@@ -12,8 +12,10 @@
 
 ## TODO
 - `Sanitizer` Class  
-- `Error` Class and handling
-- Rename `class` and `name` attributes?
+- `Error` Class and handling  
+- Rename `class` and `name` attributes? ✅
+- Field parameters `default` and ``
+- `get( 'field_id' )` function  
 
 ## Maybe
 ### `Request` Class 
@@ -22,3 +24,8 @@ See:
 - request.php
 - rwmb_request
 
+
+# Scouty
+Page Title
+Troubleshoot "Elementor"
+Remove from menu light/dark toggle

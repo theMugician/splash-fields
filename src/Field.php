@@ -125,7 +125,7 @@ class Field {
 			'name'      => $field['field_name'],
 		] );
 
-		$attributes['class'] = trim( implode( ' ', array_merge( [ "spf-field-{$field['type']}" ], (array) $attributes['class'] ) ) );
+		$attributes['class'] = trim( implode( ' ', array_merge( [ "spf-{$field['type']}" ], (array) $attributes['class'] ) ) );
 
 		$id = $attributes['id'] ?: $field['id'];
 

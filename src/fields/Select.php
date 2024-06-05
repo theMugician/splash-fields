@@ -67,6 +67,8 @@ class Select extends Input {
 	 */
 	static public function html_select_options( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
+		$attributes['class'] = 'spf-select';
+
         $output = sprintf(
             '<select %s>',
             self::render_attributes( $attributes ), 

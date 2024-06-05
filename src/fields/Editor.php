@@ -26,8 +26,7 @@ class Editor extends Input {
 		ob_start();
 
 		$attributes = self::get_attributes( $field );
-		$options                  = $field['options'];
-		var_dump($options);
+		$options = $field['options'];
 
 		$options['textarea_name'] = $field['field_name'];
 		if ( ! empty( $attributes['required'] ) ) {

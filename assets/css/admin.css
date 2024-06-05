@@ -61,7 +61,7 @@ input[type=radio].spf-field__radio-button {
     margin-top: 10px;
 }
 
-.spf-field__input-list {
+.spf-input-list {
     line-height: inherit;
     display: flex;
     flex-wrap: wrap;
@@ -98,10 +98,10 @@ input[type=radio].spf-field__radio-button {
 }
 
 /* Image Field */
-.spf-field-image__delete-image.hide, .spf-field-image__upload-image.hide {
+.spf-image__delete.hide, .spf-image__upload.hide {
     display: none;
 }
 
-.spf-field-image__image-container img {
+.spf-image__image-container img {
     max-width: 300px;
 }

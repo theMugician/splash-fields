@@ -128,7 +128,7 @@ class Checkbox_List extends Input {
 	 */
 	static public function html_input( $field, $meta ) {
 		$output     = '<div class="spf-field__input">';
-		$output    .= '<fieldset class="spf-field__input-list">';
+		$output    .= '<fieldset class="spf-input-list">';
         $output    .= static::html_checkbox_inputs( $field, $meta );
 		$output    .= '</fieldset>';
 		$output    .= '</div>';

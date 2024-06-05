@@ -145,7 +145,7 @@ class File extends Input {
 	 */
 	static public function html_input( $field, $meta ) {
         $file_add_name = self::file_add_id( $field['id'] );
-        $file_add_class = "spf-field-file__add-file";
+        $file_add_class = "spf-file__add";
 
         $file_add_attributes = ' type="file" id="' . $file_add_name . '" name="' . $file_add_name . '" class="' . $file_add_class . '"';
 
@@ -162,7 +162,7 @@ class File extends Input {
 			$add_file_hide = ' hide';
 		}
 		$output = '<div class="spf-field__input">';
-		$output .= '<div class="spf-field-file__file-container">';
+		$output .= '<div class="spf-file__file-container">';
 		if ( $has_file ) {
             $output .= self::html_file( $meta );
 		}
@@ -174,7 +174,7 @@ class File extends Input {
 			__( esc_html( 'Add File' ), 'spf' )
 		);
 		$output .= sprintf(
-			'<input id="%s" class="spf-field-file__file-id" name="%s" type="hidden"  value="%s" />',
+			'<input id="%s" class="spf-file__id" name="%s" type="hidden"  value="%s" />',
             $field['id'],
 			$field['id'],
 			esc_attr( $meta )

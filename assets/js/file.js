@@ -21,8 +21,8 @@
 
     function init() {
         file.field = $('.spf-field-file')
-        file.input = file.field.find('.spf-field-file__file-id')
-        file.container = file.field.find('.spf-field-file__file-container')
+        file.input = file.field.find('.spf-file__id')
+        file.container = file.field.find('.spf-file__file-container')
         file.addEventListeners()
 	}
 

@@ -26,6 +26,7 @@ class Radio extends Input {
         $output    .= static::html_input( $field, $meta );
 		return $output;
 	}
+
 	/**
 	 * Get field HTML.
 	 *
@@ -52,7 +53,7 @@ class Radio extends Input {
 	 */
 	static public function html_input( $field, $meta ) {
 		$output     = '<div class="spf-field__input">';
-		$output    .= '<fieldset class="spf-field__input-list">';
+		$output    .= '<fieldset class="spf-input-list">';
         $output    .= static::html_radio_inputs( $field, $meta );
 		$output    .= '</fieldset>';
 		$output    .= '</div>';
@@ -69,6 +70,7 @@ class Radio extends Input {
 	 */
 	static public function html_radio_inputs( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
+		$attributes['class'] = 'spf-radio';
         $output = '';
         foreach( $field['options'] as $value => $label ) {
             $output .= sprintf( '<label for="%s">', $value );

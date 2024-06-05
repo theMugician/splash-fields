@@ -113,25 +113,25 @@ class Image extends Input {
 			$upload_hide_class = ' hide';
 		}
 		$output = '<div class="spf-field__input">';
-		$output .= '<div class="spf-field-image__image-container">';
+		$output .= '<div class="spf-image__image-container">';
 		if ( $has_image ) {
 			$output .= '<img src="' . esc_url( $image_src[0] ) . '" alt="" />';
 		}
 		$output .= '</div>';
-		$output .= sprintf( 
-			'<a class="spf-field-image__delete-image%s" href="#">%s</a>', 
+		$output .= sprintf(
+			'<a class="button spf-image__delete%s" href="#">%s</a>',
 			$delete_hide_class,
 			__(  esc_html( 'Remove this image' ), 'spf' )
 		);
-		$output .= sprintf( 
-			'<a class="spf-field-image__upload-image%s" href="%s">%s</a>', 
+		$output .= sprintf(
+			'<a class="button spf-image__upload%s" href="%s">%s</a>', 
 			$upload_hide_class, 
 			$upload_link, 
 			__( esc_html( 'Set Custom Image' ), 'spf' )
 		);
-		$output .= sprintf( 
-			'<input class="spf-field-image__image-id" name="%s" type="hidden"  value="%s" />',
-			$field['id'],
+		$output .= sprintf(
+			'<input class="spf-image__image-id" name="%s" type="hidden"  value="%s" />',
+			esc_attr( $field['id'] ),
 			esc_attr( $image_id )
 		);
 		$output .= '</div>';
