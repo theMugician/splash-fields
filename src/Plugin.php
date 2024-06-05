@@ -36,6 +36,9 @@ class Plugin {
 
 		$core = new Core();
 		$core->init();
+
+		// Public functions.
+		require_once SPF_PATH . '/functions.php';
 	}
 }
 

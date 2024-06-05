@@ -73,9 +73,10 @@ class Select extends Input {
             self::render_attributes( $attributes ), 
         );
         if ( isset( $field['placeholder'] ) && $field['placeholder'] !== '' ) {
-            $output .= sprintf( '<option>%s</option>', esc_html( $field['placeholder'] ) );
+            $output .= sprintf( '<option value="">%s</option>', esc_html( $field['placeholder'] ) );
         }
         foreach( $field['options'] as $value => $label ) {
+
             $selected = '';
             if ( $value === $meta ) {
                 $selected = ' selected';

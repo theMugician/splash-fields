@@ -25,6 +25,10 @@ class Field {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
+		// Replace with default?
+
+		// On Save
+		
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $meta, $field );
 		$html .= '</div>';
@@ -45,6 +49,24 @@ class Field {
 		$html .= static::html( $meta, $field );
 		$html .= '</div>';
 		echo $html;
+	}
+
+	/**
+	 * Show field HTML in options page
+	 *
+	 * @param array $field   Field parameters.
+	 * @param mixed $meta  meta value.
+	 * 
+	 * @return		$meta
+	 *
+	 * @return mixed
+	 */
+	public static function get_default( $field, $meta ) {
+		if ( ( $meta === '' || $meta === false ) && ! empty( $field['default'] ) ) {
+			$meta = $field['default'];
+		}
+
+		return $meta;
 	}
 
 	/**
@@ -199,6 +221,7 @@ class Field {
 
 		// Save cloned fields as multiple values instead serialized array.
 		if ( $field['multiple'] ) {
+
 			$storage->delete( $post_id, $name );
 			$new = (array) $new;
 			foreach ( $new as $new_value ) {

@@ -65,7 +65,7 @@ class Checkbox extends Input {
 		// Remove post meta if $new is empty.
 		// $is_valid_for_field = '' !== $new && [] !== $new;
 
-		if ( $new !== 1 ) {
+		if ( $new !== 1 && $new !== 0 ) {
 			$storage->delete( $post_id, $name );
 			return;
 		}

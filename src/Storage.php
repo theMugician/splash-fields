@@ -16,19 +16,21 @@ class Storage {
      *
      * @var string
      */
-    protected $object_type = 'post';
+    protected $object_type;
 
     /**
      * Retrieve metadata for the specified object.
-     *
-     * @param int        $object_id ID of the object metadata is for.
-     * @param string     $meta_key  Optional. Metadata key. If not specified, retrieve all metadata for
+     * @see                 https://developer.wordpress.org/reference/functions/get_metadata/
+     * @param int           $object_id ID of the object metadata is for.
+     * @param string        $meta_key  Optional. Metadata key. If not specified, retrieve all metadata for
      *                              the specified object.
-     * @param bool|array $args      Optional, default is false.
+     * @param bool|array    $args      Optional, default is false.
      *                              If true, return only the first value of the specified meta_key.
      *                              If is array, use the `single` element.
      *                              This parameter has no effect if meta_key is not specified.
-     * @return mixed Single metadata value, or array of values.
+     * @return mixed        Single metadata value, or array of values.
+     *         false        False for an invalid $object_id (non-numeric, zero, or negative value), or if $meta_type is not specified.
+     *         emptystring  An empty string if a valid but non-existing object ID is passed.
      *
      * @see get_metadata()
      */

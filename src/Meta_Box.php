@@ -241,6 +241,7 @@ class Meta_Box {
 	public function save_field( array $field ) {
         // Get Posted Value
         $old = Field::call( 'raw_meta', $field, $this->object_id );
+
         $new = $_POST[$field['id']];
 
 		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
@@ -267,23 +268,25 @@ class Meta_Box {
 		}
 	}
 
+	/**
+	 * Get storage object.
+	 *
+	 * @return Storage
+	 */
     public function get_storage() {
-        static $data = [];
-        $type = 'storage';
-		$class = 'Splash_Fields\Storage_Registry';
+		return spf_get_storage( $this->object_type );
+        // static $data = [];
+        // $data_type = 'storage';
+		// $storage_registry_class = 'Splash_Fields\Storage_Registry';
+		// $storage_class = '\\Splash_Fields\\Storages\\' . \Splash_Fields\Helpers\String_Helper::title_case( $this->object_type );
 
-		if ( ! isset( $data[ $type ] ) ) {
-			$data[ $type ] = new $class();
-		}
+		// if ( ! isset( $data[ $data_type ] ) ) {
+		// 	$data[ $data_type ] = new $storage_registry_class();
+		// }
 
-		$storage = $data[ $type ]->get( 'Splash_Fields\Storage');
+		// $storage = $data[ $data_type ]->get( $storage_class );
 
-        return apply_filters( 'spf_get_storage', $storage, $this->object_type, $this );
-    }
-    
-
-    public function add_meta_box() {
-        add_meta_box( $this->id, $this->title, array( $this, 'render' ), $this->screens );
+        // return apply_filters( 'spf_get_storage', $storage, $this->object_type, $this );
     }
 
     public static function normalize( $meta_box ) {

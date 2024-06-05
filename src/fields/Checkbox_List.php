@@ -54,6 +54,42 @@ class Checkbox_List extends Input {
 		return $value;
 	}
 
+
+	/**
+	 * Process the submitted value before saving into the database.
+	 *
+	 * @param mixed $value     The submitted value.
+	 * @param int   $object_id The object ID.
+	 * @param array $field     The field settings.
+	 */
+	public static function process_value( $value, $object_id, array $field ) {
+		$return_value = '';
+		if ( is_array( $value ) ) {
+			$return_value = array();
+			foreach ( $value as $item_key => $item_value ) {
+				$return_value[] = sanitize_text_field( $item_value );
+			}
+		} else {
+			$return_value = sanitize_text_field( $value );
+		}
+		// TODO: Add Sanitize() Class
+
+		/*
+		$old_value = self::call( $field, 'raw_meta', $object_id );
+
+		// Allow field class change the value.
+		if ( $field['clone'] ) {
+			$value = RWMB_Clone::value( $value, $old_value, $object_id, $field );
+		} else {
+			$value = self::call( $field, 'value', $value, $old_value, $object_id );
+			$value = self::filter( 'sanitize', $value, $field, $old_value, $object_id );
+		}
+		$value = self::filter( 'value', $value, $field, $old_value, $object_id );
+		*/
+
+		return $return_value;
+	}
+
 	/**
 	 * Normalize parameters for field.
 	 *
@@ -144,8 +180,9 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_checkbox_inputs( $field, $meta ) {
+		var_dump($meta);
 		$meta_exists = [];
-		if ( count( $meta ) > 0 ) {
+		if ( $meta && count( $meta ) > 0 ) {
 			foreach( $meta as $key => $value ) {
 				$meta_exists[$value] = 1;
 			}

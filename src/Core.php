@@ -14,6 +14,7 @@ class Core {
 	public function init() {
         add_action( 'init', [ $this, 'register_meta_boxes' ], 20 );
         add_action( 'init', [ $this, 'register_options_pages' ], 20 );
+        add_action( 'init', [ $this, 'register_users' ], 20 );
     }
 
     public function register_meta_boxes() {
@@ -59,6 +60,29 @@ class Core {
 			}
 			$options_page = $registry->make( $config );
 			$options_page->register_fields();
+		}
+	}
+
+	public function register_users() {
+		$configs  = apply_filters( 'spf_users', [] );
+        /*
+            @see meta-box-registry.php
+        */
+		// $registry = rwmb_get_registry( 'meta_box' );
+        static $data = [];
+
+		if ( ! isset( $data['user'] ) ) {
+			$data['user'] = new User_Registry();
+		}
+
+        $registry = $data['user'];
+
+		foreach ( $configs as $config ) {
+			if ( ! is_array( $config ) || empty( $config ) ) {
+				continue;
+			}
+			$user = $registry->make( $config );
+			$user->register_fields();
 		}
 	}
 }
