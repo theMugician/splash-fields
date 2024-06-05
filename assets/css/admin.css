@@ -59,7 +59,7 @@ input[type=radio].spf-field__radio-button {
     gap: 6px 12px;
 }
 
-/* Media Field */
+/* Image Field */
 .spf-field-image__delete-image.hide, .spf-field-image__upload-image.hide {
     display: none;
 }

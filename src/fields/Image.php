@@ -34,8 +34,8 @@ class Image extends Input {
 		wp_enqueue_media();
 
 		wp_register_script(
-			'spf-media-js',
-			SPF_ASSETS_URL . '/js/media.js',
+			'spf-image-js',
+			SPF_ASSETS_URL . '/js/image.js',
 			array( 'jquery' ),
 			false,
 			true 
@@ -49,7 +49,7 @@ class Image extends Input {
         //     ) 
         // );
 
-        wp_enqueue_script( 'spf-media-js' );
+        wp_enqueue_script( 'spf-image-js' );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Checkbox Class.
+ * Checkbox_List Class.
  *
  * @package splash-fields
  */
@@ -8,10 +8,51 @@
 namespace Splash_Fields\Fields;
 
 /**
- * Class Checkbox.
+ * Class Checkbox_List.
  * 
  */
 class Checkbox_List extends Input {
+	/**
+	 * Get raw meta value.
+	 *
+	 * @param int   $object_id Object ID.
+	 * @param array $field     Field parameters.
+	 * @param array $args      Arguments of {@see rwmb_meta()} helper.
+	 *
+	 * @return mixed
+	 */
+	public static function raw_meta( $object_id, $field, $args = [] ) {
+		if ( empty( $field['id'] ) ) {
+			return '';
+		}
+		/**
+		 *	For now there is only one type of Storage Class 
+		 */
+		/*
+			} elseif ( isset( $args['object_type'] ) ) {
+				$storage = rwmb_get_storage( $args['object_type'] );
+			} else {
+				$storage = rwmb_get_storage( 'post' );
+			}
+		*/
+
+		$args['single'] = false;
+
+		if ( isset( $field['storage'] ) ) {
+			$storage = $field['storage'];
+		} else {
+			// Get instance of Storage Class
+			$storage_type = 'storage';
+			$storage_class = 'Splash_Fields\Storage_Registry';
+			if ( ! isset( $data[ $storage_type ] ) ) {
+				$data[ $storage_type ] = new $storage_class();
+			}
+			$storage = $data[ $storage_type ]->get( 'Splash_Fields\Storage');
+		}
+
+		$value = $storage->get( $object_id, $field['id'], $args );
+		return $value;
+	}
 
 	/**
 	 * Normalize parameters for field.
@@ -24,6 +65,27 @@ class Checkbox_List extends Input {
 		$field             = parent::normalize( $field );
 
 		return $field;
+	}
+
+		/**
+	 * Get the attributes for a field.
+	 *
+	 * @param array $field Field parameters.
+	 * @param mixed $value Meta value.
+	 *
+	 * @return array
+	 */
+	public static function get_attributes( $field, $value = null ) {
+		$attributes = parent::get_attributes( $field, $value );
+        if ( $value === null ) {
+            $value = '';
+        }
+		// $attribute_name = $field['id'] . '[]';
+		// $attributes = wp_parse_args( $attributes, [
+		// 	'name' => $attribute_name,
+		// ] );
+		$attributes['name'] = $field['id'] . '[]';
+		return $attributes;
 	}
 
 	/**
@@ -39,6 +101,7 @@ class Checkbox_List extends Input {
         $output    .= static::html_input( $field, $meta );
 		return $output;
 	}
+
 	/**
 	 * Get field HTML.
 	 *
@@ -81,16 +144,21 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_checkbox_inputs( $field, $meta ) {
-		var_dump($meta);
-        $attributes = static::get_attributes( $field, 1 );
-		$attributes['type'] = 'checkbox';
+		$meta_exists = [];
+		if ( count( $meta ) > 0 ) {
+			foreach( $meta as $key => $value ) {
+				$meta_exists[$value] = 1;
+			}
+		}
         $output = '';
         foreach( $field['options'] as $value => $label ) {
+			$attributes = static::get_attributes( $field, $value );
+			$attributes['type'] = 'checkbox';
             $output .= sprintf( '<label for="%s">', $value );
-            $output .= sprintf( 
-				'<input %s %s>', 
+            $output .= sprintf(
+				'<input %s %s>',
 				self::render_attributes( $attributes ), 
-				checked( ! empty( $meta ), 1, false )
+				checked( ! empty( $meta_exists[$value] ), 1, false )
 			);
             $output .= sprintf( '%s</label>', $label );
 
