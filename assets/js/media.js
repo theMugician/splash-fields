@@ -4,21 +4,20 @@ jQuery(function($){
     // Set all variables to be used in scope
     var frame,
         // metaBox = $(`${metaBoxId}.postbox`), // Your meta box id here
-        field = $('.spf-field-media'),
-        addImgLink = field.find('.spf-field-media__upload-img'),
-        delImgLink = field.find( '.spf-field-media__delete-image'),
-        imgContainer = field.find( '.spf-field-media__image-container'),
-        imgIdInput = field.find( '.spf-field-media__image-id' );
-    
+        field = $('.spf-field-image'),
+        addImgLink = field.find('.spf-field-image__upload-image'),
+        delImgLink = field.find( '.spf-field-image__delete-image'),
+        imgContainer = field.find( '.spf-field-image__image-container'),
+        imgIdInput = field.find( '.spf-field-image__image-id' )
     // ADD IMAGE LINK
     addImgLink.on( 'click', function( event ){
       
-      event.preventDefault();
+      event.preventDefault()
       
       // If the media frame already exists, reopen it.
       if ( frame ) {
-        frame.open();
-        return;
+        frame.open()
+        return
       }
       
       // Create a new media frame
@@ -28,50 +27,50 @@ jQuery(function($){
           text: 'Use this media'
         },
         multiple: false  // Set to true to allow multiple files to be selected
-      });
+      })
   
       
       // When an image is selected in the media frame...
       frame.on( 'select', function() {
         
         // Get media attachment details from the frame state
-        var attachment = frame.state().get('selection').first().toJSON();
+        var attachment = frame.state().get('selection').first().toJSON()
   
         // Send the attachment URL to our custom image input field.
-        imgContainer.append( '<img src="'+attachment.url+'" alt="" style="max-width:100%;"/>' );
+        imgContainer.append( '<img src="' + attachment.url + '" alt="" />' )
   
         // Send the attachment id to our hidden input
-        imgIdInput.val( attachment.id );
+        imgIdInput.val( attachment.id )
   
         // Hide the add image link
-        addImgLink.addClass( 'hidden' );
+        addImgLink.addClass( 'hide' )
   
         // Unhide the remove image link
-        delImgLink.removeClass( 'hidden' );
-      });
+        delImgLink.removeClass( 'hide' )
+      })
   
       // Finally, open the modal on click
-      frame.open();
-    });
+      frame.open()
+    })
     
     
     // DELETE IMAGE LINK
     delImgLink.on( 'click', function( event ) {
   
-      event.preventDefault();
+      event.preventDefault()
   
       // Clear out the preview image
-      imgContainer.html( '' );
+      imgContainer.html( '' )
   
       // Un-hide the add image link
-      addImgLink.removeClass( 'hidden' );
+      addImgLink.removeClass( 'hide' )
   
       // Hide the delete image link
-      delImgLink.addClass( 'hidden' );
+      delImgLink.addClass( 'hide' )
   
       // Delete the image id from the hidden input
-      imgIdInput.val( '' );
+      imgIdInput.val( '' )
   
-    });
+    })
   
-  });
+  })

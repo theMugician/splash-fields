@@ -58,3 +58,12 @@ input[type=radio].spf-field__radio-button {
     flex-wrap: wrap;
     gap: 6px 12px;
 }
+
+/* Media Field */
+.spf-field-image__delete-image.hide, .spf-field-image__upload-image.hide {
+    display: none;
+}
+
+.spf-field-image__image-container img {
+    max-width: 300px;
+}
