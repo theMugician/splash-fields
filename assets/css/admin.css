@@ -136,6 +136,11 @@ input[type=radio].spf-field__radio-button {
    padding: 0;
 }
 
+/* User Settings */
+.spf-user-settings {
+    margin-top: 40px;
+}
+
 .spf-user-settings .spf-field {
     border: 0;
     padding: 20px 0;
