@@ -82,6 +82,34 @@ class Field {
 		return $value;
 	}
 
+
+	/**
+	 * Process the submitted value before saving into the database.
+	 *
+	 * @param mixed $value     The submitted value.
+	 * @param int   $object_id The object ID.
+	 * @param array $field     The field settings.
+	 */
+	public static function process_value( $value, $object_id, array $field ) {
+
+		// TODO: Add Sanitize() Class
+
+		/*
+		$old_value = self::call( $field, 'raw_meta', $object_id );
+
+		// Allow field class change the value.
+		if ( $field['clone'] ) {
+			$value = RWMB_Clone::value( $value, $old_value, $object_id, $field );
+		} else {
+			$value = self::call( $field, 'value', $value, $old_value, $object_id );
+			$value = self::filter( 'sanitize', $value, $field, $old_value, $object_id );
+		}
+		$value = self::filter( 'value', $value, $field, $old_value, $object_id );
+		*/
+
+		return $value;
+	}
+
 	/**
 	 * Get the attributes for a field.
 	 *
@@ -223,6 +251,10 @@ class Field {
 		}
 
 		$class = \Splash_Fields\Helpers\Field::get_class( $field );
+		// if ( $field['type'] === 'file' ) {
+		// 	var_dump($field);
+		// }
+		// die();
 		if ( method_exists( $class, $method ) ) {
 			return call_user_func_array( [ $class, $method ], $args );
 		}

@@ -1,4 +1,4 @@
-jQuery(function($){
+jQuery(function($) {
     // const metaBoxId = mediaField.id
 
     // Set all variables to be used in scope

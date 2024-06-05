@@ -1,12 +1,14 @@
 # TODOS
 
 ## Fields
-- Checkbox
-- Checkbox List
-- File Upload
-- Number
-- Textarea
-- 
+### File 
+- What to return: attachment_id OR filename OR fileurl?
+- ajax error handling
+
+### Select
+- add multiple attribute 
+
+### Repeater
 
 ## TODO
 - `Sanitizer` Class  

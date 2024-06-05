@@ -242,7 +242,15 @@ class Meta_Box {
         // Get Posted Value
         $old = Field::call( 'raw_meta', $field, $this->object_id );
         $new = $_POST[$field['id']];
-		// var_dump($new);
+
+		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
+		// var_dump($class);
+		// $class::process_value($new , $this->object_id, $field);
+		// die();
+
+		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
+
+		// var_dump($_FILES);
 		// die();
 		// var_dump($field['id']);
 		// var_dump($new);
