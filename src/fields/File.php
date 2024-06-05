@@ -101,6 +101,56 @@ class File extends Input {
 		return $field;
     }
 
+	static public function file_add_id( $field_id ) {
+        return "file-add-{$field_id}";
+    }
+
+    static public function html_file( $meta ) {
+        $i18n_delete = apply_filters( 'spf_file_delete_string', _x( 'Delete', 'file upload', 'splash-fields' ) );
+		$i18n_edit   = apply_filters( 'spf_file_edit_string', _x( 'Edit', 'file upload', 'splash-fields' ) );
+        $file = array(
+            'icon'      => wp_get_attachment_image( $meta, [ 48, 64 ], true ),
+            'name'      => basename( get_attached_file( $meta ) ),
+            'url'       => wp_get_attachment_url( $meta ),
+            'title'     => get_the_title( $meta ),
+            'edit_link' => '',
+        );
+        $edit_link = get_edit_post_link( $meta );
+        if ( $edit_link ) {
+            $file['edit_link'] = sprintf( '<a href="%s" class="spf-file__edit" target="_blank">%s</a>', $edit_link, $i18n_edit );
+        }
+        /*
+        $file_url = wp_get_attachment_url( $meta );
+        $file_type = wp_check_filetype( $file_url );
+        if ( preg_match('/image/', $file_type['type'] ) ) {
+            $file_icon = $file_url;
+        } else {
+            $file_icon = wp_mime_type_icon( $file_type['type'] );
+        }
+        */
+
+        return sprintf(
+			'<div class="spf-file">
+				<div class="spf-file__icon">%s</div>
+				<div class="spf-file__info">
+					<a href="%s" target="_blank" class="spf-file__title">%s</a>
+					<div class="spf-file__name">%s</div>
+					<div class="spf-file__actions">
+						%s
+						<a href="#" class="spf-file__delete" data-attachment_id="%s">%s</a>
+					</div>
+				</div>
+			</div>',
+			$file['icon'],
+			esc_url( $file['url'] ),
+			esc_html( $file['title'] ),
+			esc_html( $file['name'] ),
+			$file['edit_link'],
+			esc_attr( $meta ),
+			esc_html( $i18n_delete ),
+		);
+    }
+
 	/**
 	 * HTML and functionality to add/update/delete image
 	 * 
@@ -118,7 +168,7 @@ class File extends Input {
         // $file_add_name = "file_add_{$field['id']}";
         // $file_add_class = "file-add-{$field['id']}";
 
-        $file_add_name = "file_add_{$field['id']}";
+        $file_add_name = self::file_add_id( $field['id'] );
         $file_add_class = "spf-field-file__add-file";
 
         $file_add_attributes = ' type="file" id="' . $file_add_name . '" name="' . $file_add_name . '" class="' . $file_add_class . '"';
@@ -151,6 +201,7 @@ class File extends Input {
         // $output = '<p>Upload file here</p>';
 		$output .= '<div class="spf-field-file__file-container">';
 		if ( $has_file ) {
+            $output .= self::html_file( $meta );
 			// $output .= '<img src="' . esc_url( $file_src[0] ) . '" alt="" />';
 		}
 		$output .= '</div>';
@@ -199,7 +250,9 @@ class File extends Input {
 
     /**
 	 * Process the submitted value before saving into the database.
-	 *
+     * 
+	 * @see                 https://developer.wordpress.org/reference/functions/media_handle_upload/
+     * 
 	 * @param   mixed       $value      The submitted value.
 	 * @param   int         $object_id  The object ID.
 	 * @param   array       $field      The field settings.
@@ -216,11 +269,12 @@ class File extends Input {
         $value = ''; // By default start out as empty string
         // Empty string value will result in metadata removal in ::save() function
 
-        // Get existing field from hidden input
-        $existing_value = $field['id'];
+        // Get existing field value from hidden input
+        $existing_value = $_POST[$field['id']];
+        $file_add_id = self::file_add_id( $field['id'] );
 
         // If no new $_FILES name exists or no existing value return empty string.
-        if ( empty( $_FILES[$field['id']]['name'] ) && empty( $existing_value ) ) {
+        if ( empty( $_FILES[$file_add_id]['name'] ) && empty( $existing_value ) ) {
             return $value;
         }
 
@@ -229,19 +283,22 @@ class File extends Input {
         $value = $existing_value;
 
         // Make value equal chosen file attachment ID if $_FILES exists
-        if ( ! empty( $_FILES[$field['id']]['name'] ) ) {
+        if ( ! empty( $_FILES[$file_add_id]['name'] ) ) {
 
+            // TODO
             self::check_supported_file_types( $value );
 
-            $upload = wp_upload_bits(
-                $_FILES[$field['id']]['name'], 
-                null,
-                file_get_contents( $_FILES[$field['id']]['tmp_name'] )
-            );
-    
-            $attachment_id = attachment_url_to_postid( $upload['url'] );
-            if ( isset( $upload['error'] ) && $upload['error'] != 0 ) {
-                wp_die( 'There was an error uploading your file. The error is: ' . $upload['error'] );
+            // $upload = wp_upload_bits(
+            //     $_FILES[$file_add_id]['name'], 
+            //     null,
+            //     file_get_contents( $_FILES[$file_add_id]['tmp_name'] )
+            // );
+
+            $attachment_id = media_handle_upload( $file_add_id, $object_id );
+
+            if ( is_wp_error( $attachment_id ) ) {
+                // TODO: Error Handling
+                // There was an error uploading the image.
             } else {
                 $value = $attachment_id;	
             }

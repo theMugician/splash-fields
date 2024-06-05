@@ -4,6 +4,11 @@
     border-bottom: 1px solid #ddd;
 }
 
+.spf-field a {
+    text-decoration: none;
+
+}
+
 .spf-field:last-child {
     border-bottom: none;
 }
@@ -61,6 +66,35 @@ input[type=radio].spf-field__radio-button {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 12px;
+}
+
+/* File Field */
+.spf-file {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    cursor: move;
+    border: #ccd0d4 solid 1px;
+}
+
+.spf-file__icon {
+    padding: 10px;
+    background: #f1f1f1;
+    border-right: #d5d9dd solid 1px;
+}
+
+.spf-file__info {
+    padding: 10px;
+}
+
+.spf-file__edit:after {
+    content: "|";
+    color: #dcdcde;
+    margin: 0 6px;
+}
+
+.spf-file__delete {
+    color: red;
 }
 
 /* Image Field */
