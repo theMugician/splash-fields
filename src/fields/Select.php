@@ -26,6 +26,7 @@ class Select extends Input {
         $output    .= static::html_input( $field, $meta );
 		return $output;
 	}
+
 	/**
 	 * Get field HTML.
 	 *
@@ -53,6 +54,9 @@ class Select extends Input {
 	static public function html_input( $field, $meta ) {
 		$output     = '<div class="spf-field__input">';
         $output    .= static::html_select_options( $field, $meta );
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
 		$output    .= '</div>';
 		return $output;
     }

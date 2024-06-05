@@ -28,6 +28,9 @@ class Textarea extends Input {
 			self::render_attributes( $attributes ),
 			esc_textarea( $meta )
 		);
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
         $output .= '</div>';
 		return $output;
 	}

@@ -90,6 +90,9 @@ class Input extends Field {
         $attributes = static::get_attributes( $field, $meta );
 		$output     = '<div class="spf-field__input">';
         $output    .= sprintf( '<input %s>', self::render_attributes( $attributes ) );
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
 		$output    .= '</div>';
 		return $output;
     }

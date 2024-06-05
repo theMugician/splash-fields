@@ -180,6 +180,9 @@ class File extends Input {
 			$field['id'],
 			esc_attr( $meta )
 		);
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
 		$output .= '</div>';
 		return $output;
 	}
@@ -230,14 +233,7 @@ class File extends Input {
         $existing_value = $_POST[$field['id']];
         $file_add_id = self::file_add_id( $field['id'] );
 
-		// error_log( print_r( '$file_add_id: ' . $file_add_id, true ) );
-		// foreach ( $_POST as $key => $value ) {
-		// 	error_log( print_r( $key . ' => ' . $value, true ) );
-		// }
-		// error_log( print_r( '$_FILES[$file_add_id][name]: ' . $_FILES[$file_add_id]['name'], true ) );
-
         // If no new $_FILES name exists or no existing value return empty string.
-        // if ( empty( $_POST[$file_add_id] ) && empty( $existing_value ) ) {
         if ( empty( $_FILES[$file_add_id]['name'] ) && empty( $existing_value ) ) {
 			// error_log( print_r( 'FILES is empty: ' . $_FILES, true ) );
             return $value;
@@ -249,7 +245,6 @@ class File extends Input {
 
         // Make value equal chosen file attachment ID if $_FILES exists
         if ( ! empty( $_FILES[$file_add_id]['name'] ) ) {
-        // if ( ! empty( $_POST[$file_add_id] ) ) {
 
             // TODO
             self::check_supported_file_types( $value );
@@ -263,10 +258,6 @@ class File extends Input {
                 $value = $attachment_id;
             }
         }
-
-		error_log( print_r( '$value: ' . $value, true ) );
-		error_log( print_r( '$existing_value: ' . $existing_value, true ) );
-		error_log( print_r( '$field_id: ' . $field['id'], true ) );
 
         return $value;
     }

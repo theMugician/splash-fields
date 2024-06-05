@@ -21,6 +21,7 @@ class Image extends Input {
 	 * @return mixed
 	 */
 	public static function show( array $field, $post_id = 0 ) {
+		var_dump( $field );
 		$meta = static::raw_meta( $post_id, $field );
 		$field['upload_iframe_src'] = static::upload_iframe_src( $post_id );
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
@@ -134,6 +135,9 @@ class Image extends Input {
 			esc_attr( $field['id'] ),
 			esc_attr( $image_id )
 		);
+		if ( isset( $field['description'] ) && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
 		$output .= '</div>';
 		return $output;
 	}

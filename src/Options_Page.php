@@ -183,78 +183,36 @@ class Options_Page {
 		);
 
 		foreach ( $this->fields as $field ) {
-			// var_dump(Field::call( 'show_in_options_page', $field, $field['id'] ));
 			// 2. register fields
 			register_setting(
 				$this->id, 
 				$field['id'],
 				array(
 					'sanitize_callback' => function( $value ) use ( $field ) {
-						// return $value;
-						// die();
-						error_log( print_r( 'sanitize_callback: ' . $value, true ) );
-
 						return Field::call( $field, 'process_value', $value, 0, $field );
 					}, 
 				),
-				// [ $this, 'spf_sanitize_checkbox' ]
 			);
-			// register_setting( $this->id, $field['id'], [ $this, 'spf_sanitize_checkbox' ] );
-			// register_setting( $this->id, $field['id'], 'spf_sanitize_checkbox' );
 
 			// 3. add fields
 			add_settings_field(
 				$field['id'],
 				$field['name'],
-				// \Splash_Fields\Fields\Checkbox::show_in_options_page( $field, $field['id'] ),
 				function() use ( $field ) {
 					echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
 				},
-				// function() use ( $field ) {
-				// 	$this->rudr_checkbox( $field );
-				// },
 				$this->menu_slug,
 				$settings_section_id, //$this->id,	// section ID - same or different than Options?
 			);
 		}
 
-		// register_setting( $this->id, $field['id'], 'rudr_sanitize_checkbox' );
-
-		// // 3. add fields
-		// add_settings_field(
-		// 	$field['id'],
-		// 	$field['name'],
-		// 	'rudr_checkbox',
-		// 	$this->menu_slug,
-		// 	$settings_section_id, //$this->id,	// section ID - same or different than Options?
-		// );
-
-
-
-		function spf_sanitize_checkbox( $value ) {
-			return 1 === int( $value ) ? 1 : 0;
-		}
-
-	}
-
-	public function rudr_checkbox( $field ) {
-		$value = get_option( $field['id'] );
-		?>
-			<label>
-				<input value="1" type="checkbox" name="<?php echo $field['id']; ?>" <?php checked( $value, 1 ) ?> /> Yes
-			</label>
-		<?php
-	}
-	
-	public function rudr_sanitize_checkbox( $value ) {
-		return 'on' == $value ? 'yes' : 'no';
 	}
 
     public function show() {
 		if ( null === $this->object_id ) {
 			$this->object_id = $this->get_current_object_id();
 		}
-		// $saved = $this->is_saved();
+
 		printf(
 			'<div class="%s" data-object-type="%s" data-object-id="%s">',
 			esc_attr( trim( "spf-settings" ) ),
@@ -266,32 +224,16 @@ class Options_Page {
 		echo '<form action="options.php" method="post" enctype="multipart/form-data">';
 		settings_fields( $this->id );
 		do_settings_sections( $this->menu_slug );
-		// foreach ( $this->fields as $field ) {
-		// 	echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
-		// }
 
 		printf( '<input name="submit" class="spf-settings__save button button-primary" type="submit" value="%s" />', esc_attr( 'Save' ) );
 		echo '</form>';
 		// Container.
 
-
-		// wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
-        // wp_nonce_field( 'spf_options_page_' . $this->id, 'spf_options_page_' . $this->id . '_nonce' );
-
-		// Allow users to add custom code before meta box content.
 		// 1st action applies to all meta boxes.
 		// 2nd action applies to only current meta box.
 		do_action( 'spf_before', $this );
 		do_action( "spf_before_{$this->id}", $this );
 
-		// foreach ( $this->fields as $field ) {
-		// 	Field::call( 'show', $field, $this->object_id );
-		// }
-
-		// Field::call( 'show', $this->fields[0], $this->object_id );
-
-		// \Splash_Fields\Fields\Test::this_method();
-		// Allow users to add custom code after meta box content.
 		// 1st action applies to all meta boxes.
 		// 2nd action applies to only current meta box.
 		do_action( 'spf_after', $this );
@@ -334,9 +276,6 @@ class Options_Page {
 
 		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
-
-        // TODO: Sanitize
-        // Write Sanitizer Class and function
 
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );

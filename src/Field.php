@@ -15,6 +15,7 @@ class Field {
 	public static function add_actions() {}
 
 	public static function admin_enqueue_scripts() {}
+	
 	/**
 	 * Show field HTML
 	 *
@@ -307,18 +308,6 @@ class Field {
 		}
 
 		$class = \Splash_Fields\Helpers\Field::get_class( $field );
-		// var_dump($class);
-		// echo '<pre style="margin-left: 200px;">';
-		// var_dump($class);
-		// var_dump($method);
-		// var_dump($args);
-		// echo '</pre>';
-		// echo '<br>';
-
-		// if ( $field['type'] === 'file' ) {
-		// 	var_dump($field);
-		// }
-		// die();
 		if ( method_exists( $class, $method ) ) {
 			return call_user_func_array( [ $class, $method ], $args );
 

@@ -11,10 +11,9 @@
 ### Repeater
 
 ## TODO
-- Update `Storage` Class to change `object_type` = `['post', 'comment', 'term', 'user']`
 - `Error` Class and handling  
-- Field parameter `default`   
 - Field parameter `description`  
+- Refactor `Field::html_input()` function  
 - `spf_get( 'field_id' )` function  
 
 ## User Object

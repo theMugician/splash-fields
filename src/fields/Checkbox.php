@@ -28,6 +28,9 @@ class Checkbox extends Input {
 			self::render_attributes( $attributes ),
 			checked( ! empty( $meta ), 1, false )
 		);
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
 		$output    .= '</div>';
 		return $output;
     }
