@@ -57,11 +57,8 @@ class Input extends Field {
 	 * @return string
 	 */
 	static public function html( $meta, $field ) {
-		$output		 = '<div class="spf-field">';
-        $output     .= static::html_title( $field );
-        $output    	.= static::html_field_set( $field, $meta );
-		$output		.= '</div>';
-
+        $output      = static::html_label( $field );
+        $output    	.= static::html_input( $field, $meta );
 		return $output;
 	}
 
@@ -72,7 +69,7 @@ class Input extends Field {
 	 *
 	 * @return  string
 	 */
-	static public function html_title( $field ) {
+	static public function html_label( $field ) {
         $field_title = $field['name'];
         $field_id = $field['id'];
 		$output  	 =  '<div class="spf-field__label">';
@@ -89,7 +86,7 @@ class Input extends Field {
 	 *
 	 * @return string
 	 */
-	static public function html_field_set( $field, $meta ) {
+	static public function html_input( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
 		$output     = '<div class="spf-field__input">';
         $output    .= sprintf( '<input %s>', self::render_attributes( $attributes ) );

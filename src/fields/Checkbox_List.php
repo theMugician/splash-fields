@@ -1,6 +1,6 @@
 <?php
 /**
- * Text Class.
+ * Checkbox Class.
  *
  * @package splash-fields
  */
@@ -8,10 +8,10 @@
 namespace Splash_Fields\Fields;
 
 /**
- * Class Text.
+ * Class Checkbox.
  * 
  */
-class Radio extends Input {
+class Checkbox_List extends Input {
 
 	/**
 	 * Get field HTML.
@@ -53,7 +53,7 @@ class Radio extends Input {
 	static public function html_input( $field, $meta ) {
 		$output     = '<div class="spf-field__input">';
 		$output    .= '<fieldset class="spf-field__input-list">';
-        $output    .= static::html_radio_inputs( $field, $meta );
+        $output    .= static::html_checkbox_inputs( $field, $meta );
 		$output    .= '</fieldset>';
 		$output    .= '</div>';
 		return $output;
@@ -67,16 +67,17 @@ class Radio extends Input {
 	 *
 	 * @return string
 	 */
-	static public function html_radio_inputs( $field, $meta ) {
-        $attributes = static::get_attributes( $field, $meta );
+	static public function html_checkbox_inputs( $field, $meta ) {
+		var_dump($meta);
+        $attributes = static::get_attributes( $field, 1 );
+		$attributes['type'] = 'checkbox';
         $output = '';
         foreach( $field['options'] as $value => $label ) {
             $output .= sprintf( '<label for="%s">', $value );
             $output .= sprintf( 
-				'<input value="%s" %s %s>', 
-				$value, 
+				'<input %s %s>', 
 				self::render_attributes( $attributes ), 
-				checked( $value, $attributes['value'], false )
+				checked( ! empty( $meta ), 1, false )
 			);
             $output .= sprintf( '%s</label>', $label );
 

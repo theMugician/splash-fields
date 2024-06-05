@@ -22,7 +22,9 @@ class Field {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
-		$html = static::html( $meta, $field );
+		$html = '<div class="spf-field">';
+		$html .= static::html( $meta, $field );
+		$html .= '</div>';
 		echo $html;
 	}
 
@@ -141,11 +143,12 @@ class Field {
 		$name    = $field['id'];
 		$storage = $field['storage'];
 
-		// Remove post meta if it's empty.
-		// if ( ! RWMB_Helpers_Value::is_valid_for_field( $new ) ) {
-		// 	$storage->delete( $post_id, $name );
-		// 	return;
-		// }
+		// Remove post meta if $new is empty.
+		// $is_valid_for_field = '' !== $new && [] !== $new;
+		if ( ! ( '' !== $new && [] !== $new ) ) {
+			$storage->delete( $post_id, $name );
+			return;
+		}
 
 		// Default: just update post meta.
 		$storage->update( $post_id, $name, $new );
@@ -180,8 +183,8 @@ class Field {
 	}
 
 	/**
-	 * Call a method of another extended field. 
-	 * Usually based on field type.
+	 * Call a method of another extended Field Class. 
+	 * Based on field type.
 	 * Example: \Splash_Fields\Fields\{Type}
 	 */
 	public static function call() {
