@@ -32,7 +32,7 @@ class Field {
 	}
 
 	/**
-	 * Show field HTML
+	 * Show field HTML in options page
 	 *
 	 * @param array $field   Field parameters.
 	 * @param int   $post_id Post ID.
@@ -40,8 +40,7 @@ class Field {
 	 * @return mixed
 	 */
 	public static function show_in_options_page( array $field, $option_name = '' ) {
-		// $meta = get_option( $option_name );
-		$meta = '';
+		$meta = get_option( $option_name );
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $meta, $field );
 		$html .= '</div>';
@@ -210,6 +209,23 @@ class Field {
 
 		// Default: just update post meta.
 		$storage->update( $post_id, $name, $new );
+	}
+
+	public static function save_option( $new, $old, $field ) {
+		// Remove option if $new is empty.
+		if ( ! ( '' !== $new && [] !== $new ) ) {
+			delete_option( $field['id'] );
+			return;
+		}
+
+		// Add option if option is empty and $new has a value.
+		if ( empty( get_option( $field['id'] )	) ) {
+			add_option( $field['id'], $new );
+			return;
+		}
+
+		// Update option if option is empty and $new has a value.
+		update_option( $field['id'], $new );
 	}
 
 	/**

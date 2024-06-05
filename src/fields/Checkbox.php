@@ -21,6 +21,7 @@ class Checkbox extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
+		var_dump( $meta );
         $attributes = self::get_attributes( $field, 1 );
 		$output     = '<div class="spf-field__input">';
         $output    .= sprintf(
@@ -40,7 +41,6 @@ class Checkbox extends Input {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
-		// TODO: Add Sanitize() Class
 		return (int) ! empty( $value );
 	}
 

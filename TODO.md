@@ -15,6 +15,9 @@
 - Field parameters `default` and `description`  
 - `get( 'field_id' )` function  
 
+## Option_Page
+- decide to use settings API or create own settings with options API?
+
 ## Maybe
 ### `Request` Class 
 To grab POST and GET form data  

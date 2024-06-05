@@ -171,9 +171,12 @@ class Options_Page {
 	 */
 	public function register_settings() {
 
+		// $settings_section_id = 'settings_section_id';
+		$settings_section_id = $this->id;
+
 		// 1. create section
 		add_settings_section(
-			'spf_section_id', // $this->id,	// section ID - same or different than Options?
+			$settings_section_id, // $this->id,	// section ID - same or different than Options?
 			'', 		// title (optional)
 			'', 		// callback function to display the section (optional)
 			$this->menu_slug
@@ -181,9 +184,23 @@ class Options_Page {
 
 		foreach ( $this->fields as $field ) {
 			// var_dump(Field::call( 'show_in_options_page', $field, $field['id'] ));
-		// 	// 2. register fields
-		// 	// register_setting( $option_group, 'slider_on', 'rudr_sanitize_checkbox' );
-			register_setting( $this->id, $field['id'] );
+			// 2. register fields
+			register_setting(
+				$this->id, 
+				$field['id'],
+				array(
+					'sanitize_callback' => function( $value ) use ( $field ) {
+						// return $value;
+						// die();
+						error_log( print_r( 'sanitize_callback: ' . $value, true ) );
+
+						return Field::call( $field, 'process_value', $value, 0, $field );
+					}, 
+				),
+				// [ $this, 'spf_sanitize_checkbox' ]
+			);
+			// register_setting( $this->id, $field['id'], [ $this, 'spf_sanitize_checkbox' ] );
+			// register_setting( $this->id, $field['id'], 'spf_sanitize_checkbox' );
 
 			// 3. add fields
 			add_settings_field(
@@ -193,27 +210,44 @@ class Options_Page {
 				function() use ( $field ) {
 					echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
 				},
-				// 'rudr_checkbox',
+				// function() use ( $field ) {
+				// 	$this->rudr_checkbox( $field );
+				// },
 				$this->menu_slug,
-				'spf_section_id', //$this->id,	// section ID - same or different than Options?
+				$settings_section_id, //$this->id,	// section ID - same or different than Options?
 			);
-
 		}
 
-		function rudr_checkbox( $args ) {
-			$value = get_option( $field['id'] );
-			?>
-				<label>
-					<input type="checkbox" name="<?php echo $field['id']; ?>" <?php checked( $value, 'yes' ) ?> /> Yes
-				</label>
-			<?php
-		}
-		
-		// custom sanitization function for a checkbox field
-		function rudr_sanitize_checkbox( $value ) {
-			return 'on' == $value ? 'yes' : 'no';
+		// register_setting( $this->id, $field['id'], 'rudr_sanitize_checkbox' );
+
+		// // 3. add fields
+		// add_settings_field(
+		// 	$field['id'],
+		// 	$field['name'],
+		// 	'rudr_checkbox',
+		// 	$this->menu_slug,
+		// 	$settings_section_id, //$this->id,	// section ID - same or different than Options?
+		// );
+
+
+
+		function spf_sanitize_checkbox( $value ) {
+			return 1 === int( $value ) ? 1 : 0;
 		}
 
+	}
+
+	public function rudr_checkbox( $field ) {
+		$value = get_option( $field['id'] );
+		?>
+			<label>
+				<input value="1" type="checkbox" name="<?php echo $field['id']; ?>" <?php checked( $value, 1 ) ?> /> Yes
+			</label>
+		<?php
+	}
+	
+	public function rudr_sanitize_checkbox( $value ) {
+		return 'on' == $value ? 'yes' : 'no';
 	}
 
     public function show() {
@@ -229,7 +263,7 @@ class Options_Page {
 		);
 
 		printf( '<h2>%s</h2>', get_admin_page_title() );
-		echo '<form action="options.php" method="post">';
+		echo '<form action="options.php" method="post" enctype="multipart/form-data">';
 		settings_fields( $this->id );
 		do_settings_sections( $this->menu_slug );
 		// foreach ( $this->fields as $field ) {
