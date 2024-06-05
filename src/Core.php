@@ -42,10 +42,7 @@ class Core {
 
 	public function register_options_pages() {
 		$configs  = apply_filters( 'spf_options_pages', [] );
-        /*
-            @see meta-box-registry.php
-        */
-		// $registry = rwmb_get_registry( 'meta_box' );
+
         static $data = [];
 
 		if ( ! isset( $data['options_page'] ) ) {
@@ -64,25 +61,22 @@ class Core {
 	}
 
 	public function register_users() {
-		$configs  = apply_filters( 'spf_users', [] );
-        /*
-            @see meta-box-registry.php
-        */
-		// $registry = rwmb_get_registry( 'meta_box' );
+		$configs  = apply_filters( 'spf_user_settings', [] );
+
         static $data = [];
 
-		if ( ! isset( $data['user'] ) ) {
-			$data['user'] = new User_Registry();
+		if ( ! isset( $data['user_settings'] ) ) {
+			$data['user_settings'] = new User_Settings_Registry();
 		}
 
-        $registry = $data['user'];
+        $registry = $data['user_settings'];
 
 		foreach ( $configs as $config ) {
 			if ( ! is_array( $config ) || empty( $config ) ) {
 				continue;
 			}
-			$user = $registry->make( $config );
-			$user->register_fields();
+			$user_settings = $registry->make( $config );
+			$user_settings->register_fields();
 		}
 	}
 }

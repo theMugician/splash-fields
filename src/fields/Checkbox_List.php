@@ -180,7 +180,6 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_checkbox_inputs( $field, $meta ) {
-		var_dump($meta);
 		$meta_exists = [];
 		if ( $meta && count( $meta ) > 0 ) {
 			foreach( $meta as $key => $value ) {

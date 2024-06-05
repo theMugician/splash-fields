@@ -1,6 +1,6 @@
 <?php
 /**
- * User Class.
+ * User_Settings Class.
  *
  * @package splash-fields
  */
@@ -8,20 +8,21 @@
 namespace Splash_Fields;
 
 /**
- * Class User.
+ * Class User_Settings.
  * 
- * @property string $id             Splash_Fields\User Object ID.
- * @property string $user_id        Current WP User ID.
- * @property string $title          User title.
+ * @property string $id             Splash_Fields\User_Settings Object ID.
+ * @property string $user_id        Current WP_User ID.
+ * @property string $title          User_Settings title.
  * @property array  $fields         List of fields.
  */
-class User {
+
+class User_Settings {
     /**
-	 * User parameters.
+	 * User_Settings parameters.
 	 *
 	 * @var array
 	 */
-	public $user;
+	public $user_settings;
 
 	/**
 	 * The object ID.
@@ -38,7 +39,7 @@ class User {
 	protected $object_type = 'user';
 
     /**
-     * The ID of the Splash_Fields\User Object.
+     * The ID of the Splash_Fields\User_Settings Object.
      *
      * @var string
      */
@@ -59,7 +60,7 @@ class User {
     protected $title;
 
     /**
-     * Screens where this meta box will appear.
+     * List of fields related to the User Settings object.
      *
      * @var array
      */
@@ -70,15 +71,15 @@ class User {
      * Include all relevant scripts and custom fields.
      * 
      */
-    public function __construct( array $user ) {
-		$user           = static::normalize( $user );
-
-		$this->user         = $user;
-        $this->id           = $user['id'];
+    public function __construct( array $user_settings ) {
+		$user_settings           = static::normalize( $user_settings );
+		
+		$this->user         = $user_settings;
+        $this->id           = $user_settings['id'];
         $this->user_id      = get_current_user_id();
-        $this->title        = $user['title'];
+        $this->title        = $user_settings['title'];
 
-        $this->user['fields'] = static::normalize_fields( $user['fields'], $this->get_storage() );
+        $this->user['fields'] = static::normalize_fields( $user_settings['fields'], $this->get_storage() );
         $this->fields         = $this->user['fields'];
 
         $this->object_hooks();
@@ -96,7 +97,7 @@ class User {
 	}
 
 	/**
-	 * Specific hooks for meta box object. Default is 'post'.
+	 * Specific hooks for user settings object. Default is 'post'.
 	 * This should be extended in subclasses to support meta fields for terms, user, settings pages, etc.
 	 */
 	protected function object_hooks() {
@@ -117,7 +118,7 @@ class User {
 		/**
 		 * Allow developers to enqueue more scripts and styles
 		 *
-		 * @param User $object Meta Box object
+		 * @param User_Settings $object Meta Box object
 		 */
 		do_action( 'spf_enqueue_scripts', $this );
 	}
@@ -125,29 +126,33 @@ class User {
     public function show() {
 		// Container.
 		printf(
-			'<div class="%s" data-object-type="%s" data-user-id="%s">',
-			esc_attr( trim( "spf-user" ) ),
+			'<div class="%s" data-object-type="%s" data-id="%s">',
+			esc_attr( trim( "spf-user-settings" ) ),
 			esc_attr( $this->object_type ),
-			esc_attr( $this->user_id )
+			esc_attr( $this->id )
 		);
 
 		// wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
         wp_nonce_field( 'spf_user_' . $this->id, 'spf_user_' . $this->id . '_nonce' );
 
-		// Allow users to add custom code before meta box content.
-		// 1st action applies to all meta boxes.
-		// 2nd action applies to only current meta box.
+		// Allow users to add custom code before user settings content.
+		// 1st action applies to all user settingses.
+		// 2nd action applies to only current user settings.
 		do_action( 'spf_before', $this );
 		do_action( "spf_before_{$this->id}", $this );
+
+		if ( ! empty( $this->title ) ) {
+			printf( '<h2>%s</h2>', esc_html( $this->title ) );
+		}
 
 		foreach ( $this->fields as $field ) {
 			Field::call( 'show', $field, $this->user_id );
 		}
 
 		// \Splash_Fields\Fields\Test::this_method();
-		// Allow users to add custom code after meta box content.
-		// 1st action applies to all meta boxes.
-		// 2nd action applies to only current meta box.
+		// Allow users to add custom code after user settings content.
+		// 1st action applies to all user settingses.
+		// 2nd action applies to only current user settings.
 		do_action( 'spf_after', $this );
 		do_action( "spf_after_{$this->id}", $this );
 
@@ -158,7 +163,7 @@ class User {
 	/**
 	 * Save data from user fields
 	 *
-	 * @param int $user_id User ID.
+	 * @param int $user_id User_Settings ID.
 	 */
 	public function save_user( $user_id ) {
 		if ( ! $this->validate() ) {
@@ -216,9 +221,9 @@ class User {
 		return spf_get_storage( $this->object_type );
     }
 
-    public static function normalize( $user ) {
-		$default_title = __( 'User Settings', 'splash-fields' );
-		$user      = wp_parse_args( $user, [
+    public static function normalize( $user_settings ) {
+		$default_title = __( 'User_Settings Settings', 'splash-fields' );
+		$user_settings      = wp_parse_args( $user_settings, [
 			'title'          => $default_title,
 			'id'             => ! empty( $meta_box['title'] ) ? sanitize_title( $meta_box['title'] ) : sanitize_title( $default_title ),
 			'user_id'        => get_current_user_id(),
@@ -226,9 +231,9 @@ class User {
 		] );
 
 		// Make sure the post type is an array and is sanitized.
-		// $user['post_types'] = array_filter( array_map( 'sanitize_key', Arr::from_csv( $user['post_types'] ) ) );
+		// $user_settings['post_types'] = array_filter( array_map( 'sanitize_key', Arr::from_csv( $user_settings['post_types'] ) ) );
 
-		return $user;
+		return $user_settings;
     }
 
     public static function normalize_fields( array $fields, $storage = null ) : array {
