@@ -14,6 +14,19 @@ namespace Splash_Fields\Fields;
 class Checkbox_List extends Input {
 
 	/**
+	 * Normalize parameters for field.
+	 *
+	 * @param array $field Field parameters.
+	 * @return array
+	 */
+	public static function normalize( $field ) {
+		$field['multiple'] = true;
+		$field             = parent::normalize( $field );
+
+		return $field;
+	}
+
+	/**
 	 * Get field HTML.
 	 *
 	 * @param mixed $meta   Meta value.

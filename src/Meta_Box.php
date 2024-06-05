@@ -109,8 +109,18 @@ class Meta_Box {
         $this->fields       = $this->meta_box['fields'];
 
         $this->object_hooks();
+        $this->global_hooks();
     }
 
+	protected function global_hooks() {
+		// Enqueue common styles and scripts.
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
+
+		// Add additional actions for fields.
+		foreach ( $this->fields as $field ) {
+			Field::call( $field, 'add_actions' );
+		}
+	}
 
 	/**
 	 * Specific hooks for meta box object. Default is 'post'.
@@ -131,6 +141,19 @@ class Meta_Box {
 				add_action( "save_post_{$post_type}", [ $this, 'save_post' ] );
 			}
 		}
+	}
+
+	public function enqueue() {
+		// Enqueue scripts and styles for fields.
+		foreach ( $this->fields as $field ) {
+			Field::call( $field, 'admin_enqueue_scripts' );
+		}
+		/**
+		 * Allow developers to enqueue more scripts and styles
+		 *
+		 * @param Meta_Box $object Meta Box object
+		 */
+		do_action( 'spf_enqueue_scripts', $this );
 	}
 
     /**

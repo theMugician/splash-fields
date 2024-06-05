@@ -12,6 +12,9 @@ namespace Splash_Fields;
  * 
  */
 class Field {
+	public static function add_actions() {}
+
+	public static function admin_enqueue_scripts() {}
 	/**
 	 * Show field HTML
 	 *
@@ -22,7 +25,7 @@ class Field {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
-		$html = '<div class="spf-field">';
+		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $meta, $field );
 		$html .= '</div>';
 		echo $html;
@@ -147,6 +150,16 @@ class Field {
 		// $is_valid_for_field = '' !== $new && [] !== $new;
 		if ( ! ( '' !== $new && [] !== $new ) ) {
 			$storage->delete( $post_id, $name );
+			return;
+		}
+
+		// Save cloned fields as multiple values instead serialized array.
+		if ( $field['multiple'] ) {
+			$storage->delete( $post_id, $name );
+			$new = (array) $new;
+			foreach ( $new as $new_value ) {
+				$storage->add( $post_id, $name, $new_value, false );
+			}
 			return;
 		}
 
