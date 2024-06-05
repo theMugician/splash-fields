@@ -107,7 +107,7 @@ class Field {
 		$value = self::filter( 'value', $value, $field, $old_value, $object_id );
 		*/
 
-		return $value;
+		return sanitize_text_field( $value );
 	}
 
 	/**

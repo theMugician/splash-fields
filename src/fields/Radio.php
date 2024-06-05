@@ -73,14 +73,14 @@ class Radio extends Input {
 		$attributes['class'] = 'spf-radio';
         $output = '';
         foreach( $field['options'] as $value => $label ) {
-            $output .= sprintf( '<label for="%s">', $value );
+            $output .= sprintf( '<label for="%s">', esc_attr( $value ) );
             $output .= sprintf( 
 				'<input value="%s" %s %s>', 
-				$value, 
+				esc_attr( $value ),
 				self::render_attributes( $attributes ), 
-				checked( $value, $attributes['value'], false )
+				checked( esc_attr( $value ), $attributes['value'], false )
 			);
-            $output .= sprintf( '%s</label>', $label );
+            $output .= sprintf( '%s</label>', esc_html( $label ) );
 
         }
 		return $output;

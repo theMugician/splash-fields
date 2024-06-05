@@ -76,4 +76,15 @@ class Textarea extends Input {
 
 		return $attributes;
 	}
+
+	/**
+	 * Process the submitted value before saving into the database.
+	 *
+	 * @param mixed $value     The submitted value.
+	 * @param int   $object_id The object ID.
+	 * @param array $field     The field settings.
+	 */
+	public static function process_value( $value, $object_id, array $field ) {
+		return sanitize_textarea_field( $value );
+	}
 }

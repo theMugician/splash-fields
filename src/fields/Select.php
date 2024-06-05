@@ -67,7 +67,6 @@ class Select extends Input {
 	 */
 	static public function html_select_options( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
-		$attributes['class'] = 'spf-select';
 
         $output = sprintf(
             '<select %s>',
@@ -81,15 +80,12 @@ class Select extends Input {
             if ( $value === $meta ) {
                 $selected = ' selected';
             }
-            $output .= sprintf( '<option%s value="%s">%s</option>', $selected, $value, $label );
-            /*
             $output .= sprintf( 
-				'<option value="%s" %s %s>', 
-				$value, 
-				self::render_attributes( $attributes ), 
-				checked( $value, $attributes['value'], false )
+				'<option%s value="%s">%s</option>', 
+				esc_attr( $selected ),
+				esc_attr( $value ),
+				esc_html( $label )
 			);
-            */
         }
         $output .= '</select>';
 		return $output;

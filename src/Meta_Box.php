@@ -261,7 +261,7 @@ class Meta_Box {
         // Write Sanitizer Class and function
 
         // update_meta with Storage Class
-        Field::call( 'save', $new, $old, $this->object_id, $field );
+        Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}
 
     public function register_fields() {

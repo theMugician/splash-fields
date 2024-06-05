@@ -250,7 +250,7 @@ class File extends Input {
                 // TODO: Error Handling
                 // There was an error uploading the image.
             } else {
-                $value = $attachment_id;	
+                $value = $attachment_id;
             }
         }
 

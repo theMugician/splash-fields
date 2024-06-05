@@ -102,9 +102,7 @@ class Input extends Field {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
-		// TODO: Add Sanitize() Class
- 
-		return $value;
+		return sanitize_text_field( $value );
 	}
 
 	/**
