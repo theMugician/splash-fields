@@ -21,13 +21,24 @@
     font-weight: 500;
 }
 
-.spf-field__field-set {
-    flex-grow: 1;
-}
-
 .spf-field__input {
     flex-basis: 30%;
     flex: 1;
+}
+
+.edit-post-sidebar__panel .spf-field {
+    flex-direction: column;
+}
+
+.edit-post-sidebar__panel .spf-field__label {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.edit-post-sidebar__panel  .spf-field__input select {
+    padding-left: 8px;
+    padding-right: 0;
+    width: calc(100% - 8px);
 }
 
 .spf-field__input input:not([type="checkbox"]):not([type="radio"]), .spf-field__input textarea, .spf-field__input select {
