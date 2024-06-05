@@ -12,6 +12,8 @@
 
 ## TODO
 - `Sanitizer` Class  
+- `Error` Class and handling
+- Rename `class` and `name` attributes?
 
 ## Maybe
 ### `Request` Class 

@@ -62,15 +62,6 @@ class File extends Input {
 		echo ' enctype="multipart/form-data"';
 	}
 
-    public static function ajax_add_file() {
-        var_dump($_FILES);
-        exit;
-    }
-
-    public static function ajax_delete_file() {
-
-    }
-
 	/**
 	 * Normalize parameters for field.
 	 * Get the upload iframe source for media item
@@ -119,15 +110,6 @@ class File extends Input {
         if ( $edit_link ) {
             $file['edit_link'] = sprintf( '<a href="%s" class="spf-file__edit" target="_blank">%s</a>', $edit_link, $i18n_edit );
         }
-        /*
-        $file_url = wp_get_attachment_url( $meta );
-        $file_type = wp_check_filetype( $file_url );
-        if ( preg_match('/image/', $file_type['type'] ) ) {
-            $file_icon = $file_url;
-        } else {
-            $file_icon = wp_mime_type_icon( $file_type['type'] );
-        }
-        */
 
         return sprintf(
 			'<div class="spf-file">
@@ -162,28 +144,10 @@ class File extends Input {
 	 * @return array
 	 */
 	static public function html_input( $field, $meta ) {
-        // $attributes = parent::get_attributes( $field, $meta );
-	    // $output = '<input type="file" id="wp_custom_attachment" name="wp_custom_attachment" value="" size="25" />';
-	
-        // $file_add_name = "file_add_{$field['id']}";
-        // $file_add_class = "file-add-{$field['id']}";
-
         $file_add_name = self::file_add_id( $field['id'] );
         $file_add_class = "spf-field-file__add-file";
 
         $file_add_attributes = ' type="file" id="' . $file_add_name . '" name="' . $file_add_name . '" class="' . $file_add_class . '"';
-
-		// Get WordPress' media upload URL
-		// $upload_link = $field['upload_iframe_src'];
-
-		// See if there's a media id already saved as post meta
-		// $file_id = $meta;
-
-		// Get the file src
-		// $file_src = wp_get_attachment_file_src( $file_id, 'full' );
-
-		// For convenience, see if the array is valid
-		// $has_file = is_array( $file_src );
 
         $has_file = false;
 		$delete_file_hide = ' hide';
@@ -198,23 +162,15 @@ class File extends Input {
 			$add_file_hide = ' hide';
 		}
 		$output = '<div class="spf-field__input">';
-        // $output = '<p>Upload file here</p>';
 		$output .= '<div class="spf-field-file__file-container">';
 		if ( $has_file ) {
             $output .= self::html_file( $meta );
-			// $output .= '<img src="' . esc_url( $file_src[0] ) . '" alt="" />';
 		}
 		$output .= '</div>';
-		// $output .= sprintf( 
-		// 	'<a class="spf-field-file__delete-file%s" href="#">%s</a>', 
-		// 	$delete_hide_class,
-		// 	__(  esc_html( 'Remove this file' ), 'spf' )
-		// );
 		$output .= sprintf(
             '<input %s %s/>',
 			$add_file_hide,
             $file_add_attributes,
-            // self::render_attributes( $attributes ),
 			__( esc_html( 'Add File' ), 'spf' )
 		);
 		$output .= sprintf(
@@ -287,12 +243,6 @@ class File extends Input {
 
             // TODO
             self::check_supported_file_types( $value );
-
-            // $upload = wp_upload_bits(
-            //     $_FILES[$file_add_id]['name'], 
-            //     null,
-            //     file_get_contents( $_FILES[$file_add_id]['tmp_name'] )
-            // );
 
             $attachment_id = media_handle_upload( $file_add_id, $object_id );
 
