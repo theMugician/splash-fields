@@ -1,29 +1,33 @@
 <?php
 /**
- * Meta_Box Class.
+ * Options_Page Class.
  *
  * @package splash-fields
  */
 
 namespace Splash_Fields;
 
+/*
+string $page_title, string $menu_title, string $capability, string $menu_slug, callable $callback = ”
+*/
+
 /**
- * Class Meta_Box.
+ * Class Options_Page.
  * 
- * @property string $id             Meta Box ID.
- * @property string $title          Meta Box title.
- * @property array  $fields         List of fields.
- * @property array  $post_types     List of post types that the meta box is created for.
- * @property string $priority       The meta box priority.
- * @property string $context        Where the meta box is displayed.
+ * @property string $id             	Option Page ID.
+ * @property string $title          	Option Page title.
+ * @property string $menu_title     	Option Page menu name.
+ * @property string $capability   		Option Page capability.
+ * @property string $menu_slug     		Option Page menu slug.
+ * @property array  $fields         	List of fields.
  */
-class Meta_Box {
+class Options_Page {
     /**
-	 * Meta box parameters.
+	 * Option page parameters.
 	 *
 	 * @var array
 	 */
-	public $meta_box;
+	public $options_page;
 
 	/**
 	 * Detect whether the meta box is saved at least once.
@@ -45,7 +49,7 @@ class Meta_Box {
 	 *
 	 * @var string
 	 */
-	protected $object_type = 'post';
+	protected $object_type = 'options';
 
     /**
      * The ID of the meta box.
@@ -62,18 +66,25 @@ class Meta_Box {
     protected $title;
 
     /**
-     * The display priority of the meta box.
+     * The title of the meta box.
      *
      * @var string
      */
-    protected $priority;
+    protected $menu_title;
 
     /**
-     * The post types where this meta box will appear.
+     * The title of the meta box.
      *
-     * @var array
+     * @var string
      */
-    protected $post_types = array();
+    protected $capability;
+
+    /**
+     * The title of the meta box.
+     *
+     * @var string
+     */
+    protected $menu_slug;
 
     /**
      * Screens where this meta box will appear.
@@ -82,31 +93,23 @@ class Meta_Box {
      */
     protected $fields = array();
 
-
-    /**
-     * Screen context where the meta box should display.
-     *
-     * @var string
-     */
-    protected $context;
-
     /**
      * Constructor.
      * Include all relevant scripts and custom fields.
      * 
      */
-    public function __construct( array $meta_box ) {
-		$meta_box           = static::normalize( $meta_box );
+    public function __construct( array $options_page ) {
+		$options_page           = static::normalize( $options_page );
 
-		$this->meta_box     = $meta_box;
-        $this->id           = $meta_box['id'];
-        $this->title        = $meta_box['title'];
-        $this->post_types   = $meta_box['post_types'];
-        $this->priority     = $meta_box['priority'];;
-        $this->context      = $meta_box['context'];
+		$this->options_page = $options_page;
+        $this->id           = $options_page['id'];
+        $this->title        = $options_page['title'];
+        $this->menu_title   = $options_page['menu_title'];
+        $this->menu_slug   	= $options_page['menu_slug'];
+        $this->capability   = $options_page['capability'];
 
-        $this->meta_box['fields'] = static::normalize_fields( $meta_box['fields'], $this->get_storage() );
-        $this->fields       = $this->meta_box['fields'];
+        $this->options_page['fields'] = static::normalize_fields( $options_page['fields'], $this->get_storage() );
+        $this->fields       = $this->options_page['fields'];
 
         $this->object_hooks();
         $this->global_hooks();
@@ -123,24 +126,14 @@ class Meta_Box {
 	}
 
 	/**
-	 * Specific hooks for meta box object. Default is 'post'.
+	 * Specific hooks for options page object. Default is 'post'.
 	 * This should be extended in subclasses to support meta fields for terms, user, settings pages, etc.
 	 */
 	protected function object_hooks() {
-		// Add meta box.
-		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
-
-		// Save post meta.
-		foreach ( $this->post_types as $post_type ) {
-			if ( 'attachment' === $post_type ) {
-				// Attachment uses other hooks.
-				// @see wp_update_post(), wp_insert_attachment().
-				add_action( 'edit_attachment', [ $this, 'save_post' ] );
-				add_action( 'add_attachment', [ $this, 'save_post' ] );
-			} else {
-				add_action( "save_post_{$post_type}", [ $this, 'save_post' ] );
-			}
-		}
+		// Add options page.
+		add_action( 'admin_menu', [ $this, 'add_options_page' ] );
+		// Add settings to that options page.
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 	}
 
 	public function enqueue() {
@@ -151,25 +144,76 @@ class Meta_Box {
 		/**
 		 * Allow developers to enqueue more scripts and styles
 		 *
-		 * @param Meta_Box $object Meta Box object
+		 * @param Options_Page $object Option Page object
 		 */
 		do_action( 'spf_enqueue_scripts', $this );
 	}
 
     /**
-	 * Add meta box for multiple post types
+	 * Add options page to site
+	 * 
+	 * @link https://developer.wordpress.org/reference/functions/add_options_page/
 	 */
-	public function add_meta_boxes() {
-		foreach ( $this->post_types as $post_type ) {
-			add_meta_box(
-				$this->id,
-				$this->title,
-				[ $this, 'show' ],
-				$post_type,
-				$this->context,
-				$this->priority
+	public function add_options_page() {
+		add_options_page(
+			$this->title,
+			$this->menu_title,
+			$this->capability,
+			$this->menu_slug,
+			[ $this, 'show' ],
+		);
+	}
+
+    /**
+	 * Add options page to site
+	 * 
+	 * @link https://developer.wordpress.org/reference/functions/add_options_page/
+	 */
+	public function register_settings() {
+
+		// 1. create section
+		add_settings_section(
+			'spf_section_id', // $this->id,	// section ID - same or different than Options?
+			'', 		// title (optional)
+			'', 		// callback function to display the section (optional)
+			$this->menu_slug
+		);
+
+		foreach ( $this->fields as $field ) {
+			// var_dump(Field::call( 'show_in_options_page', $field, $field['id'] ));
+		// 	// 2. register fields
+		// 	// register_setting( $option_group, 'slider_on', 'rudr_sanitize_checkbox' );
+			register_setting( $this->id, $field['id'] );
+
+			// 3. add fields
+			add_settings_field(
+				$field['id'],
+				$field['name'],
+				// \Splash_Fields\Fields\Checkbox::show_in_options_page( $field, $field['id'] ),
+				function() use ( $field ) {
+					echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
+				},
+				// 'rudr_checkbox',
+				$this->menu_slug,
+				'spf_section_id', //$this->id,	// section ID - same or different than Options?
 			);
+
 		}
+
+		function rudr_checkbox( $args ) {
+			$value = get_option( $field['id'] );
+			?>
+				<label>
+					<input type="checkbox" name="<?php echo $field['id']; ?>" <?php checked( $value, 'yes' ) ?> /> Yes
+				</label>
+			<?php
+		}
+		
+		// custom sanitization function for a checkbox field
+		function rudr_sanitize_checkbox( $value ) {
+			return 'on' == $value ? 'yes' : 'no';
+		}
+
 	}
 
     public function show() {
@@ -177,17 +221,28 @@ class Meta_Box {
 			$this->object_id = $this->get_current_object_id();
 		}
 		// $saved = $this->is_saved();
-
-		// Container.
 		printf(
 			'<div class="%s" data-object-type="%s" data-object-id="%s">',
-			esc_attr( trim( "spf-metabox" ) ),
+			esc_attr( trim( "spf-settings" ) ),
 			esc_attr( $this->object_type ),
 			esc_attr( $this->object_id )
 		);
 
+		printf( '<h2>%s</h2>', get_admin_page_title() );
+		echo '<form action="options.php" method="post">';
+		settings_fields( $this->id );
+		do_settings_sections( $this->menu_slug );
+		// foreach ( $this->fields as $field ) {
+		// 	echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
+		// }
+
+		printf( '<input name="submit" class="button button-primary" type="submit" value="%s" />', esc_attr( 'Save' ) );
+		echo '</form>';
+		// Container.
+
+
 		// wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
-        wp_nonce_field( 'spf_metabox_' . $this->id, 'spf_metabox_' . $this->id . '_nonce' );
+        // wp_nonce_field( 'spf_options_page_' . $this->id, 'spf_options_page_' . $this->id . '_nonce' );
 
 		// Allow users to add custom code before meta box content.
 		// 1st action applies to all meta boxes.
@@ -195,9 +250,9 @@ class Meta_Box {
 		do_action( 'spf_before', $this );
 		do_action( "spf_before_{$this->id}", $this );
 
-		foreach ( $this->fields as $field ) {
-			Field::call( 'show', $field, $this->object_id );
-		}
+		// foreach ( $this->fields as $field ) {
+		// 	Field::call( 'show', $field, $this->object_id );
+		// }
 
 		// Field::call( 'show', $this->fields[0], $this->object_id );
 
@@ -244,8 +299,10 @@ class Meta_Box {
         $new = $_POST[$field['id']];
 
 		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
-
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
+
+        // TODO: Sanitize
+        // Write Sanitizer Class and function
 
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );
@@ -260,11 +317,10 @@ class Meta_Box {
 
         $field_registry = $data['field'];
 
-		foreach ( $this->post_types as $post_type ) {
-			foreach ( $this->fields as $field ) {
-				$field_registry->add( $field, $post_type );
-			}
+		foreach ( $this->fields as $field ) {
+			$field_registry->add( $field, $this->object_type );
 		}
+
 	}
 
     public function get_storage() {
@@ -282,15 +338,11 @@ class Meta_Box {
     }
     
 
-    public function add_meta_box() {
-        add_meta_box( $this->id, $this->title, array( $this, 'render' ), $this->screens );
-    }
-
-    public static function normalize( $meta_box ) {
-		$default_title = __( 'Meta Box Title', 'meta-box' );
-		$meta_box      = wp_parse_args( $meta_box, [
+    public static function normalize( $options_page ) {
+		$default_title = __( 'Option Page Title', 'meta-box' );
+		$options_page      = wp_parse_args( $options_page, [
 			'title'          => $default_title,
-			'id'             => ! empty( $meta_box['title'] ) ? sanitize_title( $meta_box['title'] ) : sanitize_title( $default_title ),
+			'id'             => ! empty( $options_page['title'] ) ? sanitize_title( $options_page['title'] ) : sanitize_title( $default_title ),
 			'context'        => 'normal',
 			'priority'       => 'high',
 			'post_types'     => array( 'post' ),
@@ -298,9 +350,9 @@ class Meta_Box {
 		] );
 
 		// Make sure the post type is an array and is sanitized.
-		// $meta_box['post_types'] = array_filter( array_map( 'sanitize_key', Arr::from_csv( $meta_box['post_types'] ) ) );
+		// $options_page['post_types'] = array_filter( array_map( 'sanitize_key', Arr::from_csv( $options_page['post_types'] ) ) );
 
-		return $meta_box;
+		return $options_page;
     }
 
     public static function normalize_fields( array $fields, $storage = null ) : array {
@@ -331,14 +383,14 @@ class Meta_Box {
         $valid = false;
 
         // Check if our nonce is set.
-        if ( ! isset( $_POST['spf_metabox_' . $this->id  . '_nonce'] ) ) {
+        if ( ! isset( $_POST['spf_options_page_' . $this->id  . '_nonce'] ) ) {
             return $valid;
         }
 
-        $nonce = $_POST['spf_metabox_' . $this->id  . '_nonce'];
+        $nonce = $_POST['spf_options_page_' . $this->id  . '_nonce'];
         
         // Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce, 'spf_metabox_' . $this->id  ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'spf_options_page_' . $this->id  ) ) {
             return $valid;
             echo('passed validation');
         }
@@ -359,8 +411,6 @@ class Meta_Box {
             }
         } else {
             if ( ! current_user_can( 'edit_post', $this->object_id ) ) {
-				var_dump('current user can NOT edit this post');
-				die();
                 return $valid;
             }
         }

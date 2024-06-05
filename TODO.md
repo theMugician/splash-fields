@@ -11,10 +11,8 @@
 ### Repeater
 
 ## TODO
-- `Sanitizer` Class  
 - `Error` Class and handling  
-- Rename `class` and `name` attributes? ✅
-- Field parameters `default` and ``
+- Field parameters `default` and `description`  
 - `get( 'field_id' )` function  
 
 ## Maybe

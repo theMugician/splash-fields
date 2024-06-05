@@ -32,6 +32,23 @@ class Field {
 	}
 
 	/**
+	 * Show field HTML
+	 *
+	 * @param array $field   Field parameters.
+	 * @param int   $post_id Post ID.
+	 *
+	 * @return mixed
+	 */
+	public static function show_in_options_page( array $field, $option_name = '' ) {
+		// $meta = get_option( $option_name );
+		$meta = '';
+		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
+		$html .= static::html( $meta, $field );
+		$html .= '</div>';
+		echo $html;
+	}
+
+	/**
 	 * Get field HTML.
 	 *
 	 * @param mixed $meta  Meta value.
@@ -251,12 +268,21 @@ class Field {
 		}
 
 		$class = \Splash_Fields\Helpers\Field::get_class( $field );
+		// var_dump($class);
+		// echo '<pre style="margin-left: 200px;">';
+		// var_dump($class);
+		// var_dump($method);
+		// var_dump($args);
+		// echo '</pre>';
+		// echo '<br>';
+
 		// if ( $field['type'] === 'file' ) {
 		// 	var_dump($field);
 		// }
 		// die();
 		if ( method_exists( $class, $method ) ) {
 			return call_user_func_array( [ $class, $method ], $args );
+
 		}
 	}
 }
