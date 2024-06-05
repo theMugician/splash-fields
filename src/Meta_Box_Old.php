@@ -244,7 +244,6 @@ class Meta_Box_Old {
             $type = $field['type'];
             $this->settings[ $key ] = $this->{ 'validate_' . $type } ( $key );
         }
-        // var_dump( $this->settings );
         update_post_meta( $post_id, $this->settings_id, $this->settings );	
 
     }

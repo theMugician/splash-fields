@@ -1,31 +1,28 @@
 <?php
 /**
- * Field Class.
+ * Text Class.
  *
  * @package splash-fields
  */
 
-namespace Splash_Fields;
+namespace Splash_Fields\Fields;
 
 /**
- * Class Field.
+ * Class Text.
  * 
  */
-class Text_Field extends Field {
+class Text extends Input {
 	/**
-	 * Get field HTML.
+	 * Normalize parameters for field.
 	 *
-	 * @param mixed $meta   Meta value.
-	 * @param array $field  Field parameters.
+	 * @param array $field Field parameters.
 	 *
-	 * @return string
+	 * @return array
 	 */
-	public static function html( $meta, $field ) {
-		$attributes = self::get_attributes( $field, $meta );
-		return sprintf(
-			'<textarea %s>%s</textarea>',
-			self::render_attributes( $attributes ),
-			esc_textarea( $meta )
-		);
+	public static function normalize( $field ) {
+
+		$field = parent::normalize( $field );
+
+		return $field;
 	}
 }

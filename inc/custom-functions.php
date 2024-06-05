@@ -16,7 +16,7 @@
  */
 function aquila_features_get_template( string $template, array $variables = [], bool $echo = false ) {
 
-	$template_file = sprintf( '%1$s/templates/%2$s.php', SF_PATH, $template );
+	$template_file = sprintf( '%1$s/templates/%2$s.php', SPF_PATH, $template );
 
 	if ( ! file_exists( $template_file ) ) {
 		return '';

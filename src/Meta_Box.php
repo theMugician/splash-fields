@@ -6,7 +6,7 @@
  */
 
 namespace Splash_Fields;
-use Splash_Fields\Field;
+
 /**
  * Class Meta_Box.
  * 
@@ -101,12 +101,12 @@ class Meta_Box {
 		$this->meta_box     = $meta_box;
         $this->id           = $meta_box['id'];
         $this->title        = $meta_box['title'];
-        $this->fields       = $meta_box['fields'];
         $this->post_types   = $meta_box['post_types'];
         $this->priority     = $meta_box['priority'];;
         $this->context      = $meta_box['context'];
 
         $this->meta_box['fields'] = static::normalize_fields( $meta_box['fields'], $this->get_storage() );
+        $this->fields       = $this->meta_box['fields'];
 
         $this->object_hooks();
     }
@@ -157,31 +157,32 @@ class Meta_Box {
 
 		// Container.
 		printf(
-			'<div class="%s" data-autosave="%s" data-object-type="%s" data-object-id="%s">',
-			esc_attr( trim( "splash-fields-metabox {$this->class}" ) ),
-			esc_attr( $this->autosave ? 'true' : 'false' ),
+			'<div class="%s" data-object-type="%s" data-object-id="%s">',
+			esc_attr( trim( "spf-metabox" ) ),
 			esc_attr( $this->object_type ),
 			esc_attr( $this->object_id )
 		);
 
-		// wp_nonce_field( "sf-save-{$this->id}", "nonce_{$this->id}" );
-        wp_nonce_field( 'sf_metabox_' . $this->id, 'sf_metabox_' . $this->id . '_nonce' );
+		// wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
+        wp_nonce_field( 'spf_metabox_' . $this->id, 'spf_metabox_' . $this->id . '_nonce' );
 
 		// Allow users to add custom code before meta box content.
 		// 1st action applies to all meta boxes.
 		// 2nd action applies to only current meta box.
-		do_action( 'sf_before', $this );
-		do_action( "sf_before_{$this->id}", $this );
+		do_action( 'spf_before', $this );
+		do_action( "spf_before_{$this->id}", $this );
 
 		foreach ( $this->fields as $field ) {
-			RWMB_Field::call( 'show', $field, $saved, $this->object_id );
+			Field::call( 'show', $field, $this->object_id );
+			// \Splash_Fields\Fields\Text::show( $field, $this->object_id );
+			// \Splash_Fields\Fields\Test::this_method();
 		}
-
+		// \Splash_Fields\Fields\Test::this_method();
 		// Allow users to add custom code after meta box content.
 		// 1st action applies to all meta boxes.
 		// 2nd action applies to only current meta box.
-		do_action( 'sf_after', $this );
-		do_action( "sf_after_{$this->id}", $this );
+		do_action( 'spf_after', $this );
+		do_action( "spf_after_{$this->id}", $this );
 
 		// End container.
 		echo '</div>';
@@ -196,32 +197,33 @@ class Meta_Box {
 		if ( ! $this->validate() ) {
 			return;
 		}
+
 		$this->saved = true;
 
 		$object_id       = $this->get_real_object_id( $object_id );
 		$this->object_id = $object_id;
 
 		// Before save action.
-		do_action( 'sf_before_save_post', $object_id );
-		do_action( "sf_{$this->id}_before_save_post", $object_id );
+		do_action( 'spf_before_save_post', $object_id );
+		do_action( "spf_{$this->id}_before_save_post", $object_id );
 
 		array_map( [ $this, 'save_field' ], $this->fields );
 
 		// After save action.
-		do_action( 'sf_after_save_post', $object_id );
-		do_action( "sf_{$this->id}_after_save_post", $object_id );
+		do_action( 'spf_after_save_post', $object_id );
+		do_action( "spf_{$this->id}_after_save_post", $object_id );
 	}
 
 	public function save_field( array $field ) {
         // Get Posted Value
-        $old = Field->raw_meta( $field, $this->object_id );
+        $old = Field::call( 'raw_meta', $field, $this->object_id );
         $new = $_POST[$field['id']];
 
         // TODO: Sanitize
         // Write Sanitizer Class and function
 
         // update_meta with Storage Class
-        Field->save( $new, $old, $this->object_id, $field );
+        Field::call( 'save', $new, $old, $this->object_id, $field );
 	}
 
     public function register_fields() {
@@ -232,6 +234,7 @@ class Meta_Box {
 		}
 
         $field_registry = $data['field'];
+
 		foreach ( $this->post_types as $post_type ) {
 			foreach ( $this->fields as $field ) {
 				$field_registry->add( $field, $post_type );
@@ -250,7 +253,7 @@ class Meta_Box {
 
 		$storage = $data[ $type ]->get( 'Splash_Fields\Storage');
 
-        return apply_filters( 'sf_get_storage', $storage, $this->object_type, $this );
+        return apply_filters( 'spf_get_storage', $storage, $this->object_type, $this );
     }
     
 
@@ -277,12 +280,12 @@ class Meta_Box {
 
     public static function normalize_fields( array $fields, $storage = null ) : array {
 		foreach ( $fields as $k => $field ) {
-			$field = Field::normalize( $field );
+			$field = Field::call( 'normalize', $field );
 
 			// Allow to add default values for fields.
-			$field = apply_filters( 'sf_normalize_field', $field );
-			$field = apply_filters( "sf_normalize_{$field['type']}_field", $field );
-			$field = apply_filters( "sf_normalize_{$field['id']}_field", $field );
+			$field = apply_filters( 'spf_normalize_field', $field );
+			$field = apply_filters( "spf_normalize_{$field['type']}_field", $field );
+			$field = apply_filters( "spf_normalize_{$field['id']}_field", $field );
 
 			$field['storage'] = $storage;
 
@@ -303,18 +306,18 @@ class Meta_Box {
         $valid = false;
 
         // Check if our nonce is set.
-        if ( ! isset( $_POST['sf_metabox_' . $this->id  . '_nonce'] ) ) {
+        if ( ! isset( $_POST['spf_metabox_' . $this->id  . '_nonce'] ) ) {
             return $valid;
         }
-        
-        $nonce = $_POST['sf_metabox_' . $this->id  . '_nonce'];
+
+        $nonce = $_POST['spf_metabox_' . $this->id  . '_nonce'];
         
         // Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce, 'sf_metabox_' . $this->id  ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'spf_metabox_' . $this->id  ) ) {
             return $valid;
             echo('passed validation');
         }
-        
+
         /*
         * If this is an autosave, our form has not been submitted,
         * so we don't want to do anything.
@@ -322,18 +325,22 @@ class Meta_Box {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return $valid;
         }
-        
+
         // Check the user's permissions.
+		/*
         if ( 'page' == $_POST['post_type'] ) {
-            if ( ! current_user_can( 'edit_page', $post_id ) ) {
+            if ( ! current_user_can( 'edit_page', $this->object_id ) ) {
                 return $valid;
             }
         } else {
-            if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            if ( ! current_user_can( 'edit_post', $this->object_id ) ) {
+				var_dump('current user can NOT edit this post');
+				die();
                 return $valid;
             }
         }
-        
+		*/
+
         $valid = true;
 
         return $valid;

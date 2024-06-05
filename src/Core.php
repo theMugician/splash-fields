@@ -13,13 +13,10 @@ namespace Splash_Fields;
 class Core {
 	public function init() {
         add_action( 'init', [ $this, 'register_meta_boxes' ], 20 );
-        echo '<pre style="margin-left: 200px;">';
-        // var_dump(new Plugin());
-        echo '</pre>';
     }
 
     public function register_meta_boxes() {
-		$configs  = apply_filters( 'sf_meta_boxes', [] );
+		$configs  = apply_filters( 'spf_meta_boxes', [] );
         /*
             @see meta-box-registry.php
         */

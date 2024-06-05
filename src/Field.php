@@ -35,7 +35,7 @@ class Field {
 	 * @return string
 	 */
 	public static function html( $meta, $field ) {
-		return '';
+		return '<div>This is a field</div>';
 	}
 
 	/**
@@ -72,8 +72,54 @@ class Field {
 			}
 			$storage = $data[ $storage_type ]->get( 'Splash_Fields\Storage');
 		}
+
 		$value = $storage->get( $object_id, $field['id'], $args );
 		return $value;
+	}
+
+	/**
+	 * Get the attributes for a field.
+	 *
+	 * @param array $field Field parameters.
+	 * @param mixed $value Meta value.
+	 *
+	 * @return array
+	 */
+	public static function get_attributes( $field, $value = null ) {
+		$attributes = wp_parse_args( $field['attributes'], [
+			'id'        => $field['id'],
+			'class'     => '',
+			'name'      => $field['field_name'],
+		] );
+
+		$attributes['class'] = trim( implode( ' ', array_merge( [ "spf-field-{$field['type']}" ], (array) $attributes['class'] ) ) );
+
+		$id = $attributes['id'] ?: $field['id'];
+
+		return $attributes;
+	}
+
+	public static function render_attributes( array $attributes ) : string {
+		$output = '';
+		/**
+		 * Check if a value is valid for attribute.
+		 *
+		 * @param mixed $value Input value.
+		 * @return bool
+		 */
+		$attributes = array_filter( $attributes, function ( $attribute_value ) {
+			return '' !== $attribute_value && false !== $attribute_value;
+		} );
+
+		foreach ( $attributes as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$value = wp_json_encode( $value );
+			}
+
+			$output .= sprintf( ' %s="%s"', $key, esc_attr( $value ) );
+		}
+
+		return $output;
 	}
 
 	/**
@@ -85,17 +131,21 @@ class Field {
 	 * @param array $field   The field parameters.
 	 */
 	public static function save( $new, $old, $post_id, $field ) {
-		if ( empty( $field['id'] ) || ! $field['save_field'] ) {
+
+		// Old - Might be useful for later
+		// if ( empty( $field['id'] ) || ! $field['save_field'] ) {
+		if ( empty( $field['id'] ) ) {
 			return;
 		}
+
 		$name    = $field['id'];
 		$storage = $field['storage'];
 
 		// Remove post meta if it's empty.
-		if ( ! RWMB_Helpers_Value::is_valid_for_field( $new ) ) {
-			$storage->delete( $post_id, $name );
-			return;
-		}
+		// if ( ! RWMB_Helpers_Value::is_valid_for_field( $new ) ) {
+		// 	$storage->delete( $post_id, $name );
+		// 	return;
+		// }
 
 		// Default: just update post meta.
 		$storage->update( $post_id, $name, $new );
@@ -109,6 +159,7 @@ class Field {
 	 */
 	public static function normalize( $field ) {
 		// Quick define text fields with "name" attribute only.
+
 		if ( is_string( $field ) ) {
 			$field = [
 				'name' => $field,
@@ -119,50 +170,45 @@ class Field {
 			'id'                => '',
 			'name'              => '',
 			'type'              => 'text',
-			'label_description' => '',
-			'multiple'          => false,
-			'std'               => '',
-			'desc'              => '',
-			'format'            => '',
-			'before'            => '',
-			'after'             => '',
-			'field_name'        => $field['id'] ?? '',
-			'placeholder'       => '',
-			'save_field'        => true,
-
-			'clone'             => false,
-			'min_clone'         => 0,
-			'max_clone'         => 0,
-			'sort_clone'        => false,
-			'add_button'        => __( '+ Add more', 'meta-box' ),
-			'clone_default'     => false,
-			'clone_as_multiple' => false,
-
-			'class'             => '',
-			'disabled'          => false,
-			'required'          => false,
-			'autofocus'         => false,
+			'description' 		=> '',
+			'placeholder' 		=> '',
+			'field_name' 		=> $field['id'],
 			'attributes'        => [],
-
-			'sanitize_callback' => null,
 		] );
 
-		// Store the original ID to run correct filters for the clonable field.
-		if ( $field['clone'] ) {
-			$field['_original_id'] = $field['id'];
-		}
-
-		if ( $field['clone_default'] ) {
-			$field['attributes'] = wp_parse_args( $field['attributes'], [
-				'data-default'       => $field['std'],
-				'data-clone-default' => 'true',
-			] );
-		}
-
-		if ( 1 === $field['max_clone'] ) {
-			$field['clone'] = false;
-		}
-
 		return $field;
+	}
+
+	/**
+	 * Call a method of another extended field. 
+	 * Usually based on field type.
+	 * Example: \Splash_Fields\Fields\{Type}
+	 */
+	public static function call() {
+		$args = func_get_args();
+
+		$check = reset( $args );
+
+		// Params: method name, field, other params.
+		if ( is_string( $check ) ) {
+			$method = array_shift( $args );
+			$field  = reset( $args ); // Keep field as 1st param.
+		} else {
+			// Params: field, method name, other params.
+			$field  = array_shift( $args );
+			$method = array_shift( $args );
+
+			if ( 'raw_meta' === $method ) {
+				// Add field param after object id.
+				array_splice( $args, 1, 0, [ $field ] );
+			} else {
+				$args[] = $field; // Add field as last param.
+			}
+		}
+
+		$class = \Splash_Fields\Helpers\Field::get_class( $field );
+		if ( method_exists( $class, $method ) ) {
+			return call_user_func_array( [ $class, $method ], $args );
+		}
 	}
 }

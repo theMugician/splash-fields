@@ -23,8 +23,7 @@ class Meta_Box_Registry {
 	 * @return      \Meta_Box
 	 */
 	public function make( array $settings ) {
-		$class_name = apply_filters( 'sf_meta_box_class_name', 'Splash_Fields\Meta_Box', $settings );
-
+		$class_name = apply_filters( 'spf_meta_box_class_name', 'Splash_Fields\Meta_Box', $settings );
 		$meta_box = new $class_name( $settings );
 		$this->add( $meta_box );
 		return $meta_box;

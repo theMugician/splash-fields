@@ -36,7 +36,7 @@ class Field_Registry {
 		}
 		$this->data[ $object_type ][ $type ][ $field['id'] ] = $field;
 
-		do_action( 'sf_field_registered', $field, $type, $object_type );
+		do_action( 'spf_field_registered', $field, $type, $object_type );
 	}
 
 	/**

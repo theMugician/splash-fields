@@ -1,42 +1,42 @@
-.splash-field {
+.spf-field {
     padding: 16px 0;
     display: flex;
     border-bottom: 1px solid #ddd;
 }
 
-.splash-field:last-child {
+.spf-field:last-child {
     border-bottom: none;
 }
 
-.splash-field__title {
+.spf-field__title {
     flex-basis: 30%;
 }
 
-.splash-field__label {
+.spf-field__label {
     margin-top: 0;
     margin-bottom: 0;
     cursor: default;
 }
 
-.splash-field__field-set {
+.spf-field__field-set {
     flex-grow: 1;
 }
-.splash-field__input {
+.spf-field__input {
     margin-top: 0;
     max-width: 300px;
     width: 100%;
 }
 
-.splash-field__radio-group {
+.spf-field__radio-group {
     display: flex;
     align-items: center;
 }
 
-input[type=radio].splash-field__radio-button {
+input[type=radio].spf-field__radio-button {
     line-height: 1;
     margin: 0 12px 0 6px;
 }
 
-.splash-field__description {
+.spf-field__description {
     margin-top: 10px;
 }
