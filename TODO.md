@@ -16,13 +16,9 @@
 - Refactor `Field::html_input()` function  
 - `spf_get( 'field_id' )` function  
 
-## User Object
-
 
 ## Option_Page
 - decide to use settings API or create own settings with options API?
-- CSS layout
-- Check ACF options
 
 ## Gutenberg_Sidebar
 - Make class and add fields to it

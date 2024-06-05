@@ -1,19 +1,33 @@
-# splash-fields
-Advanced WordPress Plugin Development
+# Splash Fields
+Create custom fields and add them to a metabox, options page, taxonomy page, user settings or gutenberg sidepanel.
 
-# Setup
-How to set up the plugin.
+# Getting Started
 
-## Install Setup Packaaes.
+## Meta Box
 
-- `npm ci && composer install`
+## Options Page
 
-# Development
+## User
 
-## Start Development Server.
-- `npm run dev`
+## Taxonomy
 
-## Run PHPCS.
+## Gutenberg Sidepanel
+*In development*
 
-- `npm run lint:php`
-- `npm run lint:php:fix`
+# Fields
+- Checkbox
+- Checkbox List
+- Editor
+- File
+- Image
+- Input
+- Number
+- Radio
+- Select
+- Text
+- Textarea
+
+# Roadmap
+- Repeater Field
+- Gutenberg Sidebar
+- Detailed document

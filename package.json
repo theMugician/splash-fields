@@ -1,7 +1,7 @@
 {
 	"name": "splash-fields",
 	"version": "1.0.0",
-	"description": "Aquila features plugin packages",
+	"description": "Splash Fields wordpres plugin",
 	"main": "main.js",
 	"scripts": {
 		"prod": "cross-env NODE_ENV=production webpack --mode production --progress",
@@ -21,7 +21,7 @@
 		"wordpress",
 		"themes"
 	],
-	"author": "Imran Sayed",
+	"author": "Greg Slonina",
 	"license": "MIT",
 	"private": true,
 	"devDependencies": {

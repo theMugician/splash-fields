@@ -7,9 +7,9 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Splash Fields
- * Plugin URI:        https://splashfields.com/
- * Description:       Create custom fields and add them to a metabox, options page or sidepanel.
- * Version:           1.0.1
+ * Plugin URI:        https://github.com/theMugician/splash-fields
+ * Description:       Create custom fields and add them to a metabox, options page, taxonomy page, user settings or sidepanel.
+ * Version:           1.0.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Greg Slonina
