@@ -262,7 +262,7 @@ class Options_Page {
 			esc_attr( $this->object_id )
 		);
 
-		printf( '<h2>%s</h2>', get_admin_page_title() );
+		printf( '<h1>%s</h1>', get_admin_page_title() );
 		echo '<form action="options.php" method="post" enctype="multipart/form-data">';
 		settings_fields( $this->id );
 		do_settings_sections( $this->menu_slug );
@@ -270,7 +270,7 @@ class Options_Page {
 		// 	echo Field::call( 'show_in_options_page', $field, $field['id'] ); // function to print the field
 		// }
 
-		printf( '<input name="submit" class="button button-primary" type="submit" value="%s" />', esc_attr( 'Save' ) );
+		printf( '<input name="submit" class="spf-settings__save button button-primary" type="submit" value="%s" />', esc_attr( 'Save' ) );
 		echo '</form>';
 		// Container.
 

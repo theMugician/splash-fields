@@ -17,6 +17,8 @@
 
 ## Option_Page
 - decide to use settings API or create own settings with options API?
+- CSS layout
+- Check ACF options
 
 ## Maybe
 ### `Request` Class 

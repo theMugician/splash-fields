@@ -21,7 +21,6 @@ class Checkbox extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-		var_dump( $meta );
         $attributes = self::get_attributes( $field, 1 );
 		$output     = '<div class="spf-field__input">';
         $output    .= sprintf(

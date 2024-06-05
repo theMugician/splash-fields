@@ -211,12 +211,12 @@ class File extends Input {
 	 * @see                 https://developer.wordpress.org/reference/functions/media_handle_upload/
      * 
 	 * @param   mixed       $value      The submitted value.
-	 * @param   int         $object_id  The object ID.
+	 * @param   int         $object_id  The object ID. If $object_id is not applicable make it 0
 	 * @param   array       $field      The field settings.
      * 
      * @return  int|string  $value      File attachment ID or empty string if there is nothing.
 	 */
-	public static function process_value( $value, $object_id = 0, array $field ) {
+	public static function process_value( $value, $object_id, array $field ) {
         // Existing File or Deleted File    : $value = $field['id'] || ''
         // Add File                         : $value = $new_meta from $_FILES
 
@@ -267,7 +267,7 @@ class File extends Input {
 		error_log( print_r( '$value: ' . $value, true ) );
 		error_log( print_r( '$existing_value: ' . $existing_value, true ) );
 		error_log( print_r( '$field_id: ' . $field['id'], true ) );
-		
+
         return $value;
     }
 
