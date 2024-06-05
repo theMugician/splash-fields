@@ -16,16 +16,29 @@ class Radio extends Input {
 	/**
 	 * Get field HTML.
 	 *
+	 * @param mixed $meta   Meta value.
+	 * @param array $field  Field parameters.
+	 *
+	 * @return string
+	 */
+	static public function html( $meta, $field ) {
+        $output     = static::html_label( $field );
+        $output    .= static::html_field_set( $field, $meta );
+		return $output;
+	}
+	/**
+	 * Get field HTML.
+	 *
 	 * @param   array    $field  Field name.
 	 *
 	 * @return  string
 	 */
-	static public function html_title( $field ) {
+	static public function html_label( $field ) {
         $field_title = $field['name'];
         $field_id = $field['id'];
-		$output  =  '<div class="spf-field__title">';
-		$output  =  sprintf( '<p>%s</p>', $field_title );
-		$output .=  '</div>';
+		$output      =  '<div class="spf-field__label">';
+		$output     .=  sprintf( '<p>%s</p>', $field_title );
+		$output     .=  '</div>';
 		return $output;
 	}
 
@@ -38,8 +51,10 @@ class Radio extends Input {
 	 * @return string
 	 */
 	static public function html_field_set( $field, $meta ) {
-		$output     = '<div class="spf-field__set">';
-        $output    .= static::html_radio_input( $field, $meta );
+		$output     = '<div class="spf-field__input">';
+		$output    .= '<fieldset class="spf-field__input-list">';
+        $output    .= static::html_radio_inputs( $field, $meta );
+		$output    .= '</fieldset>';
 		$output    .= '</div>';
 		return $output;
     }
@@ -52,12 +67,18 @@ class Radio extends Input {
 	 *
 	 * @return string
 	 */
-	static public function html_radio_input( $field, $meta ) {
+	static public function html_radio_inputs( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
         $output = '';
         foreach( $field['options'] as $value => $label ) {
-            $output    .= sprintf( '<label for="%s">%s</label>', $value, $label );
-            $output    .= sprintf( '<input %s>', self::render_attributes( $attributes ) );
+            $checked = '';
+            if ( $value === $attributes['value'] ) {
+                $checked = 'checked';
+            }
+            $output    .= sprintf( '<label for="%s">', $value );
+            $output    .= sprintf( '<input value="%s" %s %s>', $value, self::render_attributes( $attributes ), $checked );
+            $output    .= sprintf( '%s</label>', $label );
+
         }
 		return $output;
     }

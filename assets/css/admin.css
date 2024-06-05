@@ -8,22 +8,24 @@
     border-bottom: none;
 }
 
-.spf-field__title {
+.spf-field__input {
     flex-basis: 30%;
+    flex: 1;
 }
 
 .spf-field__label {
     margin-top: 0;
     margin-bottom: 0;
     cursor: default;
+    width: 25%;
 }
 
 .spf-field__field-set {
     flex-grow: 1;
 }
-.spf-field__input {
+
+.spf-field__input > input {
     margin-top: 0;
-    max-width: 300px;
     width: 100%;
 }
 
@@ -39,4 +41,11 @@ input[type=radio].spf-field__radio-button {
 
 .spf-field__description {
     margin-top: 10px;
+}
+
+.spf-field__input-list {
+    line-height: inherit;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
 }

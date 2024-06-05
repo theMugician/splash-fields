@@ -35,8 +35,6 @@ class Input extends Field {
 	 */
 	public static function get_attributes( $field, $value = null ) {
 		$attributes = parent::get_attributes( $field, $value );
-        echo '<br>';
-        var_dump($value);
         if ( $value === null ) {
             $value = '';
         }
@@ -59,8 +57,11 @@ class Input extends Field {
 	 * @return string
 	 */
 	static public function html( $meta, $field ) {
-        $output     = static::html_title( $field );
-        $output    .= static::html_field_set( $field, $meta );
+		$output		 = '<div class="spf-field">';
+        $output     .= static::html_title( $field );
+        $output    	.= static::html_field_set( $field, $meta );
+		$output		.= '</div>';
+
 		return $output;
 	}
 
@@ -74,9 +75,9 @@ class Input extends Field {
 	static public function html_title( $field ) {
         $field_title = $field['name'];
         $field_id = $field['id'];
-		$output  =  '<div class="spf-field__title">';
-		$output  =  sprintf( '<label for="%s">%s</label>', $field_id, $field_title );
-		$output .=  '</div>';
+		$output  	 =  '<div class="spf-field__label">';
+		$output  	.=  sprintf( '<label for="%s">%s</label>', $field_id, $field_title );
+		$output 	.=  '</div>';
 		return $output;
 	}
 
@@ -90,7 +91,7 @@ class Input extends Field {
 	 */
 	static public function html_field_set( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
-		$output     = '<div class="spf-field__set">';
+		$output     = '<div class="spf-field__input">';
         $output    .= sprintf( '<input %s>', self::render_attributes( $attributes ) );
 		$output    .= '</div>';
 		return $output;

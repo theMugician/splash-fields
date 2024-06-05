@@ -174,9 +174,10 @@ class Meta_Box {
 
 		foreach ( $this->fields as $field ) {
 			Field::call( 'show', $field, $this->object_id );
-			// \Splash_Fields\Fields\Text::show( $field, $this->object_id );
-			// \Splash_Fields\Fields\Test::this_method();
 		}
+
+		// Field::call( 'show', $this->fields[0], $this->object_id );
+
 		// \Splash_Fields\Fields\Test::this_method();
 		// Allow users to add custom code after meta box content.
 		// 1st action applies to all meta boxes.
@@ -218,6 +219,11 @@ class Meta_Box {
         // Get Posted Value
         $old = Field::call( 'raw_meta', $field, $this->object_id );
         $new = $_POST[$field['id']];
+
+		// var_dump($field['id']);
+		// var_dump($new);
+		// echo('---------------------');
+		// die();
 
         // TODO: Sanitize
         // Write Sanitizer Class and function

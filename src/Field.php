@@ -35,7 +35,7 @@ class Field {
 	 * @return string
 	 */
 	public static function html( $meta, $field ) {
-		return '<div>This is a field</div>';
+		return '';
 	}
 
 	/**
