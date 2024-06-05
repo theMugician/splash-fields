@@ -84,6 +84,7 @@ class Taxonomy_Settings {
         $this->taxonomy_settings    = $taxonomy_settings;
         $this->id                   = $taxonomy_settings['id'];
         $this->title                = $taxonomy_settings['title'];
+        $this->taxonomy             = $taxonomy_settings['taxonomy'];
 
         $this->taxonomy_settings['fields'] = static::normalize_fields( $taxonomy_settings['fields'], $this->get_storage() );
         $this->fields         = $this->taxonomy_settings['fields'];
@@ -109,11 +110,10 @@ class Taxonomy_Settings {
     protected function object_hooks() {
         // Add fields.
         foreach ( $this->taxonomy as $taxonomy ) {
-            add_action( '{$taxonomy}_add_form_fields', [ $this, 'show' ] );
-            add_action( '{$taxonomy}_edit_form_fields', [ $this, 'show' ] );
-            add_action( 'created_{$taxonomy}',  [ $this, 'save_taxonomy' ] );
-            add_action( 'edited_{$taxonomy}',  [ $this, 'save_taxonomy' ] );
-
+            add_action( "{$taxonomy}_add_form_fields", [ $this, 'show_add' ] );
+            add_action( "{$taxonomy}_edit_form_fields", [ $this, 'show_edit' ], 10, 2 );
+            add_action( "created_{$taxonomy}",  [ $this, 'save_taxonomy' ] );
+            add_action( "edited_{$taxonomy}",  [ $this, 'save_taxonomy' ] );
         }
     }
 
@@ -130,15 +130,11 @@ class Taxonomy_Settings {
         do_action( 'spf_enqueue_scripts', $this );
     }
 
-    public function show( $taxonomy ) {
-        if ( ! $this->term_id ) {
-            $this->term_id = $this->get_current_term_id( $taxonomy );
-        }
-
+    public function show_add( $taxonomy ) {
         // Container.
         printf(
             '<div class="%s" data-object-type="%s" data-id="%s">',
-            esc_attr( trim( "spf-taxonomy-settings" ) ),
+            esc_attr( trim( "spf-taxonomy-settings--add" ) ),
             esc_attr( $this->object_type ),
             esc_attr( $this->id )
         );
@@ -146,9 +142,41 @@ class Taxonomy_Settings {
         // wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
         wp_nonce_field( 'spf_taxonomy_settings_' . $this->id, 'spf_taxonomy_settings_' . $this->id . '_nonce' );
 
-        // Allow users to add custom code before taxonomy settings content.
-        // 1st action applies to all taxonomy settingses.
-        // 2nd action applies to only current taxonomy settings.
+        do_action( 'spf_before', $this );
+        do_action( "spf_before_{$this->id}", $this );
+
+        if ( ! empty( $this->title ) ) {
+            printf( '<h2>%s</h2>', esc_html( $this->title ) );
+        }
+
+        foreach ( $this->fields as $field ) {
+            Field::call( 'show', $field, 0 );
+        }
+
+        do_action( 'spf_after', $this );
+        do_action( "spf_after_{$this->id}", $this );
+
+        // End container.
+        echo '</div>';
+    }
+
+    public function show_edit( $tag, $taxonomy ) {
+        // var_dump($tag);
+        if ( ! $this->term_id ) {
+            $this->term_id = $this->get_current_term_id( $tag );
+        }
+
+        // Container.
+        printf(
+            '<div class="%s" data-object-type="%s" data-id="%s">',
+            esc_attr( trim( "spf-taxonomy-settings--edit" ) ),
+            esc_attr( $this->object_type ),
+            esc_attr( $this->id )
+        );
+
+        // wp_nonce_field( "spf-save-{$this->id}", "nonce_{$this->id}" );
+        wp_nonce_field( 'spf_taxonomy_settings_' . $this->id, 'spf_taxonomy_settings_' . $this->id . '_nonce' );
+
         do_action( 'spf_before', $this );
         do_action( "spf_before_{$this->id}", $this );
 
@@ -160,10 +188,6 @@ class Taxonomy_Settings {
             Field::call( 'show', $field, $this->term_id );
         }
 
-        // \Splash_Fields\Fields\Test::this_method();
-        // Allow users to add custom code after taxonomy settings content.
-        // 1st action applies to all taxonomy settingses.
-        // 2nd action applies to only current taxonomy settings.
         do_action( 'spf_after', $this );
         do_action( "spf_after_{$this->id}", $this );
 
@@ -176,7 +200,7 @@ class Taxonomy_Settings {
      *
      * @param int $taxonomy_id Taxonomy_Settings ID.
      */
-    public function save_taxonomy( $term ) {
+    public function save_taxonomy( $term_id ) {
         if ( ! $this->validate() ) {
             return;
         }
@@ -184,18 +208,18 @@ class Taxonomy_Settings {
         $this->saved = true;
 
         if ( ! $this->term_id ) {
-            $this->term_id = $term->term_id;
+            $this->term_id = $term_id;
         }
 
         // Before save action.
-        do_action( 'spf_before_save_taxonomy', $taxonomy_id );
-        do_action( "spf_{$this->id}_before_save_taxonomy", $taxonomy_id );
+        do_action( 'spf_before_save_taxonomy', $this->id );
+        do_action( "spf_{$this->id}_before_save_taxonomy", $this->id );
 
         array_map( [ $this, 'save_field' ], $this->fields );
 
         // After save action.
-        do_action( 'spf_after_save_taxonomy', $taxonomy_id );
-        do_action( "spf_{$this->id}_after_save_taxonomy", $taxonomy_id );
+        do_action( 'spf_after_save_taxonomy', $this->id );
+        do_action( "spf_{$this->id}_after_save_taxonomy", $this->id );
     }
 
     public function save_field( array $field ) {
@@ -315,7 +339,7 @@ class Taxonomy_Settings {
         return $valid;
     }
 
-    public function get_current_term_id( $taxonomy ) {
-        return $taxonomy->term_id;
+    public function get_current_term_id( $tag ) {
+        return $tag->term_id;
     }
 }

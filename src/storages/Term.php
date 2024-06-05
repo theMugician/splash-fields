@@ -12,7 +12,7 @@ use Splash_Fields\Storage;
  * Class Term.
  * 
  */
-class Post extends Storage {
+class Term extends Storage {
     /**
      * Object type.
      *

@@ -14,7 +14,8 @@ class Core {
 	public function init() {
         add_action( 'init', [ $this, 'register_meta_boxes' ], 20 );
         add_action( 'init', [ $this, 'register_options_pages' ], 20 );
-        add_action( 'init', [ $this, 'register_users' ], 20 );
+        add_action( 'init', [ $this, 'register_user_settings' ], 20 );
+        add_action( 'init', [ $this, 'register_taxonomy_settings' ], 20 );
     }
 
     public function register_meta_boxes() {
@@ -60,7 +61,7 @@ class Core {
 		}
 	}
 
-	public function register_users() {
+	public function register_user_settings() {
 		$configs  = apply_filters( 'spf_user_settings', [] );
 
         static $data = [];
@@ -77,6 +78,26 @@ class Core {
 			}
 			$user_settings = $registry->make( $config );
 			$user_settings->register_fields();
+		}
+	}
+
+	public function register_taxonomy_settings() {
+		$configs  = apply_filters( 'spf_taxonomy_settings', [] );
+
+        static $data = [];
+
+		if ( ! isset( $data['taxonomy_settings'] ) ) {
+			$data['taxonomy_settings'] = new Taxonomy_Settings_Registry();
+		}
+
+        $registry = $data['taxonomy_settings'];
+
+		foreach ( $configs as $config ) {
+			if ( ! is_array( $config ) || empty( $config ) ) {
+				continue;
+			}
+			$taxonomy_settings = $registry->make( $config );
+			$taxonomy_settings->register_fields();
 		}
 	}
 }
