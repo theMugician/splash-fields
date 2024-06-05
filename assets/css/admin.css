@@ -34,7 +34,7 @@
     width: 100%;
 }
 
-.spf-field__input select {
+.spf-field__input select, .spf-field__input textarea {
     width: 100%;
 }
 
