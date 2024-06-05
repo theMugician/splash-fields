@@ -242,7 +242,8 @@ class Meta_Box {
         // Get Posted Value
         $old = Field::call( 'raw_meta', $field, $this->object_id );
         $new = $_POST[$field['id']];
-
+		// var_dump($new);
+		// die();
 		// var_dump($field['id']);
 		// var_dump($new);
 		// echo('---------------------');
