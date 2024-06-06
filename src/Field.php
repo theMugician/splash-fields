@@ -31,7 +31,7 @@ class Field {
 		// On Save
 		
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
-		$html .= static::html( $meta, $field );
+		$html .= static::html( $field, $meta );
 		$html .= '</div>';
 		echo $html;
 	}
@@ -47,7 +47,7 @@ class Field {
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
-		$html .= static::html( $meta, $field );
+		$html .= static::html( $field, $meta );
 		$html .= '</div>';
 		echo $html;
 	}
@@ -78,7 +78,7 @@ class Field {
 	 *
 	 * @return string
 	 */
-	public static function html( $meta, $field ) {
+	public static function html( $field, $meta ) {
 		return '';
 	}
 
@@ -158,6 +158,7 @@ class Field {
 	 * @return array
 	 */
 	public static function get_attributes( $field, $value = null ) {
+		// var_dump($field);
 		$attributes = wp_parse_args( $field['attributes'], [
 			'id'        => $field['id'],
 			'class'     => '',
@@ -287,7 +288,6 @@ class Field {
 	 */
 	public static function call() {
 		$args = func_get_args();
-
 		$check = reset( $args );
 
 		// Params: method name, field, other params.
@@ -306,7 +306,9 @@ class Field {
 				$args[] = $field; // Add field as last param.
 			}
 		}
-
+		// echo '<pre>';
+		// var_dump($args);
+		// echo '</pre>';
 		$class = \Splash_Fields\Helpers\Field::get_class( $field );
 		if ( method_exists( $class, $method ) ) {
 			return call_user_func_array( [ $class, $method ], $args );

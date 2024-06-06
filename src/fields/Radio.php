@@ -12,21 +12,6 @@ namespace Splash_Fields\Fields;
  * 
  */
 class Radio extends Input {
-
-	/**
-	 * Get field HTML.
-	 *
-	 * @param mixed $meta   Meta value.
-	 * @param array $field  Field parameters.
-	 *
-	 * @return string
-	 */
-	static public function html( $meta, $field ) {
-        $output     = static::html_label( $field );
-        $output    .= static::html_input( $field, $meta );
-		return $output;
-	}
-
 	/**
 	 * Get field HTML.
 	 *
@@ -52,14 +37,9 @@ class Radio extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-		$output     = '<div class="spf-field__input">';
 		$output    .= '<fieldset class="spf-input-list">';
         $output    .= static::html_radio_inputs( $field, $meta );
 		$output    .= '</fieldset>';
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
-			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
-		}
-		$output    .= '</div>';
 		return $output;
     }
 

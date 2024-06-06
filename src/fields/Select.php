@@ -12,21 +12,6 @@ namespace Splash_Fields\Fields;
  * 
  */
 class Select extends Input {
-
-	/**
-	 * Get field HTML.
-	 *
-	 * @param mixed $meta   Meta value.
-	 * @param array $field  Field parameters.
-	 *
-	 * @return string
-	 */
-	static public function html( $meta, $field ) {
-        $output     = static::html_label( $field );
-        $output    .= static::html_input( $field, $meta );
-		return $output;
-	}
-
 	/**
 	 * Get field HTML.
 	 *
@@ -52,12 +37,7 @@ class Select extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-		$output     = '<div class="spf-field__input">';
         $output    .= static::html_select_options( $field, $meta );
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
-			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
-		}
-		$output    .= '</div>';
 		return $output;
     }
 

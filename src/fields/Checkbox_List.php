@@ -132,11 +132,13 @@ class Checkbox_List extends Input {
 	 *
 	 * @return string
 	 */
+	/*
 	static public function html( $meta, $field ) {
         $output     = static::html_label( $field );
         $output    .= static::html_input( $field, $meta );
 		return $output;
 	}
+	*/
 
 	/**
 	 * Get field HTML.

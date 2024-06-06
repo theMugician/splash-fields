@@ -54,12 +54,15 @@ class File extends Input {
 
 	public static function add_actions() {
 		add_action( 'post_edit_form_tag', [ __CLASS__, 'post_edit_form_tag' ] );
-		add_action( 'wp_ajax_spf_add_file', [ __CLASS__, 'ajax_add_file' ] );
-		add_action( 'wp_ajax_spf_delete_file', [ __CLASS__, 'ajax_delete_file' ] );
+		add_action( 'wp_ajax_spf_file_error', [ __CLASS__, 'ajax_error' ] );
 	}
 
 	public static function post_edit_form_tag() {
 		echo ' enctype="multipart/form-data"';
+	}
+
+	public static function ajax_error() {
+		wp_send_json_error( $_POST['message'] );
 	}
 
 	/**
@@ -154,7 +157,6 @@ class File extends Input {
 		$add_file_hide = '';
 
         if ( $meta !== '' && $meta !== null && $meta !== false ) {
-			var_dump($meta);
             $has_file = true;
         }
 
@@ -235,7 +237,6 @@ class File extends Input {
 
         // If no new $_FILES name exists or no existing value return empty string.
         if ( empty( $_FILES[$file_add_id]['name'] ) && empty( $existing_value ) ) {
-			// error_log( print_r( 'FILES is empty: ' . $_FILES, true ) );
             return $value;
         }
 
@@ -252,8 +253,9 @@ class File extends Input {
             $attachment_id = media_handle_upload( $file_add_id, $object_id );
 
             if ( is_wp_error( $attachment_id ) ) {
-                // TODO: Error Handling
-                // There was an error uploading the image.
+				$error_message = $attachment_id->get_error_message();
+				self::error_message( $error_message );
+				error_log( print_r( $error_message, true ) );
             } else {
                 $value = $attachment_id;
             }
@@ -261,6 +263,10 @@ class File extends Input {
 
         return $value;
     }
+
+	public static function error_message( $message ) {
+		echo "<p class='spf-field__error'>{$message}</p>";
+	}
 
     /**
 	 * Save meta value.

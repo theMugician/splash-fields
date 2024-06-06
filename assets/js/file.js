@@ -3,6 +3,26 @@
 
 	let file = {}
 
+    /**
+	 * Handles a click on delete new file.
+	 *
+	 * @param event Click event.
+	 */
+	file.errorHandler = function (event) {
+        $.ajax({
+            type: 'POST',
+            url: spfFileField.ajaxurl,
+            data: {
+                action: 'spf_file_error',
+			    field_id: file.inputId,
+            },
+            success: function( response ) {
+                console.log(response)
+            }
+		})
+	}
+
+
 	/**
 	 * Handles a click on delete new file.
 	 *

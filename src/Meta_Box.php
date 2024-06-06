@@ -247,7 +247,7 @@ class Meta_Box {
 		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
 
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
-
+		
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}

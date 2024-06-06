@@ -80,6 +80,20 @@ input[type=radio].spf-field__radio-button {
     flex-direction: column;
 }
 
+/* Repeater Field */
+.spf-field.spf-field-repeater {
+    display: block;
+}
+
+.spf-repeater-group {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    /* display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px; */
+}
+
 /* File Field */
 .spf-file {
     display: flex;
