@@ -9,19 +9,21 @@
 - add multiple attribute 
 
 ### Repeater
-Check how to create this:  
-Groups, repeater, fields, clone?  
-Save: How to store metadata? Serialized array or 
+- test every field within repeater
 
 
 ## TODO
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - Refactor `Field::html_input()` function - Updated/Need QA
 - `spf_get( 'field_id' )` function  
+    - post_meta
+    - user_meta
+    - term_meta
+    - options
 - `checkbox-list` `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 
 ## QA
-Test each field (11) with every object type (5)  
+Test each field (12) with every object type (5)  
 
 ### Object Types
 - Metabox
@@ -42,6 +44,7 @@ Test each field (11) with every object type (5)
 - Select
 - Text
 - Textarea
+- Repeater
 
 ## Test Error
 Use `spf-error` as value
@@ -54,7 +57,7 @@ Use `spf-error` as value
 - Make class and add fields to it
 
 ## Maybe
-### 
+
 ### `Request` Class 
 To grab POST and GET form data  
 See:  

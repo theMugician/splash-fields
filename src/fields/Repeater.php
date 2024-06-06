@@ -75,7 +75,7 @@ class Repeater extends Input {
             $group_html .= static::show_sub_field($sub_field, $sub_field_meta);
         }
 
-        $group_html .= '<button type="button" class="button spf-delete-repeater-row">Remove</button>';
+        $group_html .= '<a class="spf-delete-repeater-row">Remove</a>';
         $group_html .= '</div>';
 
         return $group_html;
@@ -92,7 +92,7 @@ class Repeater extends Input {
         $field = Field::call('normalize', $field);
         $meta  = static::get_default($field, $meta);
 
-        $html = sprintf('<div class="spf-sub-field spf-sub-field-%s">', $field['type']);
+        $html = sprintf('<div class="spf-field spf-field-%s">', $field['type']);
         $html .= Field::call('html', $field, $meta);
         $html .= '</div>';
 
