@@ -20,7 +20,8 @@
     - user_meta
     - term_meta
     - options
-- `checkbox-list` `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
+- `checkbox-list` serialize saved value - Updated/Need QA
+- `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 
 ## QA
 Test each field (12) with every object type (5)  

@@ -28,3 +28,58 @@ if ( ! function_exists( 'spf_get_storage' ) ) {
         return apply_filters( 'spf_get_storage', $storage, $object_type );
 	}
 }
+
+if ( ! function_exists( 'spf_get_field' ) ) {
+	/**
+	 * Get field value.
+	 *
+	 * @param string $field_key The field key.
+	 * @param string $context   The context (post, user, term, option). Optional if $object is provided.
+	 * @param mixed  $object    The object (post ID, user ID, term ID, option name, or global post object).
+	 *
+	 * @return mixed The field value.
+	 */
+	function spf_get_field( $field_key, $context = 'post', $object = null ) {
+		// Determine the context if not provided
+		if ( is_null( $object ) && isset( $GLOBALS['post'] ) ) {
+			$object = $GLOBALS['post'];
+		}
+	
+		if ( is_null( $context ) || $context === 'post' ) {
+			if ( is_numeric( $object ) && get_post( $object ) ) {
+				$context = 'post';
+			} elseif ( is_object( $object ) && isset( $object->ID ) && get_post( $object->ID ) ) {
+				$context = 'post';
+				$object = $object->ID;
+			} elseif ( is_numeric( $object ) && get_userdata( $object ) ) {
+				$context = 'user';
+			} elseif ( is_numeric( $object ) && get_term( $object ) ) {
+				$context = 'term';
+			} elseif ( is_string( $object ) && !is_null( get_option( $object ) ) ) {
+				$context = 'option';
+			} else {
+				// Default to 'post' context if unable to determine context
+				$context = 'post';
+			}
+		}
+	
+		// Get the field value based on context
+		switch ( $context ) {
+			case 'post':
+				return get_post_meta( $object, $field_key, true );
+			
+			case 'user':
+				return get_user_meta( $object, $field_key, true );
+			
+			case 'term':
+				return get_term_meta( $object, $field_key, true );
+			
+			case 'option':
+				return get_option( $field_key );
+			
+			default:
+				return false;
+		}
+	}
+	
+}
