@@ -21,7 +21,6 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html( $field, $meta ) {
-
         $output      = static::html_label( $field );
 		$output     .= '<div class="spf-field__input">'; // Open input container
         $output    	.= static::html_input( $field, $meta );
@@ -72,6 +71,7 @@ class Checkbox_List extends Input {
         $name    = $field['id'];
         $storage = $field['storage'];
 
+
         if ( empty( $new ) ) {
             $storage->delete( $post_id, $name );
             return;
@@ -79,6 +79,8 @@ class Checkbox_List extends Input {
 
         // Serialize the array of checkbox values before saving.
         $serialized_value = maybe_serialize( $new );
+		// var_dump( $serialized_value ); 
+		// die();
         $storage->update( $post_id, $name, $serialized_value );
     }
 
@@ -107,7 +109,7 @@ class Checkbox_List extends Input {
 			}
 		*/
 
-		$args['single'] = false;
+		$args['single'] = true;
 
 		if ( isset( $field['storage'] ) ) {
 			$storage = $field['storage'];
@@ -260,7 +262,7 @@ class Checkbox_List extends Input {
         $output = '';
 		foreach ( $field['options'] as $option_value => $option_label ) {
 			$checked = in_array( $option_value, $meta, true ) ? ' checked' : '';
-			$ouput   .= sprintf(
+			$output   .= sprintf(
 				'<label><input type="checkbox" name="%s[]" value="%s"%s> %s</label>',
 				esc_attr( $field['id'] ),
 				esc_attr( $option_value ),
@@ -283,4 +285,3 @@ class Checkbox_List extends Input {
 		return $output;
     }
 }
-

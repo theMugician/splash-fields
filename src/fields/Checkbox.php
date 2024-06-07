@@ -22,7 +22,7 @@ class Checkbox extends Input {
 	 */
 	static public function html_input( $field, $meta ) {
         $attributes = self::get_attributes( $field, 1 );
-        $output    .= sprintf(
+        $output    = sprintf(
 			'<input %s %s>',
 			self::render_attributes( $attributes ),
 			checked( ! empty( $meta ), 1, false )

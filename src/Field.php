@@ -30,8 +30,10 @@ class Field {
 		// Unserialize raw meta data.
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 			$meta = maybe_unserialize( $meta );
+			var_dump($meta);
 			$meta = is_array( $meta ) ? $meta : array();
 		}
+		var_dump($meta);
 		// On Save
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
