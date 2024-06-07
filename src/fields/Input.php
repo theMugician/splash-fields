@@ -60,7 +60,7 @@ class Input extends Field {
         $output      = static::html_label( $field );
 		$output     .= '<div class="spf-field__input">'; // Open input container
         $output    	.= static::html_input( $field, $meta );
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+		if ( isset( $field['description'] ) && strlen( $field['description'] ) > 0 ) {
 			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
 		}
 		$output    .= '</div>'; // Close input container

@@ -14,26 +14,35 @@
 
 ## TODO
 - `Error` Class and handling - Write a value to trigger error for testing purposes
-- Refactor `Field::html_input()` function - Updated/Need QA
+- `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
+- `Field::get_value` supercedes `raw_meta` function
+    - `repeater` array
+    - `checkbox-list` array
+    - `image` returns id|url|array or what?
+    - `file` returns id|url|array or what?
+
+## QA
+### Needs QA:
+- Refactor `Field::html_input()` function  
 - `spf_get( 'field_id' )` function  
     - post_meta
     - user_meta
     - term_meta
     - options
-- `checkbox-list` serialize saved value - Updated/Need QA
-- `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
+- `checkbox-list` serialize saved value  
 
-## QA
+### Testing Protocol:
 Test each field (12) with every object type (5)  
+*Repeater will need testing with 11 fields within*
 
-### Object Types
+#### Object Types
 - Metabox
 - Option Page
 - User
 - Taxonomy
 - Gutenberg Sidebar
 
-### Fields
+#### Fields
 - Checkbox
 - Checkbox List
 - Editor

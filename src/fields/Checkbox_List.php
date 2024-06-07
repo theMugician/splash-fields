@@ -20,40 +20,16 @@ class Checkbox_List extends Input {
 	 *
 	 * @return string
 	 */
-	static public function html( $field, $meta ) {
-        $output      = static::html_label( $field );
-		$output     .= '<div class="spf-field__input">'; // Open input container
-        $output    	.= static::html_input( $field, $meta );
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
-			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
-		}
-		$output    .= '</div>'; // Close input container
-		return $output;
-	}
-
-	static public function html_( $field, $meta ) {
-
-        $html = sprintf(
-            '<div class="spf-field spf-field-%s" data-field-id="%s">',
-            esc_attr( $field['type'] ),
-            esc_attr( $field['id'] )
-        );
-
-        foreach ( $field['options'] as $option_value => $option_label ) {
-            $checked = in_array( $option_value, $meta, true ) ? ' checked' : '';
-            $html   .= sprintf(
-                '<label><input type="checkbox" name="%s[]" value="%s"%s> %s</label>',
-                esc_attr( $field['id'] ),
-                esc_attr( $option_value ),
-                $checked,
-                esc_html( $option_label )
-            );
-        }
-
-        $html .= '</div>';
-
-        echo $html; // WPCS: XSS ok.
-    }
+	// static public function html( $field, $meta ) {
+    //     $output      = static::html_label( $field );
+	// 	$output     .= '<div class="spf-field__input">'; // Open input container
+    //     $output    	.= static::html_input( $field, $meta );
+	// 	if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+	// 		$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+	// 	}
+	// 	$output    .= '</div>'; // Close input container
+	// 	return $output;
+	// }
 
     /**
      * Save the field data.

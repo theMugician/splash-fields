@@ -44,7 +44,6 @@ class File extends Input {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
-		// $field['upload_iframe_src'] = static::upload_iframe_src( $post_id );
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $meta, $field );
 		$html .= '</div>';
@@ -64,36 +63,6 @@ class File extends Input {
 	public static function ajax_error() {
 		wp_send_json_error( $_POST['message'] );
 	}
-
-	/**
-	 * Normalize parameters for field.
-	 * Get the upload iframe source for media item
-	 * 
-	 * @link			https://developer.wordpress.org/reference/functions/get_upload_iframe_src/
-	 * 
-	 * @param int 		$post_id Post ID
-	 * @return string	Media iframe source
-	 */
-    static public function upload_iframe_src( $post_id ) {
-		$upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
-		$upload_iframe_src = add_query_arg( 'type', 'image', $upload_iframe_src );
-
-		return add_query_arg( 'TB_iframe', true, $upload_iframe_src );
-	}
-
-	/**
-	 * Normalize parameters for field.
-	 *
-	 * @param array $field Field parameters.
-	 *
-	 * @return array
-	 */
-    static public function normalize( $field ) {
-		$field = wp_parse_args( $field, [
-			'upload_iframe_src'  =>  '',
-		] );
-		return $field;
-    }
 
 	static public function file_add_id( $field_id ) {
         return "file-add-{$field_id}";
@@ -182,7 +151,7 @@ class File extends Input {
 			$field['id'],
 			esc_attr( $meta )
 		);
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+		if ( isset( $field['description'] ) && strlen( $field['description'] ) > 0 ) {
 			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
 		}
 		$output .= '</div>';

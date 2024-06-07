@@ -106,6 +106,7 @@ class Options_Page {
         $this->title        = $options_page['title'];
         $this->menu_title   = $options_page['menu_title'];
         $this->menu_slug   	= $options_page['menu_slug'];
+		$this->parent_slug  = isset( $options_page['parent_slug'] ) ? $options_page['parent_slug'] : null;
         $this->capability   = $options_page['capability'];
 
         $this->options_page['fields'] = static::normalize_fields( $options_page['fields'], $this->get_storage() );
@@ -155,13 +156,24 @@ class Options_Page {
 	 * @link https://developer.wordpress.org/reference/functions/add_options_page/
 	 */
 	public function add_options_page() {
-		add_options_page(
-			$this->title,
-			$this->menu_title,
-			$this->capability,
-			$this->menu_slug,
-			[ $this, 'show' ],
-		);
+		if ( $this->parent_slug ) {
+			add_submenu_page(
+				$this->parent_slug,
+				$this->title,
+				$this->menu_title,
+				$this->capability,
+				$this->menu_slug,
+				[ $this, 'show' ]
+			);
+		} else {
+			add_menu_page(
+				$this->title,
+				$this->menu_title,
+				$this->capability,
+				$this->menu_slug,
+				[ $this, 'show' ]
+			);
+		}
 	}
 
     /**
