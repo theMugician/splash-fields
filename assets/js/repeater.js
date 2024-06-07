@@ -60,6 +60,9 @@
                     $(this).attr('name', name)
                 }
             })
+            $(this).find('.spf-repeater-group__number').each(function () {
+                $(this).text(index + 1)
+            })
         })
     }
 

@@ -27,9 +27,12 @@ class Field {
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
 		// Replace with default?
-
+		// Unserialize raw meta data.
+		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+			$meta = maybe_unserialize( $meta );
+			$meta = is_array( $meta ) ? $meta : array();
+		}
 		// On Save
-		
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
 		$html .= '</div>';

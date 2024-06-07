@@ -13,6 +13,77 @@ namespace Splash_Fields\Fields;
  */
 class Checkbox_List extends Input {
 	/**
+	 * Get field HTML.
+	 *
+	 * @param mixed $meta   Meta value.
+	 * @param array $field  Field parameters.
+	 *
+	 * @return string
+	 */
+	static public function html( $field, $meta ) {
+
+        $output      = static::html_label( $field );
+		$output     .= '<div class="spf-field__input">'; // Open input container
+        $output    	.= static::html_input( $field, $meta );
+		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
+			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
+		}
+		$output    .= '</div>'; // Close input container
+		return $output;
+	}
+
+	static public function html_( $field, $meta ) {
+
+        $html = sprintf(
+            '<div class="spf-field spf-field-%s" data-field-id="%s">',
+            esc_attr( $field['type'] ),
+            esc_attr( $field['id'] )
+        );
+
+        foreach ( $field['options'] as $option_value => $option_label ) {
+            $checked = in_array( $option_value, $meta, true ) ? ' checked' : '';
+            $html   .= sprintf(
+                '<label><input type="checkbox" name="%s[]" value="%s"%s> %s</label>',
+                esc_attr( $field['id'] ),
+                esc_attr( $option_value ),
+                $checked,
+                esc_html( $option_label )
+            );
+        }
+
+        $html .= '</div>';
+
+        echo $html; // WPCS: XSS ok.
+    }
+
+    /**
+     * Save the field data.
+     *
+     * @param mixed $new      New value.
+     * @param mixed $old      Old value.
+     * @param int   $post_id  Post ID.
+     * @param array $field    Field configuration.
+     */
+    public static function save( $new, $old, $post_id, $field ) {
+        if ( empty( $field['id'] ) ) {
+            return;
+        }
+
+        $name    = $field['id'];
+        $storage = $field['storage'];
+
+        if ( empty( $new ) ) {
+            $storage->delete( $post_id, $name );
+            return;
+        }
+
+        // Serialize the array of checkbox values before saving.
+        $serialized_value = maybe_serialize( $new );
+        $storage->update( $post_id, $name, $serialized_value );
+    }
+
+	
+	/**
 	 * Get raw meta value.
 	 *
 	 * @param int   $object_id Object ID.
@@ -165,14 +236,9 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-		$output     = '<div class="spf-field__input">';
-		$output    .= '<fieldset class="spf-input-list">';
+		$output    = '<fieldset class="spf-input-list">';
         $output    .= static::html_checkbox_inputs( $field, $meta );
 		$output    .= '</fieldset>';
-		if ( $field['description'] && strlen( $field['description'] ) > 0 ) {
-			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
-		}
-		$output    .= '</div>';
 		return $output;
     }
 
@@ -185,25 +251,36 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_checkbox_inputs( $field, $meta ) {
-		$meta_exists = [];
-		if ( $meta && count( $meta ) > 0 ) {
-			foreach( $meta as $key => $value ) {
-				$meta_exists[$value] = 1;
-			}
-		}
+		// $meta_exists = [];
+		// if ( $meta && count( $meta ) > 0 ) {
+		// 	foreach( $meta as $key => $value ) {
+		// 		$meta_exists[$value] = 1;
+		// 	}
+		// }
         $output = '';
-        foreach( $field['options'] as $value => $label ) {
-			$attributes = static::get_attributes( $field, $value );
-			$attributes['type'] = 'checkbox';
-            $output .= sprintf( '<label for="%s">', $value );
-            $output .= sprintf(
-				'<input %s %s>',
-				self::render_attributes( $attributes ), 
-				checked( ! empty( $meta_exists[$value] ), 1, false )
+		foreach ( $field['options'] as $option_value => $option_label ) {
+			$checked = in_array( $option_value, $meta, true ) ? ' checked' : '';
+			$ouput   .= sprintf(
+				'<label><input type="checkbox" name="%s[]" value="%s"%s> %s</label>',
+				esc_attr( $field['id'] ),
+				esc_attr( $option_value ),
+				$checked,
+				esc_html( $option_label )
 			);
-            $output .= sprintf( '%s</label>', $label );
+		}
+        // foreach( $field['options'] as $value => $label ) {
+		// 	$attributes = static::get_attributes( $field, $value );
+		// 	$attributes['type'] = 'checkbox';
+        //     $output .= sprintf( '<label for="%s">', $value );
+        //     $output .= sprintf(
+		// 		'<input %s %s>',
+		// 		self::render_attributes( $attributes ), 
+		// 		checked( ! empty( $meta_exists[$value] ), 1, false )
+		// 	);
+        //     $output .= sprintf( '%s</label>', $label );
 
-        }
+        // }
 		return $output;
     }
 }
+

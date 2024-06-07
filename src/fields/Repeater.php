@@ -10,7 +10,7 @@ namespace Splash_Fields\Fields;
 use Splash_Fields\Field;
 
 class Repeater extends Input {
-    
+
     /**
      * Enqueue scripts for the repeater field.
      */
@@ -18,61 +18,100 @@ class Repeater extends Input {
         wp_register_script(
             'spf-repeater-js',
             SPF_ASSETS_URL . '/js/repeater.js',
-            array('jquery'),
+            array( 'jquery' ),
             false,
             true
         );
 
-        wp_enqueue_script('spf-repeater-js');
+        wp_enqueue_script( 'spf-repeater-js' );
     }
 
     /**
      * Display the repeater field.
      *
-     * @param array $field
-     * @param int $post_id
+     * @param array $field   Field configuration.
+     * @param int   $post_id Post ID.
      */
-    public static function show(array $field, $post_id = 0) {
-        // Retrieve meta data
+    public static function show_( array $field, $post_id = 0 ) {
+        // Retrieve meta data.
         $meta = static::raw_meta( $post_id, $field );
-        $meta = is_array($meta) ? $meta : [];
+        $meta = is_array( $meta ) ? $meta : array();
 
-        $html = sprintf('<div class="spf-field spf-field-%s" data-field-id="%s">', $field['type'], $field['id']);
-        $html .= '<div class="spf-repeater-wrapper">';    
-        // Display existing groups if they exist
-        if (!empty($meta)) {
-            foreach ($meta as $index => $group_meta) {
-                $html .= static::render_repeater_group($field, $group_meta, $index);
+        $html  = sprintf(
+            '<div class="spf-field spf-field-%s" data-field-id="%s">',
+            esc_attr( $field['type'] ),
+            esc_attr( $field['id'] )
+        );
+        $html .= '<label class="spf-field__label" for="' . esc_attr( $field['id'] ) . '">' . esc_html( $field['name'] ) . '</label>';
+        $html .= '<div class="spf-repeater-wrapper">';
+
+        // Display existing groups if they exist.
+        if ( ! empty( $meta ) ) {
+            foreach ( $meta as $index => $group_meta ) {
+                $html .= static::render_repeater_group( $field, $group_meta, $index );
             }
         }
+
         $html .= '</div>';
         $html .= '<button type="button" class="button spf-add-repeater-row">Add Row</button>';
         $html .= '</div>';
 
-        // Add a hidden template for repeater groups
+        // Add a hidden template for repeater groups.
         $html .= '<script type="text/template" id="spf-repeater-template">';
-        $html .= static::render_repeater_group($field, [], 0);
+        $html .= static::render_repeater_group( $field, array(), 0 );
         $html .= '</script>';
 
-        echo $html;
+        echo $html; // WPCS: XSS ok.
+    }
+
+
+    /**
+     * Display the repeater field.
+     *
+     * @param array $field   Field configuration.
+     * @param int   $post_id Post ID.
+     */
+    public static function html( $field, $meta  ) {
+        $html = '<label class="spf-field__label" for="' . esc_attr( $field['id'] ) . '">' . esc_html( $field['name'] ) . '</label>';
+        $html .= '<div class="spf-repeater-wrapper">';
+
+        // Display existing groups if they exist.
+        if ( ! empty( $meta ) ) {
+            foreach ( $meta as $index => $group_meta ) {
+                $html .= static::render_repeater_group( $field, $group_meta, $index );
+            }
+        }
+
+        $html .= '</div>';
+        $html .= '<button type="button" class="button spf-add-repeater-row">Add Row</button>';
+
+        // Add a hidden template for repeater groups.
+        $html .= '<script type="text/template" id="spf-repeater-template">';
+        $html .= static::render_repeater_group( $field, array(), 0 );
+        $html .= '</script>';
+
+        return $html; // WPCS: XSS ok.
+
     }
 
     /**
      * Render a repeater group.
      *
-     * @param array $field
-     * @param array $group_meta
-     * @param int $index
+     * @param array $field      Field configuration.
+     * @param array $group_meta Group metadata.
+     * @param int   $index      Group index.
      * @return string
      */
-    public static function render_repeater_group($field, $group_meta, $index) {
-        $group_html = '<div class="spf-repeater-group">';
+    public static function render_repeater_group( $field, $group_meta, $index ) {
+        $group_number = $index + 1;
+        $group_html   = '<div class="spf-repeater-group">';
+        $group_html  .= '<h3 class="spf-repeater-group__title">Group <span class="spf-repeater-group__number">' . esc_html( $group_number ) . '</span></h3>';
 
-        foreach ($field['fields'] as $sub_field) {
-            $sub_field['field_name'] = sprintf('%s[%d][%s]', $field['id'], $index, $sub_field['id']);
-            $sub_field_meta = $group_meta[$sub_field['id']] ?? '';
+        foreach ( $field['fields'] as $sub_field ) {
+            $sub_field['field_name'] = sprintf( '%s[%d][%s]', $field['id'], $index, $sub_field['id'] );
+            $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
-            $group_html .= static::show_sub_field($sub_field, $sub_field_meta);
+            $group_html .= static::show_sub_field( $sub_field, $sub_field_meta );
         }
 
         $group_html .= '<a class="spf-delete-repeater-row">Remove</a>';
@@ -84,16 +123,16 @@ class Repeater extends Input {
     /**
      * Display a sub-field.
      *
-     * @param array $field
-     * @param mixed $meta
+     * @param array $field Field configuration.
+     * @param mixed $meta  Field metadata.
      * @return string
      */
-    protected static function show_sub_field($field, $meta) {
-        $field = Field::call('normalize', $field);
-        $meta  = static::get_default($field, $meta);
+    protected static function show_sub_field( $field, $meta ) {
+        $field = Field::call( 'normalize', $field );
+        $meta  = static::get_default( $field, $meta );
 
-        $html = sprintf('<div class="spf-field spf-field-%s">', $field['type']);
-        $html .= Field::call('html', $field, $meta);
+        $html  = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
+        $html .= Field::call( 'html', $field, $meta );
         $html .= '</div>';
 
         return $html;
@@ -102,29 +141,27 @@ class Repeater extends Input {
     /**
      * Process the value of the repeater field.
      *
-     * @param mixed $value
-     * @param int $post_id
-     * @param array $field
+     * @param mixed $value   New value.
+     * @param int   $post_id Post ID.
+     * @param array $field   Field configuration.
      * @return array
      */
-    public static function process_value($value, $post_id, $field) {
-        if (empty($value) || !is_array($value)) {
-            return [];
+    public static function process_value( $value, $post_id, $field ) {
+        if ( empty( $value ) || ! is_array( $value ) ) {
+            return array();
         }
 
-        $processed_value = [];
+        $processed_value = array();
 
-        foreach ($value as $group_index => $group_values) {
-            $processed_group = [];
+        foreach ( $value as $group_index => $group_values ) {
+            $processed_group = array();
 
-            foreach ($field['fields'] as $sub_field) {
-                $sub_field_id = $sub_field['id'];
-                $sub_field_value = $group_values[$sub_field_id] ?? '';
+            foreach ( $field['fields'] as $sub_field ) {
+                $sub_field_id    = $sub_field['id'];
+                $sub_field_value = isset( $group_values[ $sub_field_id ] ) ? $group_values[ $sub_field_id ] : '';
 
-                // Assuming all fields are simple text fields, process accordingly
-                $processed_group[$sub_field_id] = Field::call( $sub_field, 'process_value', $sub_field_value , $post_id, $sub_field );
-
-                // $processed_group[$sub_field_id] = sanitize_text_field($sub_field_value);
+                // Assuming all fields are simple text fields, process accordingly.
+                $processed_group[ $sub_field_id ] = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
             }
 
             $processed_value[] = $processed_group;
@@ -136,25 +173,37 @@ class Repeater extends Input {
     /**
      * Save the repeater field data.
      *
-     * @param mixed $new
-     * @param mixed $old
-     * @param int $post_id
-     * @param array $field
+     * @param mixed $new     New value.
+     * @param mixed $old     Old value.
+     * @param int   $post_id Post ID.
+     * @param array $field   Field configuration.
      */
-    public static function save($new, $old, $post_id, $field) {
-        if (empty($field['id'])) {
+    public static function save( $new, $old, $post_id, $field ) {
+        if ( empty( $field['id'] ) ) {
             return;
         }
 
-        $name = $field['id'];
+        $name    = $field['id'];
         $storage = $field['storage'];
 
-        if (empty($new)) {
-            $storage->delete($post_id, $name);
+        if ( empty( $new ) ) {
+            $storage->delete( $post_id, $name );
             return;
         }
 
-        $storage->update($post_id, $name, $new);
+        $storage->update( $post_id, $name, $new );
     }
 
+    /**
+	 * Normalize parameters for field.
+	 *
+	 * @param array $field Field parameters.
+	 * @return array
+	 */
+	public static function normalize( $field ) {
+		$field['multiple'] = true;
+		$field             = parent::normalize( $field );
+
+		return $field;
+	}
 }

@@ -1,7 +1,11 @@
+:root {
+    --spf-border-color: #8c8f94;
+}
+
 .spf-field {
     padding: 16px 0;
     display: flex;
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
 }
 
 .spf-field a {
@@ -83,17 +87,31 @@ input[type=radio].spf-field__radio-button {
 /* Repeater Field */
 .spf-field.spf-field-repeater {
     display: block;
+    border: 1px solid var(--spf-border-color);
+    border-radius: 4px;
+    padding: 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .spf-repeater-group {
     padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 4px;
     margin-top: 10px;
     margin-bottom: 10px;
+    border: 1px dashed #ccc;
     /* display: flex;
     flex-wrap: wrap;
     gap: 6px 12px; */
+}
+
+.spf-repeater-group__title {
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.spf-repeater-group .spf-field {
+    border: 0;
 }
 
 .spf-field .spf-delete-repeater-row {
@@ -109,6 +127,17 @@ input[type=radio].spf-field__radio-button {
 
 .spf-field .spf-delete-repeater-row:hover, .spf-delete-repeater-row:focus, .spf-delete-repeater-row:active {
     color: red;
+}
+
+.spf-field .spf-add-repeater-row, .spf-field .spf-add-repeater-row:hover, .spf-field .spf-add-repeater-row:focus, .spf-field .spf-add-repeater-row:active {
+    color: #FFF;
+    background-color: #0073aa;
+    cursor: pointer;
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
 }
 
 /* File Field */

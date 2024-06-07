@@ -10,7 +10,7 @@
 
 ### Repeater
 - test every field within repeater
-
+- CSS for Options pages, Side Meta Box, User, Term and Gutenberg Sidebar
 
 ## TODO
 - `Error` Class and handling - Write a value to trigger error for testing purposes
