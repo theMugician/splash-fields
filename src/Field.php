@@ -30,10 +30,8 @@ class Field {
 		// Unserialize raw meta data.
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 			$meta = maybe_unserialize( $meta );
-			var_dump($meta);
 			$meta = is_array( $meta ) ? $meta : array();
 		}
-		var_dump($meta);
 		// On Save
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
@@ -51,6 +49,12 @@ class Field {
 	 */
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
+		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+			$meta = maybe_unserialize( $meta );
+			$meta = is_array( $meta ) ? $meta : array();
+			var_dump($meta);
+			var_dump($field['id']);
+		}
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
 		$html .= '</div>';
@@ -209,7 +213,8 @@ class Field {
 	 * @param array $field   The field parameters.
 	 */
 	public static function save( $new, $old, $post_id, $field ) {
-
+		var_dump($_POST);
+		die();
 		// Old - Might be useful for later
 		// if ( empty( $field['id'] ) || ! $field['save_field'] ) {
 		if ( empty( $field['id'] ) ) {
@@ -219,29 +224,62 @@ class Field {
 		$name    = $field['id'];
 		$storage = $field['storage'];
 
-		// Remove post meta if $new is empty.
+		// Old - Might be useful for later
 		// $is_valid_for_field = '' !== $new && [] !== $new;
+		/*
 		if ( ! ( '' !== $new && [] !== $new ) ) {
 			$storage->delete( $post_id, $name );
 			return;
-		}
-
-		// Save cloned fields as multiple values instead serialized array.
-		if ( $field['multiple'] ) {
-
-			$storage->delete( $post_id, $name );
-			$new = (array) $new;
-			foreach ( $new as $new_value ) {
-				$storage->add( $post_id, $name, $new_value, false );
-			}
-			return;
-		}
+		} else {
+            if ( $field['multiple'] ) {
+                $new = maybe_serialize( $new );
+            }
+        }
+		*/
+		if ( is_array( $new ) ) {
+			// Remove object meta if $new is empty.
+            if ( empty( $new ) ) {
+				$storage->delete( $post_id, $name );
+				return;
+            } else {
+				$storage->update( $post_id, $name, maybe_serialize( $new ) );
+				return;
+            }
+        } else {
+			// Remove post meta if $new is empty.
+            if ( $new === '' || $new === null ) {
+				$storage->delete( $post_id, $name );
+				return;
+            } else {
+				$storage->update( $post_id, $name, $new );
+				return;
+            }
+        }
 
 		// Default: just update post meta.
-		$storage->update( $post_id, $name, $new );
 	}
 
 	public static function save_option( $new, $old, $field ) {
+		if ( is_array( $new ) ) {
+			// Remove object meta if $new is empty.
+            if ( empty( $new ) ) {
+				delete_option( $field['id'] );
+				return;
+            } else {
+				update_option( $field['id'], $new );
+				return;
+            }
+        } else {
+			// Remove post meta if $new is empty.
+            if ( $new === '' || $new === null ) {
+				delete_option( $field['id'] );
+				return;
+            } else {
+				update_option( $field['id'], $new );
+				return;
+            }
+        }
+		/*
 		// Remove option if $new is empty.
 		if ( ! ( '' !== $new && [] !== $new ) ) {
 			delete_option( $field['id'] );
@@ -256,6 +294,7 @@ class Field {
 
 		// Update option if option is empty and $new has a value.
 		update_option( $field['id'], $new );
+		*/
 	}
 
 	/**

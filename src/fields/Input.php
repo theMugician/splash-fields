@@ -94,7 +94,6 @@ class Input extends Field {
 	static public function html_input( $field, $meta ) {
         $attributes = static::get_attributes( $field, $meta );
         $output    	= sprintf( '<input %s>', self::render_attributes( $attributes ) );
-
 		return $output;
     }
 

@@ -26,7 +26,6 @@ class Repeater extends Input {
     public static function show( array $field, $post_id = 0 ) {
         $meta = static::raw_meta( $post_id, $field );
         $meta = static::get_default( $field, $meta );
-        var_dump($meta);
         $html = sprintf( '<div class="spf-field spf-field-%s" data-field-id="%s">', $field['type'], $field['id'] );
         $html .= '<div class="spf-repeater-wrapper">';
 

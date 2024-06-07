@@ -13,6 +13,7 @@
 - CSS for Options pages, Side Meta Box, User, Term and Gutenberg Sidebar
 
 ## TODO
+- `Checkbox_list` add proper `name` attribute - most likely issue for save
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 - `Field::get_value` supercedes `raw_meta` function
