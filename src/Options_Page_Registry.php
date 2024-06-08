@@ -43,18 +43,18 @@ class Options_Page_Registry {
 	 * @param array $args Custom argument to get options pages by.
 	 */
 	public function get_by( array $args ) : array {
-		$options_pages_ = $this->data;
-		foreach ( $options_pages_ as $index => $options_page_ ) {
+		$options_pages = $this->data;
+		foreach ( $options_pages as $index => $options_page ) {
 			foreach ( $args as $key => $value ) {
-				$options_page__key = 'object_type' === $key ? $options_page_->get_object_type() : $options_page_->$key;
-				if ( $options_page__key !== $value ) {
-					unset( $options_pages_[ $index ] );
+				$options_page_key = 'object_type' === $key ? $options_page->get_object_type() : $options_page->$key;
+				if ( $options_page_key !== $value ) {
+					unset( $options_pages[ $index ] );
 					continue 2; // Skip the meta box loop.
 				}
 			}
 		}
 
-		return $options_pages_;
+		return $options_pages;
 	}
 
 	public function all() {
