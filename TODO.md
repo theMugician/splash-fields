@@ -13,7 +13,6 @@
 - CSS for Options pages, Side Meta Box, User, Term and Gutenberg Sidebar
 
 ## TODO
-- `Checkbox_list` add proper `name` attribute - most likely issue for save
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 - `Field::get_value` supercedes `raw_meta` function
@@ -56,6 +55,13 @@ Test each field (12) with every object type (5)
 - Text
 - Textarea
 - Repeater
+
+#### Get Fields
+- `spf_get( 'field_id' )` function  
+    - post_meta
+    - user_meta
+    - term_meta
+    - options
 
 ## Test Error
 Use `spf-error` as value

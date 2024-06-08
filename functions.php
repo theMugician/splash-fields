@@ -66,13 +66,13 @@ if ( ! function_exists( 'spf_get_field' ) ) {
 		// Get the field value based on context
 		switch ( $context ) {
 			case 'post':
-				return get_post_meta( $object, $field_key, true );
+				return maybe_unserialize( get_post_meta( $object, $field_key, true ) );
 			
 			case 'user':
-				return get_user_meta( $object, $field_key, true );
+				return maybe_unserialize( get_user_meta( $object, $field_key, true ) );
 			
 			case 'term':
-				return get_term_meta( $object, $field_key, true );
+				return maybe_unserialize( get_term_meta( $object, $field_key, true ) );
 			
 			case 'option':
 				return get_option( $field_key );

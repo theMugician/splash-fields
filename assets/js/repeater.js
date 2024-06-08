@@ -12,16 +12,17 @@
         event.preventDefault()
 
         // Find the repeater wrapper
-        var $wrapper = $(this).siblings('.spf-repeater-wrapper')
+        const $wrapper = $(this).siblings('.spf-repeater-wrapper')
         
         // Get the template and clone it
-        var template = $('#spf-repeater-template').html()
-        var $clone = $(template)
+        const template = $(this).siblings('.spf-repeater-template').html()
+        // const template = $('.spf-repeater-template').html()
+        const $clone = $(template)
 
         // Reset the values of the inputs in the new group
-        $clone.find('input, textarea, select').each(function() {
-            $(this).val('')
-        })
+        // $clone.find('input, textarea, select').each(function() {
+        //     $(this).val('')
+        // })
 
         // Append the new group to the wrapper
         $wrapper.append($clone)

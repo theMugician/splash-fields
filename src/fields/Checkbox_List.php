@@ -55,7 +55,6 @@ class Checkbox_List extends Input {
 		return $value;
 	}
 
-
 	/**
 	 * Process the submitted value before saving into the database.
 	 *

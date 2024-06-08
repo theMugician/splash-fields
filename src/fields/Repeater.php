@@ -47,7 +47,7 @@ class Repeater extends Input {
         $html .= '<button type="button" class="button spf-add-repeater-row">Add Row</button>';
 
         // Add a hidden template for repeater groups.
-        $html .= '<script type="text/template" id="spf-repeater-template">';
+        $html .= '<script type="text/template" class="spf-repeater-template">';
         $html .= static::render_repeater_group( $field, array(), 0 );
         $html .= '</script>';
 
@@ -94,7 +94,6 @@ class Repeater extends Input {
             $meta = maybe_unserialize( $meta );
             $meta = is_array( $meta ) ? $meta : array();
         }
-        var_dump($meta);
         $meta  = static::get_default( $field, $meta );
 
         $html  = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
@@ -135,7 +134,6 @@ class Repeater extends Input {
 
         return $processed_value;
     }
-
 
     /**
 	 * Normalize parameters for field.

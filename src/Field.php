@@ -52,8 +52,6 @@ class Field {
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 			$meta = maybe_unserialize( $meta );
 			$meta = is_array( $meta ) ? $meta : array();
-			var_dump($meta);
-			var_dump($field['id']);
 		}
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
@@ -213,8 +211,6 @@ class Field {
 	 * @param array $field   The field parameters.
 	 */
 	public static function save( $new, $old, $post_id, $field ) {
-		var_dump($_POST);
-		die();
 		// Old - Might be useful for later
 		// if ( empty( $field['id'] ) || ! $field['save_field'] ) {
 		if ( empty( $field['id'] ) ) {
