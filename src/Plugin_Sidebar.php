@@ -87,10 +87,13 @@ class Plugin_Sidebar {
         $this->id             = $plugin_sidebar['id'];
         $this->title          = $plugin_sidebar['title'];
         $this->post_types     = $plugin_sidebar['post_types'];
-        $this->fields         = $plugin_sidebar['fields'];
+
+        $this->plugin_sidebar['fields'] = static::normalize_fields( $plugin_sidebar['fields'], $this->get_storage() );
+        $this->fields       = $this->plugin_sidebar['fields'];
 
         add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue' ) );
         add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+
         add_action( 'init', array( $this, 'register_meta_fields' ) );
     }
 
@@ -111,6 +114,23 @@ class Plugin_Sidebar {
         return $plugin_sidebar;
     }
 
+    public static function normalize_fields( array $fields, $storage = null ) : array {
+		foreach ( $fields as $k => $field ) {
+			$field = Field::call( 'normalize', $field );
+
+			// Allow to add default values for fields.
+			$field = apply_filters( 'spf_normalize_field', $field );
+			$field = apply_filters( "spf_normalize_{$field['type']}_field", $field );
+			$field = apply_filters( "spf_normalize_{$field['id']}_field", $field );
+
+			$field['storage'] = $storage;
+
+			$fields[ $k ] = $field;
+		}
+
+		return $fields;
+	}
+
     /**
      * Enqueue scripts and styles for the block editor.
      */
@@ -121,6 +141,12 @@ class Plugin_Sidebar {
             array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
             // filemtime( SPF_ASSETS_URL . '/js/plugin-sidebar.js' )
         );
+        wp_localize_script(
+            'plugin-sidebar-js',
+            'fields',
+            $this->fields
+        );
+
     }
 
     /**
@@ -155,7 +181,6 @@ class Plugin_Sidebar {
         }
     }
 
-
     public function register_fields() {
         static $data = [];
 
@@ -171,6 +196,15 @@ class Plugin_Sidebar {
 			}
 		}
 	}
+
+	/**
+	 * Get storage object.
+	 *
+	 * @return Storage
+	 */
+    public function get_storage() {
+		return spf_get_storage( $this->object_type );
+    }
 
     /**
      * Validate the plugin sidebar.

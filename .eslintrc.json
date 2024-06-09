@@ -80,7 +80,8 @@
 				"ArrowFunctionExpression": true,
 				"FunctionExpression": true
 			}
-		}]
+		}],
+		"semi": ["error", "never"]
 	},
 	"settings": {
 		"jsdoc": {
