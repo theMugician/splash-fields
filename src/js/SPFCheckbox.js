@@ -7,7 +7,7 @@ const SPFCheckbox = compose(
 		return {
 			setMetaValue: (value) => {
 				dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
-			}
+  			},
 		}
 	}),
 	withSelect((select, props) => {

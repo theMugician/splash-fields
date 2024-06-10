@@ -119,6 +119,7 @@ class Core {
             }
             $plugin_sidebar = $registry->make( $config );
             $plugin_sidebar->register_fields();
+            $plugin_sidebar->register_meta_fields();
         }
     }
 }

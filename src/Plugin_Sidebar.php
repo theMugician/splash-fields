@@ -91,10 +91,15 @@ class Plugin_Sidebar {
         $this->plugin_sidebar['fields'] = static::normalize_fields( $plugin_sidebar['fields'], $this->get_storage() );
         $this->fields       = $this->plugin_sidebar['fields'];
 
+                // Check user permissions
+                if ( current_user_can( 'edit_posts' ) ) {
+                    error_log('Current user has edit_posts capability');
+                } else {
+                    error_log('Current user does NOT have edit_posts capability');
+                }
+
         add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue' ) );
         add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
-
-        add_action( 'init', array( $this, 'register_meta_fields' ) );
     }
 
     /**
@@ -165,8 +170,15 @@ class Plugin_Sidebar {
      * Register meta fields.
      */
     public function register_meta_fields() {
+        error_log('register_meta_fields called');
+
+        // var_dump($this->post_types);
+        // echo 'register_meta_fields';
+
         foreach ( $this->fields as $field ) {
             foreach ( $this->post_types as $post_type ) {
+                error_log('Registering meta field ' . $field['id'] . ' for post type ' . $post_type); // Debug statement
+
                 register_meta(
                     'post',
                     $field['id'],
@@ -174,9 +186,13 @@ class Plugin_Sidebar {
                         'object_subtype' => $post_type,
                         'show_in_rest'   => true,
                         'single'         => true,
-                        'type'           => isset( $field['type'] ) ? $field['type'] : 'string',
+                        'type'           => 'string',
+                        'auth_callback'  => function() {
+                            return current_user_can( 'edit_posts' );
+                        },
                     )
                 );
+                
             }
         }
     }

@@ -39,5 +39,6 @@ module.exports = {
         '@wordpress/data': ['wp', 'data'],
         '@wordpress/plugins': ['wp', 'plugins'],
         '@wordpress/edit-post': ['wp', 'editPost'],
+        '@wordpress/compose': ['wp', 'compose'],
     }
 };
