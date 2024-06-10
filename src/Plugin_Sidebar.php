@@ -75,6 +75,13 @@ class Plugin_Sidebar {
     protected $fields = array();
 
     /**
+     * Fields to be displayed in the plugin sidebar.
+     *
+     * @var array
+     */
+    protected $data_types = array();
+
+    /**
      * Constructor.
      * Include all relevant scripts and custom fields.
      *
@@ -87,16 +94,9 @@ class Plugin_Sidebar {
         $this->id             = $plugin_sidebar['id'];
         $this->title          = $plugin_sidebar['title'];
         $this->post_types     = $plugin_sidebar['post_types'];
-
+        $this->data_types     = static::get_data_types();
         $this->plugin_sidebar['fields'] = static::normalize_fields( $plugin_sidebar['fields'], $this->get_storage() );
         $this->fields       = $this->plugin_sidebar['fields'];
-
-                // Check user permissions
-                if ( current_user_can( 'edit_posts' ) ) {
-                    error_log('Current user has edit_posts capability');
-                } else {
-                    error_log('Current user does NOT have edit_posts capability');
-                }
 
         add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue' ) );
         add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
@@ -166,19 +166,29 @@ class Plugin_Sidebar {
         );
     }
 
+    protected static function get_data_types() {
+        $data_types = array(
+            'checkbox' => 'boolean',
+            'checkbox-list' => 'array',
+            'editor' => 'string',
+            'file' => 'integer',
+            'image' => 'integer',
+            'number' => 'integer',
+            'radio' => 'string',
+            'repeater' => 'array',
+            'select' => 'string',
+            'text' => 'string',
+            'textarea' => 'string',
+        );
+        return $data_types;
+    }
+    
     /**
      * Register meta fields.
      */
     public function register_meta_fields() {
-        error_log('register_meta_fields called');
-
-        // var_dump($this->post_types);
-        // echo 'register_meta_fields';
-
         foreach ( $this->fields as $field ) {
             foreach ( $this->post_types as $post_type ) {
-                error_log('Registering meta field ' . $field['id'] . ' for post type ' . $post_type); // Debug statement
-
                 register_meta(
                     'post',
                     $field['id'],
@@ -186,7 +196,7 @@ class Plugin_Sidebar {
                         'object_subtype' => $post_type,
                         'show_in_rest'   => true,
                         'single'         => true,
-                        'type'           => 'string',
+                        'type'           => $this->data_types[$field['type']],
                         'auth_callback'  => function() {
                             return current_user_can( 'edit_posts' );
                         },
@@ -220,71 +230,5 @@ class Plugin_Sidebar {
 	 */
     public function get_storage() {
 		return spf_get_storage( $this->object_type );
-    }
-
-    /**
-     * Validate the plugin sidebar.
-     *
-     * @return bool
-     */
-    public function validate() {
-        $valid = false;
-
-        // Check if our nonce is set.
-        if ( ! isset( $_POST[ 'spf_sidebar_' . $this->id . '_nonce' ] ) ) {
-            return $valid;
-        }
-
-        $nonce = $_POST[ 'spf_sidebar_' . $this->id . '_nonce' ];
-
-        // Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce, 'spf_sidebar_' . $this->id ) ) {
-            return $valid;
-        }
-
-        // If this is an autosave, our form has not been submitted, so we don't want to do anything.
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-            return $valid;
-        }
-
-        // Check the user's permissions.
-        if ( 'page' == $_POST['post_type'] ) {
-            if ( ! current_user_can( 'edit_page', $this->object_id ) ) {
-                return $valid;
-            }
-        } else {
-            if ( ! current_user_can( 'edit_post', $this->object_id ) ) {
-                return $valid;
-            }
-        }
-
-        $valid = true;
-
-        return $valid;
-    }
-
-    /**
-     * Get current object id.
-     *
-     * @return int
-     */
-    protected function get_current_object_id() {
-        return get_the_ID();
-    }
-
-    /**
-     * Get real object ID when submitting.
-     *
-     * @param int $object_id Object ID.
-     * @return int
-     */
-    protected function get_real_object_id( $object_id ) {
-        // Make sure meta is added to the post, not a revision.
-        if ( 'post' !== $this->object_type ) {
-            return $object_id;
-        }
-        $parent = wp_is_post_revision( $object_id );
-
-        return $parent ?: $object_id;
     }
 }

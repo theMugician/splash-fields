@@ -68,16 +68,6 @@ class Checkbox extends Input {
 			return;
 		}
 
-		// Save cloned fields as multiple values instead serialized array.
-		if ( $field['multiple'] ) {
-			$storage->delete( $post_id, $name );
-			$new = (array) $new;
-			foreach ( $new as $new_value ) {
-				$storage->add( $post_id, $name, $new_value, false );
-			}
-			return;
-		}
-
 		// Default: just update post meta.
 		$storage->update( $post_id, $name, $new );
 	}
