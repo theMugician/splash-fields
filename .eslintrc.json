@@ -36,7 +36,7 @@
 		"comma-spacing": ["error", { "before": false, "after": true }],
 		"curly": "error",
 		"func-names": [0],
-		"indent": ["error", "tab"],
+		"indent": ["error", "4"],
 		"jsdoc/check-alignment": 1,
 		"jsdoc/check-param-names": 1,
 		"jsdoc/check-tag-names": 1,

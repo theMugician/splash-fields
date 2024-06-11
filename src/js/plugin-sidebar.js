@@ -15,9 +15,29 @@ registerPlugin('spf-sidebar', {
 						return (
 						    <SPFCheckbox key={field.id} label={field.name} metaKey={field.id} />
 						)
+					case 'checkbox-list':
+						return (
+						    <SPFCheckboxList key={field.id} label={field.name} metaKey={field.id} options={field.options} />
+						)
+                    case 'editor':
+                        return (
+                            <SPFEditor key={field.id} label={field.name} metaKey={field.id} />
+                        )
+                    case 'file':
+                        return (
+                            <SPFFile key={field.id} label={field.name} metaKey={field.id} allowedTypes={field.allowedTypes} />
+                        )
+                    case 'image':
+                        return (
+                            <SPFImage key={field.id} label={field.name} metaKey={field.id} allowedTypes={field.allowedTypes} />
+                        )
                     case 'radio':
                         return (
                             <SPFRadio key={field.id} label={field.name} metaKey={field.id} options={field.options} />
+                        )
+                    case 'select':
+                        return (
+                            <SPFSelect key={field.id} label={field.name} metaKey={field.id} options={field.options} />
                         )
                     case 'text':
                         return (
