@@ -57,6 +57,7 @@ class Input extends Field {
 	 * @return string
 	 */
 	static public function html( $field, $meta ) {
+		var_dump($field);
         $output      = static::html_label( $field );
 		$output     .= '<div class="spf-field__input">'; // Open input container
         $output    	.= static::html_input( $field, $meta );
@@ -75,6 +76,7 @@ class Input extends Field {
 	 * @return  string
 	 */
 	static public function html_label( $field ) {
+		// var_dump($field);
         $field_title = $field['name'];
         $field_id = $field['id'];
 		$output  	 =  '<div class="spf-field__label">';

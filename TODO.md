@@ -1,9 +1,10 @@
 # TODOS
 
-## Fields
+## TODO
 ### File 
-- What to return: attachment_id OR filename OR fileurl?
+- What to return: attachment_id OR filename OR fileurl OR array?
 - ajax error handling
+- attribute `allowed-types`
 
 ### Select
 - add multiple attribute 
@@ -12,7 +13,9 @@
 - test every field within repeater
 - CSS for Options pages, Side Meta Box, User, Term and Gutenberg Sidebar
 
-## TODO
+### Misc
+- Rename `File` to Media Upload and change it to Media Uploader? 
+- And restrict `Image` to uploading of images through media uploader
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 - `Field::get_value` supercedes `raw_meta` function
@@ -20,6 +23,8 @@
     - `checkbox-list` array
     - `image` returns id|url|array or what?
     - `file` returns id|url|array or what?
+
+------------------------------------------
 
 ## QA
 ### Needs QA:
@@ -63,17 +68,17 @@ Test each field (12) with every object type (5)
     - term_meta
     - options
 
+------------------------------------------
+
 ## Test Error
 Use `spf-error` as value
 
-
-## Option_Page
-- decide to use settings API or create own settings with options API?
-
-## Gutenberg_Sidebar
-- Make class and add fields to it
+------------------------------------------
 
 ## Maybe
+
+### Option_Page
+- decide to use settings API or create own settings with options API?
 
 ### `Request` Class 
 To grab POST and GET form data  

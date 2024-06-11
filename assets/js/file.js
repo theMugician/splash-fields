@@ -1,62 +1,66 @@
-(function ($) {
-    'use strict'
+jQuery(function ($) {
+    'use strict';
 
-    const file = {}
-
-    /**
-     * Handles an error.
-     *
-     * @param {Object} event Click event.
-     */
-    file.errorHandler = function () {
-        $.ajax({
-            type: 'POST',
-            url: spfFileField.ajaxurl,
-            data: {
-                action: 'spf_file_error',
-			    field_id: file.inputId,
-            },
-            /**
-             * Handles a click on delete new file.
-             *
-             * @param {Object} response returned response.
-             */
-            success: function (response) {
-                console.log(response)
-            }
-        })
-    }
-
+    const file = {};
 
     /**
-     * Handles a click on delete new file.
+     * Handles a click on delete file.
      *
      * @param {Object} event Click event.
      */
     file.deleteHandler = function (event) {
-        event.preventDefault()
-        file.input.val('')
-        file.container.html('')
-    }
+        event.preventDefault();
+        file.input.val('');
+        file.container.html('');
+        file.addFileLink.removeClass('hide');
+        file.deleteFileLink.addClass('hide');
+    };
+
+    /**
+     * Handles file selection.
+     *
+     * @param {Object} event File input change event.
+     */
+    file.fileChangeHandler = function (event) {
+        const fileInput = event.target;
+        if (fileInput.files.length > 0) {
+            const selectedFile = fileInput.files[0];
+            const fileData = {
+                id: '',  // This will be filled by the server-side processing
+                url: '', // This will be filled by the server-side processing
+                name: selectedFile.name,
+                type: selectedFile.type
+            };
+
+            // Send the file data to our hidden input as a JSON string
+            file.input.val(JSON.stringify(fileData));
+            file.container.html('<div>' + fileData.name + '</div>');
+            file.addFileLink.addClass('hide');
+            file.deleteFileLink.removeClass('hide');
+        }
+    };
 
     file.addEventListeners = function () {
-        const deleteFile = file.field.find('.spf-file__delete')
-        deleteFile.on('click', file.deleteHandler)
-    }
+        file.deleteFileLink.on('click', file.deleteHandler);
+        file.fileInput.on('change', file.fileChangeHandler);
+    };
 
     /**
      * Initiate file object.
-     *
      */
-    function init () {
-        file.field = $('.spf-field-file')
-        file.input = file.field.find('.spf-file__id')
-        file.container = file.field.find('.spf-file__file-container')
-        file.addEventListeners()
+    function init() {
+        file.field = $('.spf-field-file');
+        file.input = file.field.find('.spf-file__file-data');
+        file.container = file.field.find('.spf-file__file-container');
+        file.addFileLink = file.field.find('.spf-file__upload');
+        file.deleteFileLink = file.field.find('.spf-file__delete');
+        file.fileInput = file.field.find('.spf-file__add');
+
+        file.addEventListeners();
     }
 
     $(document).ready(function () {
-        init()
-    })
+        init();
+    });
 
-})(jQuery)
+})(jQuery);

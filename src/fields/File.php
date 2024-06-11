@@ -9,270 +9,189 @@ namespace Splash_Fields\Fields;
 
 /**
  * Class File.
- * 
  */
 class File extends Input {
     public static function admin_enqueue_scripts() {
-		// Register script for Media Field
+        // Register script for Media Field
+        wp_register_script(
+            'spf-file-js',
+            SPF_ASSETS_URL . '/js/file.js',
+            array('jquery'),
+            false,
+            true
+        );
 
-		wp_register_script(
-			'spf-file-js',
-			SPF_ASSETS_URL . '/js/file.js',
-			array( 'jquery' ),
-			false,
-			true 
-		);
-
-		wp_localize_script(
+        wp_localize_script(
             'spf-file-js',
             'spfFileField',
             array(
-                'ajaxurl' => admin_url( 'admin-ajax.php' )
-            ) 
+                'ajaxurl' => admin_url('admin-ajax.php')
+            )
         );
 
-        wp_enqueue_script( 'spf-file-js' );
-	}
+        wp_enqueue_script('spf-file-js');
+    }
 
-	/**
-	 * Show field HTML
-	 *
-	 * @param array $field   Field parameters.
-	 * @param int   $post_id Post ID.
-	 *
-	 * @return mixed
-	 */
-	public static function show( array $field, $post_id = 0 ) {
-		$meta = static::raw_meta( $post_id, $field );
-		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
-		$html .= static::html( $meta, $field );
-		$html .= '</div>';
-		echo $html;
-	}
+    /**
+     * Show field HTML
+     *
+     * @param array $field Field parameters.
+     * @param int $post_id Post ID.
+     *
+     * @return mixed
+     */
+    public static function show(array $field, $post_id = 0) {
+        var_dump($field); // Correctly showing the field parameters
+        $meta = static::raw_meta($post_id, $field);
+        $html = sprintf('<div class="spf-field spf-field-%s">', esc_attr($field['type']));
+        $html .= static::html($field, $meta); // Correct order of parameters
+        $html .= '</div>';
+        echo $html;
+    }
 
+    public static function add_actions() {
+        add_action('post_edit_form_tag', [__CLASS__, 'post_edit_form_tag']);
+        add_action('wp_ajax_spf_file_error', [__CLASS__, 'ajax_error']);
+    }
 
-	public static function add_actions() {
-		add_action( 'post_edit_form_tag', [ __CLASS__, 'post_edit_form_tag' ] );
-		add_action( 'wp_ajax_spf_file_error', [ __CLASS__, 'ajax_error' ] );
-	}
+    public static function post_edit_form_tag() {
+        echo ' enctype="multipart/form-data"';
+    }
 
-	public static function post_edit_form_tag() {
-		echo ' enctype="multipart/form-data"';
-	}
+    public static function ajax_error() {
+        wp_send_json_error($_POST['message']);
+    }
 
-	public static function ajax_error() {
-		wp_send_json_error( $_POST['message'] );
-	}
-
-	static public function file_add_id( $field_id ) {
+    static public function file_add_id($field_id) {
         return "file-add-{$field_id}";
     }
 
-    static public function html_file( $meta ) {
-        $i18n_delete = apply_filters( 'spf_file_delete_string', _x( 'Delete', 'file upload', 'splash-fields' ) );
-		$i18n_edit   = apply_filters( 'spf_file_edit_string', _x( 'Edit', 'file upload', 'splash-fields' ) );
-        $file = array(
-            'icon'      => wp_get_attachment_image( $meta, [ 48, 64 ], true ),
-            'name'      => basename( get_attached_file( $meta ) ),
-            'url'       => wp_get_attachment_url( $meta ),
-            'title'     => get_the_title( $meta ),
-            'edit_link' => '',
-        );
-        $edit_link = get_edit_post_link( $meta );
-        if ( $edit_link ) {
-            $file['edit_link'] = sprintf( '<a href="%s" class="spf-file__edit" target="_blank">%s</a>', $edit_link, $i18n_edit );
-        }
+    static public function html_file($meta) {
+        $file = json_decode($meta, true);
+        $i18n_delete = apply_filters('spf_file_delete_string', _x('Delete', 'file upload', 'splash-fields'));
+        $i18n_edit = apply_filters('spf_file_edit_string', _x('Edit', 'file upload', 'splash-fields'));
 
         return sprintf(
-			'<div class="spf-file">
-				<div class="spf-file__icon">%s</div>
-				<div class="spf-file__info">
-					<a href="%s" target="_blank" class="spf-file__title">%s</a>
-					<div class="spf-file__name">%s</div>
-					<div class="spf-file__actions">
-						%s
-						<a href="#" class="spf-file__delete" data-attachment_id="%s">%s</a>
-					</div>
-				</div>
-			</div>',
-			$file['icon'],
-			esc_url( $file['url'] ),
-			esc_html( $file['title'] ),
-			esc_html( $file['name'] ),
-			$file['edit_link'],
-			esc_attr( $meta ),
-			esc_html( $i18n_delete ),
-		);
+            '<div class="spf-file">
+                <div class="spf-file__icon">%s</div>
+                <div class="spf-file__info">
+                    <a href="%s" target="_blank" class="spf-file__title">%s</a>
+                    <div class="spf-file__name">%s</div>
+                    <div class="spf-file__actions">
+                        %s
+                        <a href="#" class="spf-file__delete" data-attachment_id="%s">%s</a>
+                    </div>
+                </div>
+            </div>',
+            wp_get_attachment_image($file['id'], [48, 64], true),
+            esc_url($file['url']),
+            esc_html($file['name']),
+            esc_html($file['name']),
+            self::edit_link($file['id'], $i18n_edit),
+            esc_attr($file['id']),
+            esc_html($i18n_delete)
+        );
     }
 
-	/**
-	 * HTML and functionality to add/update/delete image
-	 * 
-	 * @link		https://codex.wordpress.org/Javascript_Reference/wp.media
-	 * 
-	 * @param array $field Field parameters.
-	 * @param array $meta  Meta value.
-	 *
-	 * @return array
-	 */
-	static public function html_input( $field, $meta ) {
-        $file_add_name = self::file_add_id( $field['id'] );
+    static private function edit_link($id, $text) {
+        $edit_link = get_edit_post_link($id);
+        return $edit_link ? sprintf('<a href="%s" class="spf-file__edit" target="_blank">%s</a>', $edit_link, $text) : '';
+    }
+
+    /**
+     * HTML and functionality to add/update/delete file
+     *
+     * @param array $field Field parameters.
+     * @param array $meta Meta value.
+     *
+     * @return string
+     */
+    public static function html_input($field, $meta) {
+        $file_add_name = self::file_add_id($field['id']);
         $file_add_class = "spf-file__add";
 
         $file_add_attributes = ' type="file" id="' . $file_add_name . '" name="' . $file_add_name . '" class="' . $file_add_class . '"';
 
-        $has_file = false;
-		$delete_file_hide = ' hide';
-		$add_file_hide = '';
+        $has_file = !empty($meta);
+        $delete_file_hide = $has_file ? '' : ' hide';
+        $add_file_hide = $has_file ? ' hide' : '';
 
-        if ( $meta !== '' && $meta !== null && $meta !== false ) {
-            $has_file = true;
+        $output = '<div class="spf-field__input">';
+        $output .= '<div class="spf-file__file-container">';
+        if ($has_file) {
+            $output .= self::html_file($meta);
         }
-
-		if ( $has_file ) {
-			$delete_file_hide = '';
-			$add_file_hide = ' hide';
-		}
-		$output = '<div class="spf-field__input">';
-		$output .= '<div class="spf-file__file-container">';
-		if ( $has_file ) {
-            $output .= self::html_file( $meta );
-		}
-		$output .= '</div>';
-		$output .= sprintf(
+        $output .= '</div>';
+        $output .= sprintf(
             '<input %s %s/>',
-			$add_file_hide,
+            $add_file_hide,
             $file_add_attributes,
-			__( esc_html( 'Add File' ), 'spf' )
-		);
-		$output .= sprintf(
-			'<input id="%s" class="spf-file__id" name="%s" type="hidden"  value="%s" />',
-            $field['id'],
-			$field['id'],
-			esc_attr( $meta )
-		);
-		if ( isset( $field['description'] ) && strlen( $field['description'] ) > 0 ) {
-			$output .= sprintf( '<p class="spf-field__description">%s</p>', esc_html( $field['description'] ) );
-		}
-		$output .= '</div>';
-		return $output;
-	}
-
-	public static function check_for_file_object( $value, $object_id, array $field ) {
-        return $value || false;
-    }
-
-    // TODO
-	public static function check_supported_file_types( $value ) {
-        /*
-        // Setup the array of supported file types. In this case, it's just PDF. 
-        $supported_mime_types = array( 'application/pdf' );
-        
-        // Get the file type of the upload 
-        $arr_file_type = wp_check_filetype( basename( $_FILES[$field['id']]['name'] ) );
-        $uploaded_type = $arr_file_type['type'];
-        
-        // Check if the type is supported. If not, throw an error. 
-        if ( ! in_array( $uploaded_type, $supported_mime_types ) ) {
-            wp_die( 'The file type that you\'ve uploaded is not a PDF.' );
+            esc_html__('Add File', 'spf')
+        );
+        $output .= sprintf(
+            '<input id="%s" class="spf-file__file-data" name="%s" type="hidden" value="%s" />',
+            esc_attr($field['id']),
+            esc_attr($field['id']),
+            esc_attr($meta)
+        );
+        if (isset($field['description']) && strlen($field['description']) > 0) {
+            $output .= sprintf('<p class="spf-field__description">%s</p>', esc_html($field['description']));
         }
-        */
+        $output .= '</div>';
+        return $output;
     }
 
     /**
-	 * Process the submitted value before saving into the database.
-     * 
-	 * @see                 https://developer.wordpress.org/reference/functions/media_handle_upload/
-     * 
-	 * @param   mixed       $value      The submitted value.
-	 * @param   int         $object_id  The object ID. If $object_id is not applicable make it 0
-	 * @param   array       $field      The field settings.
-     * 
-     * @return  int|string  $value      File attachment ID or empty string if there is nothing.
-	 */
-	public static function process_value( $value, $object_id, array $field ) {
-        // Existing File or Deleted File    : $value = $field['id'] || ''
-        // Add File                         : $value = $new_meta from $_FILES
+     * Process the submitted value before saving into the database.
+     *
+     * @param mixed $value The submitted value.
+     * @param int $object_id The object ID.
+     * @param array $field The field settings.
+     *
+     * @return string JSON-encoded array with file data or empty string if there is nothing.
+     */
+    public static function process_value($value, $object_id, array $field) {
+        // Decode the JSON string to an array
+        $decoded_value = json_decode(stripslashes($value), true);
 
-        // Add will not work in AJAX because $_FILES is only available upon posting form
-        // Delete should be AJAX, it's not needed in this method
-
-        $value = ''; // By default start out as empty string
-        // Empty string value will result in metadata removal in ::save() function
-
-        // Get existing field value from hidden input
-        $existing_value = $_POST[$field['id']];
-        $file_add_id = self::file_add_id( $field['id'] );
-
-        // If no new $_FILES name exists or no existing value return empty string.
-        if ( empty( $_FILES[$file_add_id]['name'] ) && empty( $existing_value ) ) {
-            return $value;
+        // Check if json_decode returned null due to invalid JSON
+        if (is_null($decoded_value)) {
+            error_log('Invalid JSON data: ' . print_r($value, true));
+            return '';
         }
 
-        // Make value existing file value - don't change meta or make empty string
-        // $value = 'existing_meta_value' OR ''
-        $value = $existing_value;
-
-        // Make value equal chosen file attachment ID if $_FILES exists
-        if ( ! empty( $_FILES[$file_add_id]['name'] ) ) {
-
-            // TODO
-            self::check_supported_file_types( $value );
-
-            $attachment_id = media_handle_upload( $file_add_id, $object_id );
-
-            if ( is_wp_error( $attachment_id ) ) {
-				$error_message = $attachment_id->get_error_message();
-				self::error_message( $error_message );
-				error_log( print_r( $error_message, true ) );
-            } else {
-                $value = $attachment_id;
+        // Ensure $decoded_value is an array
+        if (is_array($decoded_value)) {
+            // If a new file is uploaded, handle it
+            $file_add_id = self::file_add_id($field['id']);
+            if (!empty($_FILES[$file_add_id]['name'])) {
+                $attachment_id = media_handle_upload($file_add_id, $object_id);
+                if (is_wp_error($attachment_id)) {
+                    $error_message = $attachment_id->get_error_message();
+                    self::error_message($error_message);
+                    error_log(print_r($error_message, true));
+                    return '';
+                } else {
+                    $decoded_value['id'] = $attachment_id;
+                    $decoded_value['url'] = wp_get_attachment_url($attachment_id);
+                    $decoded_value['name'] = get_the_title($attachment_id);
+                    $decoded_value['type'] = get_post_mime_type($attachment_id);
+                }
             }
-        }
 
-        return $value;
+            // Sanitize each element in the array
+            $sanitized_value = array_map('sanitize_text_field', $decoded_value);
+
+            // Re-encode the array to a JSON string
+            return wp_json_encode($sanitized_value);
+        } else {
+            // Log an error if the decoded value is not an array
+            error_log('Decoded value is not an array: ' . print_r($decoded_value, true));
+            return '';
+        }
     }
 
-	public static function error_message( $message ) {
-		echo "<p class='spf-field__error'>{$message}</p>";
-	}
-
-    /**
-	 * Save meta value.
-	 *
-	 * @param mixed $new     The submitted meta value.
-	 * @param mixed $old     The existing meta value.
-	 * @param int   $post_id The post ID.
-	 * @param array $field   The field parameters.
-	 */
-	public static function save( $new, $old, $post_id, $field ) {
-		// Old - Might be useful for later
-		// if ( empty( $field['id'] ) || ! $field['save_field'] ) {
-		if ( empty( $field['id'] ) ) {
-			return;
-		}
-
-		$name    = $field['id'];
-		$storage = $field['storage'];
-
-		// Remove post meta if $new is empty.
-		// $is_valid_for_field = '' !== $new && [] !== $new;
-		if ( ! ( '' !== $new && [] !== $new ) ) {
-			$storage->delete( $post_id, $name );
-			return;
-		}
-
-		// Save cloned fields as multiple values instead serialized array.
-		if ( $field['multiple'] ) {
-			$storage->delete( $post_id, $name );
-			$new = (array) $new;
-			foreach ( $new as $new_value ) {
-				$storage->add( $post_id, $name, $new_value, false );
-			}
-			return;
-		}
-
-		// Default: just update post meta.
-		$storage->update( $post_id, $name, $new );
-	}
+    public static function error_message($message) {
+        echo "<p class='spf-field__error'>{$message}</p>";
+    }
 }
