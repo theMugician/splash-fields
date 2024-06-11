@@ -3,27 +3,27 @@ import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
 
 const SPFRadio = compose(
-	withDispatch((dispatch, props) => {
-		return {
-			setMetaValue: (value) => {
-				dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
-			}
-		}
-	}),
-	withSelect((select, props) => {
-		return {
-			metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
-		}
-	})
+    withDispatch((dispatch, props) => {
+        return {
+            setMetaValue: (value) => {
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+            }
+        }
+    }),
+    withSelect((select, props) => {
+        return {
+            metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+        }
+    })
 )((props) => {
-	return (
-		<RadioControl
-			label={props.label}
-			selected={props.metaValue}
-			options={props.options}
-			onChange={(content) => { props.setMetaValue(content) }}
-		/>
-	)
+    return (
+        <RadioControl
+            label={props.label}
+            selected={props.metaValue}
+            options={props.options}
+            onChange={(content) => { props.setMetaValue(content) }}
+        />
+    )
 })
 
 export default SPFRadio

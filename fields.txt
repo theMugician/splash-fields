@@ -1,0 +1,11 @@
+checkbox
+checkbox-list
+editor
+file
+image
+number
+radio
+repeater
+select
+text
+textarea

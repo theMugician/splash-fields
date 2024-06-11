@@ -1,8 +1,8 @@
-import { TextControl } from '@wordpress/components'
+import { SelectControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
 
-const SPFText = compose(
+const SPFSelect = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
@@ -17,13 +17,13 @@ const SPFText = compose(
     })
 )((props) => {
     return (
-        <TextControl
-            type='text'
+        <SelectControl
             label={props.label}
             value={props.metaValue}
+            options={props.options}
             onChange={(content) => { props.setMetaValue(content) }}
         />
     )
 })
 
-export default SPFText
+export default SPFSelect

@@ -2,7 +2,7 @@ import { TextControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
 
-const SPFText = compose(
+const SPFNumber = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
@@ -18,7 +18,7 @@ const SPFText = compose(
 )((props) => {
     return (
         <TextControl
-            type='text'
+            type="number"
             label={props.label}
             value={props.metaValue}
             onChange={(content) => { props.setMetaValue(content) }}
@@ -26,4 +26,4 @@ const SPFText = compose(
     )
 })
 
-export default SPFText
+export default SPFNumber

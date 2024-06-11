@@ -1,7 +1,7 @@
 (function ($) {
     'use strict'
 
-    let repeater = {}
+    const repeater = {}
 
     /**
      * Handles a click to add a repeater row.
@@ -40,7 +40,7 @@
         event.preventDefault()
 
         // Remove the repeater group
-        var $wrapper = $(this).closest('.spf-repeater-wrapper')
+        const $wrapper = $(this).closest('.spf-repeater-wrapper')
         $(this).closest('.spf-repeater-group').remove()
 
         // Update indexes

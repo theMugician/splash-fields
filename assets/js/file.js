@@ -1,14 +1,14 @@
-( function ($) {
-	'use strict'
+(function ($) {
+    'use strict'
 
-	let file = {}
+    const file = {}
 
     /**
-	 * Handles a click on delete new file.
-	 *
-	 * @param event Click event.
-	 */
-	file.errorHandler = function (event) {
+     * Handles an error.
+     *
+     * @param {Object} event Click event.
+     */
+    file.errorHandler = function () {
         $.ajax({
             type: 'POST',
             url: spfFileField.ajaxurl,
@@ -16,37 +16,46 @@
                 action: 'spf_file_error',
 			    field_id: file.inputId,
             },
-            success: function( response ) {
+            /**
+             * Handles a click on delete new file.
+             *
+             * @param {Object} response returned response.
+             */
+            success: function (response) {
                 console.log(response)
             }
-		})
-	}
+        })
+    }
 
 
-	/**
-	 * Handles a click on delete new file.
-	 *
-	 * @param event Click event.
-	 */
-	file.deleteHandler = function (event) {
+    /**
+     * Handles a click on delete new file.
+     *
+     * @param {Object} event Click event.
+     */
+    file.deleteHandler = function (event) {
         event.preventDefault()
         file.input.val('')
         file.container.html('')
-	}
+    }
 
     file.addEventListeners = function () {
         const deleteFile = file.field.find('.spf-file__delete')
         deleteFile.on('click', file.deleteHandler)
     }
 
-    function init() {
+    /**
+     * Initiate file object.
+     *
+     */
+    function init () {
         file.field = $('.spf-field-file')
         file.input = file.field.find('.spf-file__id')
         file.container = file.field.find('.spf-file__file-container')
         file.addEventListeners()
-	}
+    }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         init()
     })
 
