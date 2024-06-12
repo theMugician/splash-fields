@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
     entry: './src/js/plugin-sidebar.js', // Entry point of your JavaScript
@@ -33,6 +33,7 @@ module.exports = {
         'react': 'React',
         'react-dom': 'ReactDOM',
         '@wordpress/blocks': ['wp', 'blocks'],
+        '@wordpress/block-editor': ['wp', 'blockEditor'],
         '@wordpress/i18n': ['wp', 'i18n'],
         '@wordpress/element': ['wp', 'element'],
         '@wordpress/components': ['wp', 'components'],
@@ -41,4 +42,4 @@ module.exports = {
         '@wordpress/edit-post': ['wp', 'editPost'],
         '@wordpress/compose': ['wp', 'compose'],
     }
-};
+}

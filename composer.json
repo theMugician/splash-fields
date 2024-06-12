@@ -12,13 +12,13 @@
 	},
 	"homepage": "https://github.com/theMugician/splash-fields",
 	"require-dev": {
-		"wp-coding-standards/wpcs": "^2.3",
+		"wp-coding-standards/wpcs": "^3.0",
 		"phpcompatibility/phpcompatibility-wp": "^2.1"
 	},
 	"config": {
 		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true
-		}
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
 	},
     "authors": [
         {

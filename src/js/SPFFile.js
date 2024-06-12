@@ -18,23 +18,41 @@ const SPFFile = compose(
         }
     })
 )((props) => {
+    const handleSelect = (media) => {
+        const fileData = {
+            id: media.id,
+            url: media.url,
+            name: media.title,
+            type: media.mime
+        }
+        props.setMetaValue(JSON.stringify(fileData))
+    }
+
+    const fileData = props.metaValue ? JSON.parse(props.metaValue) : null
+
     return (
         <div>
             {props.label && <label>{props.label}</label>}
             <MediaUploadCheck>
                 <MediaUpload
-                    onSelect={(media) => props.setMetaValue(media.id)}
+                    onSelect={handleSelect}
                     allowedTypes={props.allowedTypes}
-                    value={props.metaValue}
+                    value={fileData ? fileData.id : ''}
                     render={({ open }) => (
-                        <Button onClick={open}>
-                            {props.metaValue ? __('Change File') : __('Upload File')}
+                        <Button variant='primary' onClick={open}>
+                            {fileData ? __('Change File') : __('Upload File')}
                         </Button>
                     )}
                 />
             </MediaUploadCheck>
-            {props.metaValue && (
-                <p>{__('File ID:', 'text-domain')} {props.metaValue}</p>
+            {fileData && (
+                <div>
+                    <p>{__('File:', 'text-domain')}</p>
+                    <p>{__('ID:', 'text-domain')} {fileData.id}</p>
+                    <p>{__('URL:', 'text-domain')} <a href={fileData.url} target="_blank" rel="noopener noreferrer">{fileData.url}</a></p>
+                    <p>{__('Name:', 'text-domain')} {fileData.name}</p>
+                    <p>{__('Type:', 'text-domain')} {fileData.type}</p>
+                </div>
             )}
         </div>
     )

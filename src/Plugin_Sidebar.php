@@ -171,7 +171,7 @@ class Plugin_Sidebar {
             'checkbox' => 'boolean',
             'checkbox-list' => 'array',
             'editor' => 'string',
-            'file' => 'integer',
+            'file' => 'string',
             'image' => 'integer',
             'number' => 'integer',
             'radio' => 'string',
@@ -197,6 +197,10 @@ class Plugin_Sidebar {
                         'show_in_rest'   => true,
                         'single'         => true,
                         'type'           => $this->data_types[$field['type']],
+                        'sanitize_callback' => function( $value ) use ( $field ) {
+                            // return Field::call( $field, 'process_value', $value, 0, $field );
+                            return $value;
+                        },
                         'auth_callback'  => function() {
                             return current_user_can( 'edit_posts' );
                         },

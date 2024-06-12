@@ -9,13 +9,8 @@
 ### Select
 - add multiple attribute 
 
-### Repeater
-- test every field within repeater
-- CSS for Options pages, Side Meta Box, User, Term and Gutenberg Sidebar
-
 ### Misc
-- Rename `File` to Media Upload and change it to Media Uploader? 
-- And restrict `Image` to uploading of images through media uploader
+- New call stack for `process_value` and `sanitize`  
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 - `Field::get_value` supercedes `raw_meta` function
