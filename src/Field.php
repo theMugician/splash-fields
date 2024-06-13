@@ -137,22 +137,30 @@ class Field {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
+		$value = self::value( $value, $object_id, $field );
+		$value = self::sanitize( $value );
+		return $value;
+	}
 
-		// TODO: Add Sanitize() Class
+	/**
+	 * Format the value before saving into the database.
+	 *
+	 * @param mixed $value     The submitted value.
+	 * @param int   $object_id The object ID.
+	 * @param array $field     The field settings.
+	 */
+	public static function value( $value, $object_id, array $field ) {
+		return $value;
+	}
 
-		/*
-		$old_value = self::call( $field, 'raw_meta', $object_id );
-
-		// Allow field class change the value.
-		if ( $field['clone'] ) {
-			$value = RWMB_Clone::value( $value, $old_value, $object_id, $field );
-		} else {
-			$value = self::call( $field, 'value', $value, $old_value, $object_id );
-			$value = self::filter( 'sanitize', $value, $field, $old_value, $object_id );
-		}
-		$value = self::filter( 'value', $value, $field, $old_value, $object_id );
-		*/
-
+	/**
+	 * Sanitize the submitted value before saving into the database.
+	 *
+	 * @param mixed $value The submitted value.
+	 *
+	 * @return mixed
+	 */
+	public static function sanitize( $value ) {	
 		return sanitize_text_field( $value );
 	}
 
@@ -165,7 +173,6 @@ class Field {
 	 * @return array
 	 */
 	public static function get_attributes( $field, $value = null ) {
-		// var_dump($field);
 		$attributes = wp_parse_args( $field['attributes'], [
 			'id'        => $field['id'],
 			'class'     => '',

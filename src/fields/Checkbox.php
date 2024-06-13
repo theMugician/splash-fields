@@ -37,7 +37,7 @@ class Checkbox extends Input {
 	 * @param int   $object_id The object ID.
 	 * @param array $field     The field settings.
 	 */
-	public static function process_value( $value, $object_id, array $field ) {
+	public static function sanitize( $value ) {
 		return (int) ! empty( $value );
 	}
 

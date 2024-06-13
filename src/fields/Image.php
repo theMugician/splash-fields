@@ -120,42 +120,14 @@ class Image extends Input {
         return $output;
     }
 
-    /**
-     * Process and sanitize the submitted value before saving into the database.
-     *
-     * @param mixed $value     The submitted value.
-     * @param int   $object_id The object ID.
-     * @param array $field     The field settings.
-     * @return string
-     */
-    public static function process_value( $value, $object_id, array $field ) {
-        // Decode the JSON string to an array
-        $decoded_value = json_decode( stripslashes( $value ), true );
-
-        // Check if json_decode returned null due to invalid JSON
-        if ( is_null( $decoded_value ) ) {
-            error_log( 'Invalid JSON data: ' . print_r( $value, true ) );
-            return '';
-        }
-
-        // Ensure $decoded_value is an array
-        if ( is_array( $decoded_value ) ) {
-            // Sanitize each element in the array
-            $sanitized_value = array_map( 'sanitize_text_field', $decoded_value );
-
-            // Check if sanitization changed the values
-            if ($sanitized_value !== $decoded_value) {
-                error_log( 'Sanitization altered the data. Before: ' . print_r( $decoded_value, true ) . ' After: ' . print_r( $sanitized_value, true ) );
-            }
-
-            // Re-encode the array to a JSON string
-            $encoded_value = wp_json_encode( $sanitized_value );
-
-            return $encoded_value;
+    public static function sanitize( $value ) {
+        // Sanitize each element in the array.
+        $value = maybe_unserialize( $value );
+        if ( is_array( $value ) && ! empty( $value ) ) {
+            $value = array_map( 'sanitize_text_field', $decoded_value );
         } else {
-            // Log an error if the decoded value is not an array
-            error_log( 'Decoded value is not an array: ' . print_r( $decoded_value, true ) );
-            return '';
+            $value = sanitize_text_field( $value );
         }
+        return maybe_serialize( $value );
     }
 }

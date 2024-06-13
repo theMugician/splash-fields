@@ -141,54 +141,49 @@ class File extends Input {
         return $output;
     }
 
-    /**
-     * Process the submitted value before saving into the database.
-     *
-     * @param mixed $value The submitted value.
-     * @param int $object_id The object ID.
-     * @param array $field The field settings.
-     *
-     * @return string JSON-encoded array with file data or empty string if there is nothing.
-     */
-    public static function process_value($value, $object_id, array $field) {
-        // Decode the JSON string to an array
-        $decoded_value = json_decode(stripslashes($value), true);
+    public static function value( $value, $object_id, array $field ) {
+        // Unserialize the value to an array.
+        $decoded_value = maybe_unserialize( $value );
 
-        // Check if json_decode returned null due to invalid JSON
-        if (is_null($decoded_value)) {
-            error_log('Invalid JSON data: ' . print_r($value, true));
+        // Check if maybe_unserialize returned an array.
+        if ( ! is_array( $decoded_value ) ) {
+            error_log( 'Invalid serialized data: ' . print_r( $value, true ) );
             return '';
         }
 
-        // Ensure $decoded_value is an array
-        if (is_array($decoded_value)) {
-            // If a new file is uploaded, handle it
-            $file_add_id = self::file_add_id($field['id']);
-            if (!empty($_FILES[$file_add_id]['name'])) {
-                $attachment_id = media_handle_upload($file_add_id, $object_id);
-                if (is_wp_error($attachment_id)) {
-                    $error_message = $attachment_id->get_error_message();
-                    self::error_message($error_message);
-                    error_log(print_r($error_message, true));
-                    return '';
-                } else {
-                    $decoded_value['id'] = $attachment_id;
-                    $decoded_value['url'] = wp_get_attachment_url($attachment_id);
-                    $decoded_value['name'] = get_the_title($attachment_id);
-                    $decoded_value['type'] = get_post_mime_type($attachment_id);
-                }
+        // If a new file is uploaded, handle it.
+        $file_add_id = self::file_add_id( $field['id'] );
+
+        if ( ! empty( $_FILES[ $file_add_id ]['name'] ) ) {
+            $attachment_id = media_handle_upload( $file_add_id, $object_id );
+            if ( is_wp_error( $attachment_id ) ) {
+                $error_message = $attachment_id->get_error_message();
+                self::error_message( $error_message );
+                error_log( print_r( $error_message, true ) );
+                return '';
+            } else {
+                $decoded_value['id']    = $attachment_id;
+                $decoded_value['url']   = wp_get_attachment_url( $attachment_id );
+                $decoded_value['name']  = get_the_title( $attachment_id );
+                $decoded_value['type']  = get_post_mime_type( $attachment_id );
             }
-
-            // Sanitize each element in the array
-            $sanitized_value = array_map('sanitize_text_field', $decoded_value);
-
-            // Re-encode the array to a JSON string
-            return wp_json_encode($sanitized_value);
-        } else {
-            // Log an error if the decoded value is not an array
-            error_log('Decoded value is not an array: ' . print_r($decoded_value, true));
-            return '';
         }
+
+        // Sanitize each element in the array.
+        $value = $decoded_value;
+
+        // Re-serialize the array to a string.
+        return maybe_serialize( $sanitized_value );
+    }
+
+    public static function sanitize( $value ) {
+        $value = maybe_unserialize( $value );
+        if ( is_array( $value ) && ! empty( $value ) ) {
+            $value = array_map( 'sanitize_text_field', $decoded_value );
+        } else {
+            $value = sanitize_text_field( $value );
+        }
+        return maybe_serialize( $value );
     }
 
     public static function error_message($message) {

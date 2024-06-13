@@ -133,3 +133,84 @@
 		update_option( $field['id'], $new );
 	}
     */
+
+
+    	/**
+	 * Save meta value.
+	 * Field::public static function save( $new, $old, $post_id, $field ) {
+	 * @param mixed $new     The submitted meta value.
+	 * @param mixed $old     The existing meta value.
+	 * @param int   $post_id The post ID.
+	 * @param array $field   The field parameters.
+	 */
+	function save( $new, $old, $post_id, $field ) {
+		// Old - Might be useful for later
+		// if ( empty( $field['id'] ) || ! $field['save_field'] ) {
+		if ( empty( $field['id'] ) ) {
+			return;
+		}
+
+		$name    = $field['id'];
+		$storage = $field['storage'];
+
+		// Old - Might be useful for later
+		// $is_valid_for_field = '' !== $new && [] !== $new;
+		/*
+		if ( ! ( '' !== $new && [] !== $new ) ) {
+			$storage->delete( $post_id, $name );
+			return;
+		} else {
+            if ( $field['multiple'] ) {
+                $new = maybe_serialize( $new );
+            }
+        }
+		*/
+		if ( is_array( $new ) ) {
+			// Remove object meta if $new is empty.
+            if ( empty( $new ) ) {
+				$storage->delete( $post_id, $name );
+				return;
+            } else {
+				$storage->update( $post_id, $name, maybe_serialize( $new ) );
+				return;
+            }
+        } else {
+			// Remove post meta if $new is empty.
+            if ( $new === '' || $new === null ) {
+				$storage->delete( $post_id, $name );
+				return;
+            } else {
+				$storage->update( $post_id, $name, $new );
+				return;
+            }
+        }
+
+		// Default: just update post meta.
+	}
+
+    	/**
+	 * Process the submitted value before saving into the database.
+	 * public static Field::process_value
+	 * @param mixed $value     The submitted value.
+	 * @param int   $object_id The object ID.
+	 * @param array $field     The field settings.
+	 */
+	function process_value( $value, $object_id, array $field ) {
+
+		// TODO: Add Sanitize() Class
+
+		/*
+		$old_value = self::call( $field, 'raw_meta', $object_id );
+
+		// Allow field class change the value.
+		if ( $field['clone'] ) {
+			$value = RWMB_Clone::value( $value, $old_value, $object_id, $field );
+		} else {
+			$value = self::call( $field, 'value', $value, $old_value, $object_id );
+			$value = self::filter( 'sanitize', $value, $field, $old_value, $object_id );
+		}
+		$value = self::filter( 'value', $value, $field, $old_value, $object_id );
+		*/
+
+		return sanitize_text_field( $value );
+	}
