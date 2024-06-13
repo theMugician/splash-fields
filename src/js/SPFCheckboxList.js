@@ -7,13 +7,14 @@ const SPFCheckboxList = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
-                dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: JSON.stringify(value) } })
             }
         }
     }),
     withSelect((select, props) => {
+        const metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
         return {
-            metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey] || []
+            metaValue: metaValue ? JSON.parse(metaValue) : []
         }
     })
 )((props) => {
