@@ -16,7 +16,7 @@ import SPFNumber from './SPFNumber'
 
 // Assuming 'fields' is localized by wp_localize_script and is available globally
 const fields = window.fields || []
-
+console.log(fields)
 registerPlugin('spf-sidebar', {
     render: () => (
         <PluginSidebar name='spf-sidebar' title='SPF Sidebar'>

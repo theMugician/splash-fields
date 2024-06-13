@@ -2,15 +2,12 @@
 
 ## TODO
 ### File 
-- What to return: attachment_id OR filename OR fileurl OR array?
 - ajax error handling
 - attribute `allowed-types`
 
-### Select
-- add multiple attribute 
 
 ### Misc
-- New call stack for `process_value` and `sanitize`  
+- `file` and `image` attribute `allowed-types`
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 - `Field::get_value` supercedes `raw_meta` function
@@ -34,6 +31,10 @@
 ### Testing Protocol:
 Test each field (12) with every object type (5)  
 *Repeater will need testing with 11 fields within*
+
+#### Test 1st ->
+- Gutenberg Sidebar
+
 
 #### Object Types
 - Metabox

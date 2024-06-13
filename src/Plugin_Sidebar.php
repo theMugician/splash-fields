@@ -169,13 +169,13 @@ class Plugin_Sidebar {
     protected static function get_data_types() {
         $data_types = array(
             'checkbox' => 'boolean',
-            'checkbox-list' => 'array',
+            'checkbox-list' => 'string',
             'editor' => 'string',
             'file' => 'string',
             'image' => 'integer',
             'number' => 'integer',
             'radio' => 'string',
-            'repeater' => 'array',
+            'repeater' => 'string',
             'select' => 'string',
             'text' => 'string',
             'textarea' => 'string',
@@ -198,8 +198,7 @@ class Plugin_Sidebar {
                         'single'         => true,
                         'type'           => $this->data_types[$field['type']],
                         'sanitize_callback' => function( $value ) use ( $field ) {
-                            // return Field::call( $field, 'process_value', $value, 0, $field );
-                            return $value;
+                            return Field::call( $field, 'sanitize', $value );
                         },
                         'auth_callback'  => function() {
                             return current_user_can( 'edit_posts' );

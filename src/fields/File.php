@@ -41,7 +41,6 @@ class File extends Input {
      * @return mixed
      */
     public static function show(array $field, $post_id = 0) {
-        var_dump($field); // Correctly showing the field parameters
         $meta = static::raw_meta($post_id, $field);
         $html = sprintf('<div class="spf-field spf-field-%s">', esc_attr($field['type']));
         $html .= static::html($field, $meta); // Correct order of parameters

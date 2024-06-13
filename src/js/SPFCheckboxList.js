@@ -1,6 +1,7 @@
 import { CheckboxControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
+import PropTypes from 'prop-types'
 
 const SPFCheckboxList = compose(
     withDispatch((dispatch, props) => {
@@ -23,10 +24,15 @@ const SPFCheckboxList = compose(
         props.setMetaValue(newValue)
     }
 
+    const optionsArray = Object.entries(props.options).map(([value, label]) => ({
+        value,
+        label
+    }))
+
     return (
         <div>
             {props.label && <label>{props.label}</label>}
-            {props.options.map(option => (
+            {optionsArray.map(option => (
                 <CheckboxControl
                     key={option.value}
                     label={option.label}
@@ -37,5 +43,17 @@ const SPFCheckboxList = compose(
         </div>
     )
 })
+
+SPFCheckboxList.propTypes = {
+    label: PropTypes.string,
+    options: PropTypes.objectOf(PropTypes.string).isRequired,
+    metaKey: PropTypes.string.isRequired,
+    metaValue: PropTypes.array.isRequired,
+    setMetaValue: PropTypes.func.isRequired
+}
+
+SPFCheckboxList.defaultProps = {
+    options: {}
+}
 
 export default SPFCheckboxList
