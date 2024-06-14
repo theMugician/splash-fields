@@ -91,7 +91,7 @@ class Repeater extends Input {
     protected static function show_sub_field( $field, $meta ) {
         $field = Field::call( 'normalize', $field );
         if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-            $meta = maybe_unserialize( $meta );
+            $meta = json_decode( $meta );
             $meta = is_array( $meta ) ? $meta : array();
         }
         $meta  = static::get_default( $field, $meta );

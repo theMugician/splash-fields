@@ -8,35 +8,72 @@ const SPFImage = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
-                dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+                const newValue = JSON.stringify(value)
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: newValue } })
             }
         }
     }),
     withSelect((select, props) => {
+        let metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+        let parsedValue = []
+        try {
+            parsedValue = metaValue ? JSON.parse(metaValue) : []
+            if (!Array.isArray(parsedValue)) {
+                parsedValue = []
+            }
+        } catch (e) {
+            console.error('Failed to parse metaValue', e)
+            parsedValue = []
+        }
         return {
-            metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+            metaValue: parsedValue
         }
     })
 )((props) => {
+    const addImage = (media) => {
+        const newImage = {
+            id: media.id,
+            url: media.url,
+            name: media.title,
+            alt: media.alt
+        }
+        const newValue = [...props.metaValue, newImage]
+        props.setMetaValue(newValue)
+    }
+
+    const removeImage = (id) => {
+        const newValue = props.metaValue.filter((image) => image.id !== id)
+        props.setMetaValue(newValue)
+    }
+
     return (
         <div>
             {props.label && <label>{props.label}</label>}
             <MediaUploadCheck>
                 <MediaUpload
-                    onSelect={(media) => props.setMetaValue(media.id)}
+                    onSelect={addImage}
                     allowedTypes={['image']}
-                    value={props.metaValue}
+                    value={props.metaValue.map((image) => image.id)}
                     render={({ open }) => (
                         <Button onClick={open}>
-                            {props.metaValue ? __('Change Image') : __('Upload Image')}
+                            {__('Upload Image')}
                         </Button>
                     )}
                 />
             </MediaUploadCheck>
-            {props.metaValue && (
+            {props.metaValue.length > 0 && (
                 <div>
-                    <img src={wp.media.attachment(props.metaValue).get('url')} alt={__('Selected Image')} style={{ maxWidth: '100%' }} />
-                    <p>{__('Image ID:', 'text-domain')} {props.metaValue}</p>
+                    {props.metaValue.map((image) => (
+                        <div key={image.id}>
+                            <img src={image.url} alt={image.alt || __('Selected Image')} style={{ maxWidth: '100%' }} />
+                            <p>{__('Image ID:', 'text-domain')} {image.id}</p>
+                            <p>{__('Image Name:', 'text-domain')} {image.name}</p>
+                            <p>{__('Image Alt:', 'text-domain')} {image.alt}</p>
+                            <Button onClick={() => removeImage(image.id)}>
+                                {__('Remove Image')}
+                            </Button>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>

@@ -29,7 +29,7 @@ class Field {
 		// Replace with default?
 		// Unserialize raw meta data.
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-			$meta = maybe_unserialize( $meta );
+			$meta = json_decode( $meta );
 			$meta = is_array( $meta ) ? $meta : array();
 		}
 		// On Save
@@ -50,7 +50,7 @@ class Field {
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-			$meta = maybe_unserialize( $meta );
+			$meta = json_decode( $meta );
 			$meta = is_array( $meta ) ? $meta : array();
 		}
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
@@ -245,7 +245,7 @@ class Field {
 				$storage->delete( $post_id, $name );
 				return;
             } else {
-				$storage->update( $post_id, $name, maybe_serialize( $new ) );
+				$storage->update( $post_id, $name, json_encode( $new ) );
 				return;
             }
         } else {

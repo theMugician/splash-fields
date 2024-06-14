@@ -4,7 +4,6 @@ import { PanelBody } from '@wordpress/components'
 import SPFCheckbox from './SPFCheckbox'
 import SPFCheckboxList from './SPFCheckboxList'
 import SPFEditor from './SPFEditor'
-// import MinimalRichText from './MinimalRichText'
 import SPFFile from './SPFFile'
 import SPFImage from './SPFImage'
 import SPFRadio from './SPFRadio'
@@ -34,6 +33,7 @@ registerPlugin('spf-sidebar', {
                         case 'image':
                             return <SPFImage key={field.id} label={field.name} metaKey={field.id} allowedTypes={field.allowedTypes} />
                         case 'radio':
+                            console.log(field)
                             return <SPFRadio key={field.id} label={field.name} metaKey={field.id} options={field.options} />
                         case 'repeater':
                             return <SPFRepeater key={field.id} label={field.name} metaKey={field.id} fields={field.fields} />

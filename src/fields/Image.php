@@ -120,14 +120,36 @@ class Image extends Input {
         return $output;
     }
 
+    /**
+     * Sanitize the meta value.
+     *
+     * @param array  $field The field configuration.
+     * @param string $value The meta value to sanitize.
+     * @return string The sanitized meta value.
+     */
     public static function sanitize( $value ) {
-        // Sanitize each element in the array.
-        $value = maybe_unserialize( $value );
-        if ( is_array( $value ) && ! empty( $value ) ) {
-            $value = array_map( 'sanitize_text_field', $decoded_value );
-        } else {
-            $value = sanitize_text_field( $value );
+        // Decode the JSON string.
+        $decoded_value = json_decode( $value, true );
+
+        // Check if the decoded value is an array.
+        if ( is_array( $decoded_value ) ) {
+            // Iterate through each item and sanitize its fields.
+            foreach ( $decoded_value as &$item ) {
+                if ( is_array( $item ) ) {
+                    $item['id'] = isset( $item['id'] ) ? intval( $item['id'] ) : 0;
+                    $item['url'] = isset( $item['url'] ) ? esc_url_raw( $item['url'] ) : '';
+                    $item['name'] = isset( $item['name'] ) ? sanitize_text_field( $item['name'] ) : '';
+                    $item['alt'] = isset( $item['alt'] ) ? sanitize_text_field( $item['alt'] ) : '';
+                } else {
+                    // If the item is not an array, return an empty array.
+                    return wp_json_encode( [] );
+                }
+            }
+            // Return the sanitized array encoded as a JSON string.
+            return wp_json_encode( $decoded_value );
         }
-        return maybe_serialize( $value );
+
+        // If the value is not an array, return an empty array encoded as a JSON string.
+        return wp_json_encode( [] );
     }
 }

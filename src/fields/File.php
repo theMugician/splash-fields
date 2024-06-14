@@ -142,9 +142,9 @@ class File extends Input {
 
     public static function value( $value, $object_id, array $field ) {
         // Unserialize the value to an array.
-        $decoded_value = maybe_unserialize( $value );
+        $decoded_value = json_decode( $value );
 
-        // Check if maybe_unserialize returned an array.
+        // Check if decode_value returned an array.
         if ( ! is_array( $decoded_value ) ) {
             error_log( 'Invalid serialized data: ' . print_r( $value, true ) );
             return '';
@@ -172,17 +172,17 @@ class File extends Input {
         $value = $decoded_value;
 
         // Re-serialize the array to a string.
-        return maybe_serialize( $sanitized_value );
+        return json_encode( $value );
     }
 
     public static function sanitize( $value ) {
-        $value = maybe_unserialize( $value );
+        $value = json_decode( $value );
         if ( is_array( $value ) && ! empty( $value ) ) {
             $value = array_map( 'sanitize_text_field', $decoded_value );
         } else {
             $value = sanitize_text_field( $value );
         }
-        return maybe_serialize( $value );
+        return json_encode( $value );
     }
 
     public static function error_message($message) {

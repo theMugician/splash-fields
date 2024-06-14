@@ -16,12 +16,17 @@ const SPFRadio = compose(
         }
     })
 )((props) => {
+    const optionsArray = Object.keys(props.options).map(key => ({
+        label: props.options[key],
+        value: key
+    }))
+
     return (
         <RadioControl
             label={props.label}
             selected={props.metaValue}
-            options={props.options}
-            onChange={(content) => { props.setMetaValue(content) }}
+            options={optionsArray}
+            onChange={(value) => { props.setMetaValue(value) }}
         />
     )
 })

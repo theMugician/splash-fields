@@ -63,23 +63,30 @@ if ( ! function_exists( 'spf_get_field' ) ) {
 			}
 		}
 	
-		// Get the field value based on context
+		// Get the field value based on context.
 		switch ( $context ) {
 			case 'post':
-				return maybe_unserialize( get_post_meta( $object, $field_key, true ) );
-			
+				$value = get_post_meta( $object, $field_key, true );
+				break;
 			case 'user':
-				return maybe_unserialize( get_user_meta( $object, $field_key, true ) );
-			
+				$value = get_user_meta( $object, $field_key, true );
+				break;
 			case 'term':
-				return maybe_unserialize( get_term_meta( $object, $field_key, true ) );
-			
+				$value = get_term_meta( $object, $field_key, true );
+				break;
 			case 'option':
-				return get_option( $field_key );
-			
+				$value = get_option( $field_key );
+				break;
 			default:
 				return false;
 		}
+
+		// Check if the value is a JSON string and decode it if true.
+		if ( is_string( $value ) && is_json( $value ) ) {
+			$value = json_decode( $value, true );
+		}
+
+		return $value;
 	}
 	
 }

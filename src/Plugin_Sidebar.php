@@ -172,7 +172,7 @@ class Plugin_Sidebar {
             'checkbox-list' => 'string',
             'editor' => 'string',
             'file' => 'string',
-            'image' => 'integer',
+            'image' => 'string',
             'number' => 'integer',
             'radio' => 'string',
             'repeater' => 'string',
