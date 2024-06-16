@@ -140,16 +140,45 @@ class Plugin_Sidebar {
      * Enqueue scripts and styles for the block editor.
      */
     public function enqueue() {
+        wp_enqueue_editor();
+        // Enqueue TinyMCE from the CDN.
+        // wp_enqueue_script(
+        //     'tinymce',
+        //     'https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js',
+        //     array(),
+        //     null,
+        //     true
+        // );
         wp_enqueue_script(
             'plugin-sidebar-js',
             SPF_ASSETS_URL . '/js/plugin-sidebar.js',
-            array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
+            array( 
+                'wp-block-editor',
+                'wp-blocks',
+                'wp-edit-post',
+                'wp-element',
+                'wp-components',
+                'wp-compose',
+                'wp-data',
+                'wp-plugins',
+                'wp-rich-text'
+            ),
             // filemtime( SPF_ASSETS_URL . '/js/plugin-sidebar.js' )
         );
         wp_localize_script(
             'plugin-sidebar-js',
             'fields',
             $this->fields
+        );
+        // Enqueue TinyMCE plugins manually
+        wp_enqueue_script( 'tinymce-advlist', includes_url( 'js/tinymce/plugins/advlist/plugin.min.js' ), array( 'wp-editor' ), false, true );
+        wp_enqueue_script( 'tinymce-link', includes_url( 'js/tinymce/plugins/link/plugin.min.js' ), array( 'wp-editor' ), false, true );
+        
+        wp_enqueue_style(
+            'plugin-sidebar-css',
+            SPF_ASSETS_URL . '/css/plugin-sidebar.css',
+            array( 'wp-edit-blocks' ),
+            // SPF_ASSETS_URL . '/css/plugin-sidebar.css'
         );
 
     }
@@ -158,12 +187,7 @@ class Plugin_Sidebar {
      * Enqueue scripts and styles for the block assets.
      */
     public function enqueue_block_assets() {
-        wp_enqueue_style(
-            'plugin-sidebar-css',
-            SPF_ASSETS_URL . '/css/plugin-sidebar.css',
-            array(),
-            // SPF_ASSETS_URL . '/css/plugin-sidebar.css'
-        );
+
     }
 
     protected static function get_data_types() {

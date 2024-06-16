@@ -16,11 +16,16 @@ const SPFSelect = compose(
         }
     })
 )((props) => {
+    const optionsArray = Object.keys(props.options).map(key => ({
+        label: props.options[key],
+        value: key
+    }))
+
     return (
         <SelectControl
             label={props.label}
             value={props.metaValue}
-            options={props.options}
+            options={optionsArray}
             onChange={(content) => { props.setMetaValue(content) }}
         />
     )

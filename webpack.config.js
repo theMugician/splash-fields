@@ -41,5 +41,6 @@ module.exports = {
         '@wordpress/plugins': ['wp', 'plugins'],
         '@wordpress/edit-post': ['wp', 'editPost'],
         '@wordpress/compose': ['wp', 'compose'],
+        '@wordpress/rich-text': ['wp', 'richText'],
     }
 }
