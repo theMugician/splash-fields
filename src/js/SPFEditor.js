@@ -28,7 +28,7 @@ const ClassicEditor = ({ value, onChange }) => {
                 },
                 menubar: false,
                 toolbar: 'formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist outdent indent | link',
-                plugins: 'advlist link image lists',
+                plugins: 'link',
                 block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6',
             })
 
@@ -52,7 +52,6 @@ const SPFEditor = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
-                console.log('Setting meta value:', value)
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
             }
         }
@@ -60,9 +59,8 @@ const SPFEditor = compose(
     withSelect((select, props) => {
         const meta = select('core/editor').getEditedPostAttribute('meta')
         const metaValue = meta ? meta[props.metaKey] : ''
-        console.log('Retrieved meta value:', metaValue)
         return {
-            metaValue: metaValue || '', // Ensure metaValue is a string
+            metaValue: metaValue || '',
         }
     })
 )((props) => {

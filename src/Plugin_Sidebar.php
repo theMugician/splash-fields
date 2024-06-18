@@ -171,8 +171,8 @@ class Plugin_Sidebar {
             $this->fields
         );
         // Enqueue TinyMCE plugins manually
-        wp_enqueue_script( 'tinymce-advlist', includes_url( 'js/tinymce/plugins/advlist/plugin.min.js' ), array( 'wp-editor' ), false, true );
-        wp_enqueue_script( 'tinymce-link', includes_url( 'js/tinymce/plugins/link/plugin.min.js' ), array( 'wp-editor' ), false, true );
+        // wp_enqueue_script( 'tinymce-advlist', includes_url( 'js/tinymce/plugins/advlist/plugin.min.js' ), array( 'wp-editor' ), false, true );
+        // wp_enqueue_script( 'tinymce-link', includes_url( 'js/tinymce/plugins/link/plugin.min.js' ), array( 'wp-editor' ), false, true );
         
         wp_enqueue_style(
             'plugin-sidebar-css',

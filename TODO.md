@@ -7,7 +7,7 @@
 
 
 ### Misc
-- `get_value` - Replace `maybe_serialize` with `json_encode` and `maybe_unserialize` with `json_decode`
+- Add top and bottom spacing for fields in PluginSidebar
 - `file` and `image` attribute `allowed-types`
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
