@@ -40,7 +40,7 @@ registerPlugin('spf-sidebar', {
                         case 'select':
                             return <SPFSelect key={field.id} label={field.name} metaKey={field.id} options={field.options} />
                         case 'text':
-                            return <SPFText key={field.id} label={field.name} metaKey={field.id} />
+                            return <SPFText key={field.id} label={field.name} metaKey={field.id} default={field.default} />
                         case 'textarea':
                             return <SPFTextarea key={field.id} label={field.name} metaKey={field.id} />
                         case 'number':

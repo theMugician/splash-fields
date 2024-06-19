@@ -1,25 +1,16 @@
 import { TextControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
+import { useState, useEffect } from '@wordpress/element'
 
-/**
- * SPFText Component
- *
- * This component provides a text input field for WordPress.
- *
- * @param {Object}   props              - The component props.
- * @param {string}   props.label        - The label for the text field.
- * @param {string}   props.metaKey      - The meta key used to store the text field data.
- * @param {string}   props.value        - The value of the text field.
- * @param {function} props.onChange     - Function to update the meta value.
- * @param {function} props.setMetaValue - Function to update the meta value from dispatch.
- * @return {JSX.Element} The rendered component.
- */
 const SPFText = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+            },
+            deleteMetaValue: () => {
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: null } })
             }
         }
     }),
@@ -30,16 +21,37 @@ const SPFText = compose(
         }
     })
 )((props) => {
-    /**
-     * Handle changes to the text field.
-     *
-     * @param {string} value - The new value of the text field.
-     */
-    const handleChange = (value) => {
-        if (props.onChange) {
-            props.onChange(value)
+    const [isInitialLoad, setIsInitialLoad] = useState(true)
+    const [value, setValue] = useState(() => {
+        if (typeof props.value !== 'undefined') {
+            return props.value
+        }
+        return props.metaValue || props.default || ''
+    })
+
+    useEffect(() => {
+        if (value === '' && isInitialLoad && typeof props.default !== 'undefined') {
+            setValue(props.default)
+        }
+        setIsInitialLoad(false)
+    }, [isInitialLoad, value, props.default])
+
+    const handleChange = (newValue) => {
+        setValue(newValue)
+        if (newValue === '') {
+            props.deleteMetaValue()
         } else {
-            props.setMetaValue(value)
+            props.setMetaValue(newValue)
+        }
+    }
+
+    // Custom change handler that always updates local state
+    const handleChangeWithProps = (newValue) => {
+        setValue(newValue)
+        if (typeof props.onChange !== 'undefined') {
+            props.onChange(newValue)
+        } else {
+            handleChange(newValue)
         }
     }
 
@@ -47,8 +59,8 @@ const SPFText = compose(
         <TextControl
             type='text'
             label={props.label}
-            value={props.value || props.metaValue}
-            onChange={handleChange}
+            value={value}
+            onChange={handleChangeWithProps}
         />
     )
 })
