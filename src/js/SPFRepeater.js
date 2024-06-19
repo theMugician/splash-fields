@@ -31,6 +31,11 @@ import SPFNumber from './SPFNumber'
 const SPFRepeater = compose(
     withDispatch((dispatch, props) => {
         return {
+            /**
+             * Set the meta value for the repeater field.
+             *
+             * @param {Array} value - The new value of the repeater field.
+             */
             setMetaValue: (value) => {
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: JSON.stringify(value) } })
             }
@@ -49,13 +54,34 @@ const SPFRepeater = compose(
         setItems(props.metaValue)
     }, [props.metaValue])
 
+    /**
+     * Handle field change.
+     *
+     * @param {number} index   - The index of the item.
+     * @param {string} fieldId - The ID of the field.
+     * @param {string} value   - The new value of the field.
+     */
     const handleFieldChange = (index, fieldId, value) => {
         const newItems = [...items]
+
+        // Ensure the item at the given index exists
+        if (!newItems[index]) {
+            newItems[index] = {}
+        }
+
+        // Ensure the field at the given fieldId exists
+        if (!newItems[index][fieldId]) {
+            newItems[index][fieldId] = { value: '' }
+        }
+
         newItems[index][fieldId].value = value
         setItems(newItems)
         props.setMetaValue(newItems)
     }
 
+    /**
+     * Add a new item to the repeater field.
+     */
     const addItem = () => {
         const newItem = props.fields.reduce((acc, field) => {
             acc[field.id] = { type: field.type, value: field.default || '' }
@@ -66,12 +92,24 @@ const SPFRepeater = compose(
         props.setMetaValue(newItems)
     }
 
+    /**
+     * Remove an item from the repeater field.
+     *
+     * @param {number} index - The index of the item to remove.
+     */
     const removeItem = (index) => {
         const newItems = items.filter((_, i) => i !== index)
         setItems(newItems)
         props.setMetaValue(newItems)
     }
 
+    /**
+     * Render a repeater item.
+     *
+     * @param {Object} item  - The item data.
+     * @param {number} index - The index of the item.
+     * @return {JSX.Element} - The rendered repeater item.
+     */
     const renderComponent = (item, index) => {
         return (
             <div key={index} style={{ marginBottom: '10px' }}>
@@ -106,7 +144,7 @@ const SPFRepeater = compose(
                         case 'number':
                             return <SPFNumber {...fieldProps} />
                         default:
-                            return <TextControl {...fieldProps} />
+                            return null
                     }
                 })}
                 <Button isDestructive onClick={() => removeItem(index)}>

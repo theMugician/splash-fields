@@ -27,7 +27,6 @@ registerPlugin('spf-sidebar', {
                         case 'checkbox-list':
                             return <SPFCheckboxList key={field.id} label={field.name} metaKey={field.id} options={field.options} />
                         case 'editor':
-                            // return <MinimalRichText key={'minimal-rich-text'} />
                             return <SPFEditor key={field.id} label={field.name} metaKey={field.id} />
                         case 'file':
                             return <SPFFile key={field.id} label={field.name} metaKey={field.id} allowedTypes={field.allowedTypes} />
