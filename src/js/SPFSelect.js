@@ -7,6 +7,9 @@ const SPFSelect = compose(
         return {
             setMetaValue: (value) => {
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+            },
+            deleteMetaValue: () => {
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: null } })
             }
         }
     }),

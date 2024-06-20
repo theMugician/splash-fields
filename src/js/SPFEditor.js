@@ -1,7 +1,8 @@
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
-import { useEffect, useRef } from '@wordpress/element'
+import { useEffect, useRef, useState } from '@wordpress/element'
 import { Spinner } from '@wordpress/components'
+import useCommonLogic from './useCommonLogic'
 
 /**
  * ClassicEditor component to initialize TinyMCE editor.
@@ -64,12 +65,17 @@ const SPFEditor = compose(
         }
     })
 )((props) => {
+    const [isInitialLoad, setIsInitialLoad] = useState(true)
+    const { value, handleChange } = useCommonLogic(props, props.setMetaValue, props.deleteMetaValue, isInitialLoad, setIsInitialLoad)
+
     return (
         <div>
             {props.label && <label>{props.label}</label>}
             <ClassicEditor
-                value={props.metaValue}
-                onChange={(content) => props.setMetaValue(content)}
+                value={value}
+                onChange={handleChange}
+                // value={props.metaValue}
+                // onChange={(content) => props.setMetaValue(content)}
             />
         </div>
     )

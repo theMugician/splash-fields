@@ -1,6 +1,7 @@
 import { CheckboxControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
+import { useState, useEffect } from '@wordpress/element'
 import PropTypes from 'prop-types'
 
 const SPFCheckboxList = compose(
@@ -8,6 +9,9 @@ const SPFCheckboxList = compose(
         return {
             setMetaValue: (value) => {
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: JSON.stringify(value) } })
+            },
+            deleteMetaValue: () => {
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: null } })
             }
         }
     }),
@@ -18,16 +22,44 @@ const SPFCheckboxList = compose(
         }
     })
 )((props) => {
-    const handleChange = (option) => {
-        const newValue = props.metaValue.includes(option)
-            ? props.metaValue.filter(item => item !== option)
-            : [...props.metaValue, option]
-        props.setMetaValue(newValue)
+    const [isInitialLoad, setIsInitialLoad] = useState(true)
+
+    const [value, setValue] = useState(() => {
+        if ('undefined' !== typeof props.value) {
+            return props.value
+        }
+        return props.metaValue || props.default || ''
+    })
+
+    useEffect(() => {
+        if ('' === value && isInitialLoad && 'undefined' !== typeof props.default) {
+            setValue(props.default)
+        }
+        setIsInitialLoad(false)
+    }, [isInitialLoad, value, props.default, setIsInitialLoad])
+
+    /**
+     * Handle change in checkbox selection.
+     *
+     * @param {string} option - The option value that was changed.
+     */
+    const handleChange = (optionValue) => {
+        const currentValue = value || []
+        const newValue = currentValue.includes(optionValue)
+            ? currentValue.filter(item => item !== optionValue)
+            : [...currentValue, optionValue]
+
+        setValue(newValue)
+        if (props.onChange) {
+            props.onChange(newValue)
+        } else {
+            props.setMetaValue(newValue)
+        }
     }
 
-    const optionsArray = Object.entries(props.options).map(([value, label]) => ({
-        value,
-        label
+    const optionsArray = Object.entries(props.options).map(([optionValue, optionLabel]) => ({
+        value: optionValue,
+        label: optionLabel
     }))
 
     return (
@@ -37,7 +69,7 @@ const SPFCheckboxList = compose(
                 <CheckboxControl
                     key={option.value}
                     label={option.label}
-                    checked={props.metaValue.includes(option.value)}
+                    checked={value.includes(option.value)}
                     onChange={() => handleChange(option.value)}
                 />
             ))}

@@ -116,7 +116,7 @@ const SPFRepeater = compose(
                 {props.fields.map(field => {
                     const fieldProps = {
                         key: `${props.metaKey}-${index}-${field.id}`,
-                        label: field.label,
+                        label: field.name,
                         value: item[field.id] ? item[field.id].value : '',
                         onChange: (value) => handleFieldChange(index, field.id, value),
                         ...(field.default !== undefined && { default: field.default })
