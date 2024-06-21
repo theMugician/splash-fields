@@ -1,8 +1,10 @@
 import { SelectControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
+import { useState } from '@wordpress/element'
+import useCommonLogic from './useCommonLogic'
 
-const SPFSelect = compose(
+const SPFRadio = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
@@ -14,24 +16,34 @@ const SPFSelect = compose(
         }
     }),
     withSelect((select, props) => {
+        const metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey] || ''
         return {
-            metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+            metaValue
         }
     })
 )((props) => {
+    console.log(props)
+    const [isInitialLoad, setIsInitialLoad] = useState(true)
+    const { value, handleChange } = useCommonLogic(props, props.setMetaValue, props.deleteMetaValue, isInitialLoad, setIsInitialLoad)
+
     const optionsArray = Object.keys(props.options).map(key => ({
         label: props.options[key],
         value: key
     }))
 
+    // Add placeholder option if it exists
+    if (props.placeholder) {
+        optionsArray.unshift({ label: props.placeholder, value: '' })
+    }
+
     return (
         <SelectControl
             label={props.label}
-            value={props.metaValue}
             options={optionsArray}
-            onChange={(content) => { props.setMetaValue(content) }}
+            value={value}
+            onChange={handleChange}
         />
     )
 })
 
-export default SPFSelect
+export default SPFRadio

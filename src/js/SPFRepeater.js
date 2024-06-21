@@ -119,7 +119,8 @@ const SPFRepeater = compose(
                         label: field.name,
                         value: item[field.id] ? item[field.id].value : '',
                         onChange: (value) => handleFieldChange(index, field.id, value),
-                        ...(field.default !== undefined && { default: field.default })
+                        ...(field.default !== undefined && { default: field.default }),
+                        ...(field.placeholder !== undefined && { placeholder: field.placeholder })
                     }
 
                     switch (field.type) {
