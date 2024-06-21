@@ -27,6 +27,7 @@ const SPFText = compose(
 
     return (
         <TextControl
+            className='spf-plugin-sidebar-field'
             type='text'
             label={props.label}
             value={value}

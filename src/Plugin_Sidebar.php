@@ -161,7 +161,6 @@ class Plugin_Sidebar {
                 'wp-compose',
                 'wp-data',
                 'wp-plugins',
-                'wp-rich-text'
             ),
             // filemtime( SPF_ASSETS_URL . '/js/plugin-sidebar.js' )
         );
@@ -177,7 +176,7 @@ class Plugin_Sidebar {
         wp_enqueue_style(
             'plugin-sidebar-css',
             SPF_ASSETS_URL . '/css/plugin-sidebar.css',
-            array( 'wp-edit-blocks' ),
+            array(),
             // SPF_ASSETS_URL . '/css/plugin-sidebar.css'
         );
 

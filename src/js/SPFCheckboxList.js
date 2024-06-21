@@ -63,7 +63,7 @@ const SPFCheckboxList = compose(
     }))
 
     return (
-        <div>
+        <div className="spf-plugin-sidebar-field">
             {props.label && <label>{props.label}</label>}
             {optionsArray.map(option => (
                 <CheckboxControl

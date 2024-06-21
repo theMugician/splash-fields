@@ -38,6 +38,7 @@ const SPFRadio = compose(
 
     return (
         <SelectControl
+            className="spf-plugin-sidebar-field"
             label={props.label}
             options={optionsArray}
             value={value}

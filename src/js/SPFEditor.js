@@ -69,7 +69,7 @@ const SPFEditor = compose(
     const { value, handleChange } = useCommonLogic(props, props.setMetaValue, props.deleteMetaValue, isInitialLoad, setIsInitialLoad)
 
     return (
-        <div>
+        <div className="spf-plugin-sidebar-field">
             {props.label && <label>{props.label}</label>}
             <ClassicEditor
                 value={value}

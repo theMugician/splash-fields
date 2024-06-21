@@ -27,6 +27,7 @@ const SPFCheckbox = compose(
 
     return (
         <CheckboxControl
+            className="spf-plugin-sidebar-field"
             label={props.label}
             checked={value}
             onChange={handleChange}

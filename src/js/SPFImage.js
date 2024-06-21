@@ -65,7 +65,7 @@ const SPFImage = compose(
     }
 
     return (
-        <div>
+        <div className="spf-plugin-sidebar-field">
             {props.label && <label>{props.label}</label>}
             <MediaUploadCheck>
                 <MediaUpload

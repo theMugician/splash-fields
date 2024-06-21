@@ -27,12 +27,11 @@ const SPFNumber = compose(
 
     return (
         <TextControl
+            className="spf-plugin-sidebar-field"
             type="number"
             label={props.label}
             value={value}
             onChange={handleChange}
-            // value={props.metaValue}
-            // onChange={(content) => { props.setMetaValue(content) }}
         />
     )
 })

@@ -112,15 +112,15 @@ const SPFRepeater = compose(
      */
     const renderComponent = (item, index) => {
         return (
-            <div key={index} style={{ marginBottom: '10px' }}>
+            <div key={index} className="spf-plugin-sidebar-repeater-group" style={{ marginBottom: '10px' }}>
                 {props.fields.map(field => {
                     const fieldProps = {
                         key: `${props.metaKey}-${index}-${field.id}`,
                         label: field.name,
                         value: item[field.id] ? item[field.id].value : '',
                         onChange: (value) => handleFieldChange(index, field.id, value),
-                        ...(field.default !== undefined && { default: field.default }),
-                        ...(field.placeholder !== undefined && { placeholder: field.placeholder })
+                        ...('undefined' !== typeof field.default && { default: field.default }),
+                        ...('undefined' !== typeof field.placeholder && { placeholder: field.placeholder })
                     }
 
                     switch (field.type) {
@@ -148,7 +148,7 @@ const SPFRepeater = compose(
                             return null
                     }
                 })}
-                <Button isDestructive onClick={() => removeItem(index)}>
+                <Button variant="secondary" isDestructive onClick={() => removeItem(index)}>
                     {__('Remove', 'text-domain')}
                 </Button>
             </div>
@@ -156,10 +156,10 @@ const SPFRepeater = compose(
     }
 
     return (
-        <div>
+        <div className="spf-plugin-sidebar-field">
             {props.label && <label>{props.label}</label>}
             {items.map((item, index) => renderComponent(item, index))}
-            <Button variant='isPrimary' onClick={addItem}>
+            <Button variant='primary' onClick={addItem}>
                 {__('Add Item', 'text-domain')}
             </Button>
         </div>
