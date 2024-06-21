@@ -1,21 +1,30 @@
 import { RadioControl } from '@wordpress/components'
 import { withDispatch, withSelect } from '@wordpress/data'
 import { compose } from '@wordpress/compose'
+import { useState } from '@wordpress/element'
+import useCommonLogic from './useCommonLogic'
 
 const SPFRadio = compose(
     withDispatch((dispatch, props) => {
         return {
             setMetaValue: (value) => {
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: value } })
+            },
+            deleteMetaValue: () => {
+                dispatch('core/editor').editPost({ meta: { [props.metaKey]: null } })
             }
         }
     }),
     withSelect((select, props) => {
+        const metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey] || ''
         return {
-            metaValue: select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+            metaValue
         }
     })
 )((props) => {
+    const [isInitialLoad, setIsInitialLoad] = useState(true)
+    const { value, handleChange } = useCommonLogic(props, props.setMetaValue, props.deleteMetaValue, isInitialLoad, setIsInitialLoad)
+
     const optionsArray = Object.keys(props.options).map(key => ({
         label: props.options[key],
         value: key
@@ -24,9 +33,9 @@ const SPFRadio = compose(
     return (
         <RadioControl
             label={props.label}
-            selected={props.metaValue}
             options={optionsArray}
-            onChange={(value) => { props.setMetaValue(value) }}
+            selected={value}
+            onChange={handleChange}
         />
     )
 })
