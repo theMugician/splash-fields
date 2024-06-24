@@ -113,9 +113,6 @@ class Meta_Box {
     }
 
 	protected function global_hooks() {
-		add_action( 'init', function() {
-			error_log('Meta_Box init');
-		} );
 
 		// Enqueue common styles and scripts.
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );

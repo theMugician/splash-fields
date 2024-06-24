@@ -56,6 +56,7 @@ class Checkbox_List extends Input {
 	}
 
 	public static function sanitize( $value ) {
+
 		$return_value = '';
 		if ( is_array( $value ) ) {
 			$return_value = array();
@@ -102,22 +103,6 @@ class Checkbox_List extends Input {
 		$attributes['name'] = $field['id'] . '[]';
 		return $attributes;
 	}
-
-	/**
-	 * Get field HTML.
-	 *
-	 * @param mixed $meta   Meta value.
-	 * @param array $field  Field parameters.
-	 *
-	 * @return string
-	 */
-	/*
-	static public function html( $meta, $field ) {
-        $output     = static::html_label( $field );
-        $output    .= static::html_input( $field, $meta );
-		return $output;
-	}
-	*/
 
 	/**
 	 * Get field HTML.

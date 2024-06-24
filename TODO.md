@@ -3,8 +3,13 @@
 ## TODO
 
 ### Misc
-- Add top and bottom spacing for fields in PluginSidebar
+- Check when json_encoding starts for Checkbox_List, File, Image, Repeater
+    - process_value
+        - value
+        - sanitize
+    - save
 - `file` and `image` attribute `allowed-types`
+- `file` inconsistent save bug
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 

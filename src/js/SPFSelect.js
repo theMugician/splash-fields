@@ -22,7 +22,6 @@ const SPFRadio = compose(
         }
     })
 )((props) => {
-    console.log(props)
     const [isInitialLoad, setIsInitialLoad] = useState(true)
     const { value, handleChange } = useCommonLogic(props, props.setMetaValue, props.deleteMetaValue, isInitialLoad, setIsInitialLoad)
 

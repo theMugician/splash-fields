@@ -164,10 +164,20 @@ class Plugin_Sidebar {
             ),
             // filemtime( SPF_ASSETS_URL . '/js/plugin-sidebar.js' )
         );
+
+        // wp_localize_script(
+        //     'plugin-sidebar-js',
+        //     'fields',
+        //     $this->fields
+        // );
         wp_localize_script(
             'plugin-sidebar-js',
-            'fields',
-            $this->fields
+            'pluginSidebar',
+            array(
+                'id' => $this->id,
+                'title' => $this->title,
+                'fields' => $this->fields,
+            )
         );
         // Enqueue TinyMCE plugins manually
         // wp_enqueue_script( 'tinymce-advlist', includes_url( 'js/tinymce/plugins/advlist/plugin.min.js' ), array( 'wp-editor' ), false, true );

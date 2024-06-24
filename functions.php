@@ -90,3 +90,16 @@ if ( ! function_exists( 'spf_get_field' ) ) {
 	}
 	
 }
+
+if ( ! function_exists( 'is_json' ) ) {
+	/**
+	 * Validate if a string is a valid JSON.
+	 *
+	 * @param string $string The string to be checked.
+	 * @return bool True if the string is a valid JSON, false otherwise.
+	 */
+	function is_json( $string ) {
+		json_decode( $string );
+		return ( json_last_error() === JSON_ERROR_NONE );
+	}
+}

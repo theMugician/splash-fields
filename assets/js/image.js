@@ -49,9 +49,6 @@ jQuery(function ($) {
             // Send the image data to our hidden input as a JSON string
             imgDataInput.val(JSON.stringify(imageData))
 
-            // Log the data being set
-            console.log('Image Data:', imageData)
-
             // Hide the add image link
             addImgLink.addClass('hide')
 

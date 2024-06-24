@@ -35,7 +35,6 @@ class Repeater extends Input {
     public static function html( $field, $meta  ) {
         $html = '<label class="spf-field__label" for="' . esc_attr( $field['id'] ) . '">' . esc_html( $field['name'] ) . '</label>';
         $html .= '<div class="spf-repeater-wrapper">';
-
         // Display existing groups if they exist.
         if ( ! empty( $meta ) ) {
             foreach ( $meta as $index => $group_meta ) {
@@ -69,6 +68,7 @@ class Repeater extends Input {
         $group_html  .= '<h3 class="spf-repeater-group__title">Group <span class="spf-repeater-group__number">' . esc_html( $group_number ) . '</span></h3>';
 
         foreach ( $field['fields'] as $sub_field ) {
+            // var_dump( $group_meta );
             $sub_field['field_name'] = sprintf( '%s[%d][%s]', $field['id'], $index, $sub_field['id'] );
             $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
@@ -91,7 +91,9 @@ class Repeater extends Input {
     protected static function show_sub_field( $field, $meta ) {
         $field = Field::call( 'normalize', $field );
         if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-            $meta = json_decode( $meta );
+            if ( is_string( $meta ) && is_json( $meta ) ) {
+                $meta = json_decode( $meta );
+            }
             $meta = is_array( $meta ) ? $meta : array();
         }
         $meta  = static::get_default( $field, $meta );

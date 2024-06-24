@@ -201,7 +201,15 @@ class Options_Page {
 				$field['id'],
 				array(
 					'sanitize_callback' => function( $value ) use ( $field ) {
-						return Field::call( $field, 'process_value', $value, 0, $field );
+						$value = Field::call( $field, 'process_value', $value, 0, $field );
+						if ( is_array( $value ) ) {
+							return json_encode( $value );
+						}
+						if ( $value === '' || $value === null ) {
+							return '__unset__';
+							// return null;
+						}
+						return $value;
 					}, 
 				),
 			);
@@ -216,6 +224,17 @@ class Options_Page {
 				$this->menu_slug,
 				$settings_section_id, //$this->id,	// section ID - same or different than Options?
 			);
+
+			// Add a dynamic filter for each field - delete option if value is '__unset__'
+			add_filter( 'pre_update_option_' . $field['id'], function( $new_value, $old_value ) use ( $field ) {
+				error_log( 'pre_update_option_' . $field['id'] . ' - ' . print_r( $new_value, true ) );
+				if ( $new_value === '__unset__' ) {
+					delete_option( $field['id'] );
+					return null;
+				}
+				return $new_value;
+			}, 10, 2 );
+
 		}
 
 	}

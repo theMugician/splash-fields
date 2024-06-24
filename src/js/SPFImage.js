@@ -10,12 +10,9 @@ const SPFImage = compose(
         return {
             setMetaValue: (value) => {
                 const newValue = value ? JSON.stringify(value) : null
-                console.log('Setting meta value:', value)
-                console.log('Stringified meta value:', newValue)
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: newValue } })
             },
             deleteMetaValue: () => {
-                console.log('Deleting meta value')
                 dispatch('core/editor').editPost({ meta: { [props.metaKey]: null } })
             }
         }
@@ -25,7 +22,7 @@ const SPFImage = compose(
         let parsedValue = null
         try {
             parsedValue = metaValue ? JSON.parse(metaValue) : null
-            if (typeof parsedValue !== 'object' || Array.isArray(parsedValue)) {
+            if ('object' !== typeof parsedValue || Array.isArray(parsedValue)) {
                 parsedValue = null
             }
         } catch (e) {
@@ -44,6 +41,11 @@ const SPFImage = compose(
         return props.metaValue
     })
 
+    /**
+     * Handle image select change and upload.
+     *
+     * @param {Object} media - The media file data taken from the media library.
+     */
     const addImage = (media) => {
         const newImage = {
             id: media.id,
@@ -59,6 +61,9 @@ const SPFImage = compose(
         }
     }
 
+    /**
+     * Handle image remove.
+     */
     const removeImage = () => {
         setValue(null)
         props.deleteMetaValue()

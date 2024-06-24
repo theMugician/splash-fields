@@ -41,7 +41,7 @@ const SPFCheckboxList = compose(
     /**
      * Handle change in checkbox selection.
      *
-     * @param {string} option - The option value that was changed.
+     * @param {string} optionValue - The option value that was changed.
      */
     const handleChange = (optionValue) => {
         const currentValue = value || []

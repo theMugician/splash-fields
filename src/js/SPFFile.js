@@ -52,7 +52,6 @@ const SPFFile = compose(
         }
         setValue(fileData)
         if ('undefined' !== typeof props.onChange) {
-            console.log('props.onChange')
             props.onChange(fileData)
         } else {
             props.setMetaValue(JSON.stringify(fileData))

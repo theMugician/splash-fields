@@ -28,8 +28,14 @@ class Field {
 		$meta = static::raw_meta( $post_id, $field );
 		// Replace with default?
 		// Unserialize raw meta data.
+		// if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+		// 	$meta = json_decode( $meta );
+		// 	$meta = is_array( $meta ) ? $meta : array();
+		// }
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-			$meta = json_decode( $meta );
+			if ( is_string( $meta ) && is_json( $meta ) ) {
+				$meta = json_decode( $meta, true );
+			}
 			$meta = is_array( $meta ) ? $meta : array();
 		}
 		// On Save
@@ -50,7 +56,9 @@ class Field {
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-			$meta = json_decode( $meta );
+			if ( is_string( $meta ) && is_json( $meta ) ) {
+				$meta = json_decode( $meta, true );
+			}
 			$meta = is_array( $meta ) ? $meta : array();
 		}
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
@@ -137,8 +145,8 @@ class Field {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
-		$value = self::value( $value, $object_id, $field );
-		$value = self::sanitize( $value );
+		$value = static::value( $value, $object_id, $field );
+		$value = static::sanitize( $value );
 		return $value;
 	}
 
@@ -160,7 +168,7 @@ class Field {
 	 *
 	 * @return mixed
 	 */
-	public static function sanitize( $value ) {	
+	public static function sanitize( $value ) {
 		return sanitize_text_field( $value );
 	}
 

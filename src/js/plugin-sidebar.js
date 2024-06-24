@@ -13,8 +13,8 @@ import SPFText from './SPFText'
 import SPFTextarea from './SPFTextarea'
 import SPFNumber from './SPFNumber'
 
-// Assuming 'fields' is localized by wp_localize_script and is available globally
-const fields = window.fields || []
+const fields = (window.pluginSidebar && window.pluginSidebar.fields) || []
+const { id, title } = (window.pluginSidebar && { ...window.pluginSidebar })
 
 /**
  * Render a field component based on the field type.
@@ -35,8 +35,8 @@ const renderField = (field) => {
         key: field.id,
         label: field.name,
         metaKey: field.id,
-        ...(field.default !== undefined && { default: field.default }),
-        ...(field.placeholder !== undefined && { placeholder: field.placeholder })
+        ...('undefined' !== typeof field.default && { default: field.default }),
+        ...('undefined' !== typeof field.placeholder && { placeholder: field.placeholder })
     }
 
     switch (field.type) {
@@ -67,9 +67,9 @@ const renderField = (field) => {
     }
 }
 
-registerPlugin('spf-sidebar', {
+registerPlugin(id, {
     render: () => (
-        <PluginSidebar name='spf-sidebar' title='SPF Sidebar'>
+        <PluginSidebar name={id} title={title}>
             <PanelBody>
                 {fields.map(renderField)}
             </PanelBody>
