@@ -37,7 +37,7 @@ class Select extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-        $output    .= static::html_select_options( $field, $meta );
+        $output    = static::html_select_options( $field, $meta );
 		return $output;
     }
 

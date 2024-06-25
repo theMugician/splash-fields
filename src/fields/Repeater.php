@@ -27,12 +27,26 @@ class Repeater extends Input {
     }
 
     /**
+     * Enqueue scripts for the sub-fields.
+     *
+     * @param array $field Field configuration.
+     */
+    public static function enqueue_scripts( $field ) {
+        foreach ( $field['fields'] as $sub_field ) {
+            Field::call( $sub_field, 'admin_enqueue_scripts' );
+        }
+    }
+
+    /**
      * Display the repeater field.
      *
      * @param array $field   Field configuration.
      * @param int   $post_id Post ID.
      */
     public static function html( $field, $meta  ) {
+        // Enqueue scripts for each sub-field
+        self::enqueue_scripts( $field );
+
         $html = '<label class="spf-field__label" for="' . esc_attr( $field['id'] ) . '">' . esc_html( $field['name'] ) . '</label>';
         $html .= '<div class="spf-repeater-wrapper">';
         // Display existing groups if they exist.
@@ -70,6 +84,7 @@ class Repeater extends Input {
         foreach ( $field['fields'] as $sub_field ) {
             // var_dump( $group_meta );
             $sub_field['field_name'] = sprintf( '%s[%d][%s]', $field['id'], $index, $sub_field['id'] );
+            var_dump( $sub_field['field_name'] );
             $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
             $group_html .= static::show_sub_field( $sub_field, $sub_field_meta );
@@ -126,7 +141,7 @@ class Repeater extends Input {
             foreach ( $field['fields'] as $sub_field ) {
                 $sub_field_id    = $sub_field['id'];
                 $sub_field_value = isset( $group_values[ $sub_field_id ] ) ? $group_values[ $sub_field_id ] : '';
-
+                error_log( print_r( $sub_field['id'], true ) );
                 // Assuming all fields are simple text fields, process accordingly.
                 $processed_group[ $sub_field_id ] = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
             }

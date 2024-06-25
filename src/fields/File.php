@@ -11,60 +11,66 @@ namespace Splash_Fields\Fields;
  * Class File.
  */
 class File extends Input {
-    public static function admin_enqueue_scripts() {
-        // Register script for Media Field
-        wp_register_script(
-            'spf-file-js',
-            SPF_ASSETS_URL . '/js/file.js',
-            array('jquery'),
-            false,
-            true
-        );
-
-        wp_localize_script(
-            'spf-file-js',
-            'spfFileField',
-            array(
-                'ajaxurl' => admin_url('admin-ajax.php')
-            )
-        );
-
-        wp_enqueue_script('spf-file-js');
-    }
-
     /**
-     * Show field HTML
+     * Show field HTML.
      *
-     * @param array $field Field parameters.
-     * @param int $post_id Post ID.
-     *
-     * @return mixed
+     * @param array $field   Field parameters.
+     * @param int   $post_id Post ID.
      */
-    public static function show(array $field, $post_id = 0) {
-        $meta = static::raw_meta($post_id, $field);
-        $html = sprintf('<div class="spf-field spf-field-%s">', esc_attr($field['type']));
-        $html .= static::html($field, $meta); // Correct order of parameters
+    public static function show( array $field, $post_id = 0 ) {
+        $meta = static::raw_meta( $post_id, $field );
+        $field['upload_iframe_src'] = static::upload_iframe_src( $post_id );
+        $html = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
+        $html .= static::html( $field, $meta );
         $html .= '</div>';
         echo $html;
     }
 
-    public static function add_actions() {
-        add_action('post_edit_form_tag', [__CLASS__, 'post_edit_form_tag']);
-        add_action('wp_ajax_spf_file_error', [__CLASS__, 'ajax_error']);
+    /**
+     * Enqueue admin scripts.
+     */
+    public static function admin_enqueue_scripts() {
+        wp_enqueue_media();
+
+        wp_register_script(
+            'spf-file-js',
+            SPF_ASSETS_URL . '/js/file.js',
+            array( 'jquery' ),
+            false,
+            true 
+        );
+
+        wp_enqueue_script( 'spf-file-js' );
     }
 
-    public static function post_edit_form_tag() {
-        echo ' enctype="multipart/form-data"';
+    /**
+     * Get the upload iframe source for media item.
+     *
+     * @link https://developer.wordpress.org/reference/functions/get_upload_iframe_src/
+     * 
+     * @param int $post_id Post ID.
+     * @return string Media iframe source.
+     */
+    public static function upload_iframe_src( $post_id ) {
+        $upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
+        $upload_iframe_src = add_query_arg( 'type', 'file', $upload_iframe_src );
+
+        return add_query_arg( 'TB_iframe', true, $upload_iframe_src );
     }
 
-    public static function ajax_error() {
-        wp_send_json_error($_POST['message']);
+    /**
+     * Normalize parameters for field.
+     *
+     * @param array $field Field parameters.
+     * @return array
+     */
+    public static function normalize( $field ) {
+        return wp_parse_args( $field, array(
+            'field_name' => $field['id'],
+            'upload_iframe_src' => '',
+        ) );
     }
 
-    static public function file_add_id($field_id) {
-        return "file-add-{$field_id}";
-    }
-    
     /**
      * Generates the HTML for displaying an uploaded file with options to edit or delete.
      *
@@ -77,14 +83,10 @@ class File extends Input {
      */
     static public function html_file( $meta ) {
         // Decode the JSON string if $meta is a string.
-        if ( is_string( $meta ) ) {
+        if ( is_string( $meta ) && is_json( $meta ) ) {
             $meta = json_decode( $meta, true );
         }
         $file = $meta;
-
-        // Localization strings for the delete and edit actions.
-        $i18n_delete = apply_filters('spf_file_delete_string', _x('Delete', 'file upload', 'splash-fields'));
-        $i18n_edit = apply_filters('spf_file_edit_string', _x('Edit', 'file upload', 'splash-fields'));
 
         // Return the formatted HTML string for the file display.
         return sprintf(
@@ -93,137 +95,86 @@ class File extends Input {
                 <div class="spf-file__info">
                     <a href="%s" target="_blank" class="spf-file__title">%s</a>
                     <div class="spf-file__name">%s</div>
-                    <div class="spf-file__actions">
-                        %s
-                        <a href="#" class="spf-file__delete" data-attachment_id="%s">%s</a>
-                    </div>
                 </div>
             </div>',
             wp_get_attachment_image( $file['id'], [48, 64], true ),
             esc_url( $file['url'] ),
             esc_html( $file['name'] ),
             esc_html( $file['name'] ),
-            self::edit_link( $file['id'], $i18n_edit ),
-            esc_attr( $file['id'] ),
-            esc_html( $i18n_delete )
         );
-    }
-
-    static private function edit_link($id, $text) {
-        $edit_link = get_edit_post_link($id);
-        return $edit_link ? sprintf('<a href="%s" class="spf-file__edit" target="_blank">%s</a>', $edit_link, $text) : '';
     }
 
     /**
-     * HTML and functionality to add/update/delete file
+     * HTML and functionality to add/update/delete file.
      *
+     * @link https://codex.wordpress.org/Javascript_Reference/wp.media
+     * 
      * @param array $field Field parameters.
-     * @param array $meta Meta value.
-     *
+     * @param mixed $meta  Meta value.
      * @return string
      */
-    public static function html_input($field, $meta) {
-        $file_add_name = self::file_add_id($field['id']);
-        $file_add_class = "spf-file__add";
+    public static function html_input( $field, $meta ) {
+        // Get WordPress' media upload URL
+        $upload_link = esc_url( $field['upload_iframe_src'] );
 
-        $file_add_attributes = ' type="file" id="' . $file_add_name . '" name="' . $file_add_name . '" class="' . $file_add_class . '"';
+        // Decode the JSON string
+        $file_data = json_decode( $meta, true );
+        $file_id = isset( $file_data['id'] ) ? $file_data['id'] : '';
+        $file_url = isset( $file_data['url'] ) ? $file_data['url'] : '';
+        $file_name = isset( $file_data['name'] ) ? $file_data['name'] : '';
+        $file_type = isset( $file_data['type'] ) ? $file_data['type'] : '';
 
-        $has_file = ! ( $meta === '' || $meta === null || $meta === false || ( is_array( $meta ) && empty( $meta ) ) );
+        // For convenience, check if we have file data
+        $has_file = !empty( $file_id );
 
-        $delete_file_hide = $has_file ? '' : ' hide';
-        $add_file_hide = $has_file ? ' hide' : '';
+        $delete_hide_class = $has_file ? '' : ' hide';
+        $upload_hide_class = $has_file ? ' hide' : '';
 
-        $output = '<div class="spf-field__input">';
-        $output .= '<div class="spf-file__file-container">';
-        if ($has_file) {
-            $output .= self::html_file($meta);
+        $output = '<div class="spf-file__file-container">';
+        if ( $has_file ) {
+            $output .= self::html_file( $file_data );
+            // $output .= '<div>' . esc_html( $file_name ) . '</div>';
         }
         $output .= '</div>';
         $output .= sprintf(
-            '<input %s %s/>',
-            $add_file_hide,
-            $file_add_attributes,
-            esc_html__('Add File', 'spf')
+            '<a class="button spf-file__delete%s" href="#">%s</a>',
+            $delete_hide_class,
+            esc_html__( 'Remove this file', 'spf' )
         );
         $output .= sprintf(
-            '<input id="%s" class="spf-file__file-data" name="%s" type="hidden" value="%s" />',
-            esc_attr($field['id']),
-            esc_attr($field['id']),
-            esc_attr( json_encode ( $meta, true ) )
+            '<a class="button spf-file__upload%s" href="%s">%s</a>', 
+            $upload_hide_class, 
+            $upload_link, 
+            esc_html__( 'Set Custom File', 'spf' )
         );
-        if (isset($field['description']) && strlen($field['description']) > 0) {
-            $output .= sprintf('<p class="spf-field__description">%s</p>', esc_html($field['description']));
-        }
-        $output .= '</div>';
+        $output .= sprintf(
+            '<input class="spf-file__file-data" name="%s" type="hidden" value="%s" />',
+            esc_attr( $field['field_name'] ),
+            esc_attr( $meta )
+        );
         return $output;
     }
 
-    public static function value( $value, $object_id, array $field ) {
-        // Unserialize the value to an array.
+    /**
+     * Sanitize the meta value.
+     *
+     * @param string $value The meta value to sanitize.
+     * @return string The sanitized meta value.
+     */
+    public static function sanitize( $value ) {
+        // Decode the JSON string.
         $decoded_value = json_decode( $value, true );
 
-        // Check if decode_value returned an array.
-        if ( ! is_array( $decoded_value ) ) {
-            error_log( 'Invalid serialized data: ' . print_r( $value, true ) );
-            return '';
+        // Check if the decoded value is a single file object.
+        if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
+            $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;
+            $decoded_value['url'] = isset( $decoded_value['url'] ) ? esc_url_raw( $decoded_value['url'] ) : '';
+            $decoded_value['name'] = isset( $decoded_value['name'] ) ? sanitize_text_field( $decoded_value['name'] ) : '';
+            $decoded_value['type'] = isset( $decoded_value['type'] ) ? sanitize_text_field( $decoded_value['type'] ) : '';
+            return json_encode( $decoded_value );
         }
 
-        // If a new file is uploaded, handle it.
-        $file_add_id = self::file_add_id( $field['id'] );
-        error_log( 'File add ID: ' . print_r( $file_add_id, true ) );
-
-        if ( ! empty( $_FILES[ $file_add_id ]['name'] ) ) {
-            error_log( '$_FILES[ $file_add_id ] name: ' . print_r( $_FILES[ $file_add_id ]['name'], true ) );
-            $attachment_id = media_handle_upload( $file_add_id, $object_id );
-            if ( is_wp_error( $attachment_id ) ) {
-                $error_message = $attachment_id->get_error_message();
-                self::error_message( $error_message );
-                error_log( print_r( $error_message, true ) );
-                return '';
-            } else {
-                $decoded_value['id']    = $attachment_id;
-                $decoded_value['url']   = wp_get_attachment_url( $attachment_id );
-                $decoded_value['name']  = get_the_title( $attachment_id );
-                $decoded_value['type']  = get_post_mime_type( $attachment_id );
-            }
-        }
-
-        // Sanitize each element in the array.
-        $value = $decoded_value;
-        error_log( 'return value: ' . print_r( $value, true ) );
-
-        // Re-serialize the array to a string.
-        return json_encode( $value );
+        // If the value is not an array, return an empty array encoded as a JSON string.
+        return json_encode( [] );
     }
-
-    public static function sanitize( $value ) {
-        error_log( 'Sanitize value: ' . print_r( $value, true ) );
-        if ( $value === '' || is_null( $value ) ) {
-            return '';
-        }
-        $value = json_decode( $value, true );
-        if ( is_array( $value ) && ! empty( $value ) ) {
-            $value = array_map( 'sanitize_text_field', $value );
-        } else {
-            $value = sanitize_text_field( $value );
-        }
-        return json_encode( $value );
-    }
-
-    public static function error_message($message) {
-        echo "<p class='spf-field__error'>{$message}</p>";
-    }
-
-    /**
-	 * Normalize parameters for field.
-	 *
-	 * @param array $field Field parameters.
-	 * @return array
-	 */
-	public static function normalize( $field ) {
-		$field['multiple'] = true;
-		$field             = parent::normalize( $field );
-
-		return $field;
-	}
 }

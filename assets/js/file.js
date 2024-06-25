@@ -10,52 +10,94 @@
      */
     file.deleteHandler = function (event) {
         event.preventDefault()
-        file.input.val('')
-        file.container.html('')
-        file.addFileLink.removeClass('hide')
-        file.deleteFileLink.addClass('hide')
+        const field = $(this).closest('.spf-field-file')
+        const input = field.find('.spf-file__file-data')
+        const container = field.find('.spf-file__file-container')
+        const addFileLink = field.find('.spf-file__upload')
+        const delFileLink = field.find('.spf-file__delete')
+
+        input.val('')
+        container.html('')
+        addFileLink.removeClass('hide')
+        delFileLink.addClass('hide')
     }
 
     /**
      * Handles file selection.
      *
-     * @param {Object} event File input change event.
+     * @param {Object} event Click event.
      */
-    file.fileChangeHandler = function (event) {
-        const fileInput = event.target
-        if (0 < fileInput.files.length) {
-            const selectedFile = fileInput.files[0]
+    file.addHandler = function (event) {
+        event.preventDefault()
+        const field = $(this).closest('.spf-field-file')
+
+        // If the media frame already exists, reopen it.
+        if (field.data('frame')) {
+            field.data('frame').open()
+            return
+        }
+
+        // Create a new media frame
+        const frame = wp.media({
+            title: 'Select or Upload File',
+            button: {
+                text: 'Use this file'
+            },
+            library: {
+                type: ''  // Restrict to files only
+            },
+            multiple: false  // Set to true to allow multiple files to be selected
+        })
+
+        // Store the frame in the field data
+        field.data('frame', frame)
+
+        // When a file is selected in the media frame...
+        frame.on('select', function () {
+            // Get media attachment details from the frame state
+            const attachment = frame.state().get('selection').first().toJSON()
+
+            // Send the attachment URL to our custom file input field.
+            const fileContainer = field.find('.spf-file__file-container')
+            fileContainer.html('<div>' + attachment.name + '</div>')
+
+            // Create an object with the file data
             const fileData = {
-                id: '',  // This will be filled by the server-side processing
-                url: '', // This will be filled by the server-side processing
-                name: selectedFile.name,
-                type: selectedFile.type
+                id: attachment.id,
+                url: attachment.url,
+                name: attachment.name,
+                type: attachment.type
             }
 
             // Send the file data to our hidden input as a JSON string
-            file.input.val(JSON.stringify(fileData))
-            file.container.html('<div>' + fileData.name + '</div>')
-            file.addFileLink.addClass('hide')
-            file.deleteFileLink.removeClass('hide')
-        }
-    }
+            const fileDataInput = field.find('.spf-file__file-data')
+            fileDataInput.val(JSON.stringify(fileData))
 
-    file.addEventListeners = function () {
-        file.deleteFileLink.on('click', file.deleteHandler)
-        file.fileInput.on('change', file.fileChangeHandler)
+            // Hide the add file link
+            const addFileLink = field.find('.spf-file__upload')
+            addFileLink.addClass('hide')
+
+            // Unhide the remove file link
+            const delFileLink = field.find('.spf-file__delete')
+            delFileLink.removeClass('hide')
+        })
+
+        // Finally, open the modal on click
+        frame.open()
     }
 
     /**
-     * Initiate file object.
+     * Adds event listeners for file field actions.
+     */
+    file.addEventListeners = function () {
+        $('.spf-file__upload').on('click', file.addHandler)
+        $('.spf-file__delete').on('click', file.deleteHandler)
+    }
+
+    /**
+     * Initiates file object.
      */
     function init () {
-        file.field = $('.spf-field-file')
-        file.input = file.field.find('.spf-file__file-data')
-        file.container = file.field.find('.spf-file__file-container')
-        file.addFileLink = file.field.find('.spf-file__upload')
-        file.deleteFileLink = file.field.find('.spf-file__delete')
-        file.fileInput = file.field.find('.spf-file__add')
-
         file.addEventListeners()
     }
 

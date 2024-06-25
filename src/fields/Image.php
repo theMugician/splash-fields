@@ -53,8 +53,9 @@ class Image extends Input {
      */
     public static function upload_iframe_src( $post_id ) {
         $upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
-        $upload_iframe_src = add_query_arg( 'type', 'image', $upload_iframe_src );
+        var_dump( $upload_iframe_src );
 
+        $upload_iframe_src = add_query_arg( 'type', 'image', $upload_iframe_src );
         return add_query_arg( 'TB_iframe', true, $upload_iframe_src );
     }
 
@@ -66,6 +67,7 @@ class Image extends Input {
      */
     public static function normalize( $field ) {
         return wp_parse_args( $field, array(
+            'field_name' => $field['id'],
             'upload_iframe_src' => '',
         ) );
     }
@@ -114,7 +116,7 @@ class Image extends Input {
         );
         $output .= sprintf(
             '<input class="spf-image__image-data" name="%s" type="hidden" value="%s" />',
-            esc_attr( $field['id'] ),
+            esc_attr( $field['field_name'] ),
             esc_attr( $meta )
         );
         return $output;
@@ -127,16 +129,18 @@ class Image extends Input {
  * @return string The sanitized meta value.
  */
 public static function sanitize( $value ) {
+    // error_log( 'Image::sanitize() $value: ' . print_r( $value, true ) );
     // Decode the JSON string.
     $decoded_value = json_decode( $value, true );
 
     // Check if the decoded value is a single image object.
     if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
+        // error_log( 'Image::sanitize() $decoded_value: ' . print_r( $decoded_value, true ) );
         $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;
         $decoded_value['url'] = isset( $decoded_value['url'] ) ? esc_url_raw( $decoded_value['url'] ) : '';
         $decoded_value['name'] = isset( $decoded_value['name'] ) ? sanitize_text_field( $decoded_value['name'] ) : '';
         $decoded_value['alt'] = isset( $decoded_value['alt'] ) ? sanitize_text_field( $decoded_value['alt'] ) : '';
-        return wp_json_encode( $decoded_value );
+        return json_encode( $decoded_value );
     }
     
     /*
@@ -160,7 +164,7 @@ public static function sanitize( $value ) {
     */
 
     // If the value is not an array, return an empty array encoded as a JSON string.
-    return wp_json_encode( [] );
+    return json_encode( [] );
 }
 
 }

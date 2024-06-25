@@ -22,7 +22,7 @@ class Textarea extends Input {
 	 */
 	public static function html_input( $field, $meta ) {
 		$attributes = self::get_attributes( $field, $meta );
-		$output .= sprintf(
+		$output = sprintf(
 			'<textarea %s>%s</textarea>',
 			self::render_attributes( $attributes ),
 			esc_textarea( $meta )

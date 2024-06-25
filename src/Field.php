@@ -145,6 +145,9 @@ class Field {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
+		if ( $field['type'] === 'image' && $field['id'] === 'spf-options-image-test-3') {
+			error_log( 'Image::process_value() $value: ' . print_r( $value, true ) );
+		}
 		$value = static::value( $value, $object_id, $field );
 		$value = static::sanitize( $value );
 		return $value;

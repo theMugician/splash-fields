@@ -140,6 +140,8 @@ class Options_Page {
 	public function enqueue() {
 		// Enqueue scripts and styles for fields.
 		foreach ( $this->fields as $field ) {
+			error_log('Enqueuing scripts for field: ' . print_r($field, true));
+
 			Field::call( $field, 'admin_enqueue_scripts' );
 		}
 		/**
@@ -201,7 +203,12 @@ class Options_Page {
 				$field['id'],
 				array(
 					'sanitize_callback' => function( $value ) use ( $field ) {
+						if ( $field['type'] === 'repeater' && $field['id'] === 'spf-options-repeater-test') {
+							error_log( 'Options_page::sanitize_callback() $value: ' . print_r( $value, true ) );
+						}
 						$value = Field::call( $field, 'process_value', $value, 0, $field );
+						// TODO BUG: Reproduce bug for file value
+						// Sometimes the value comes out as """"
 						if ( is_array( $value ) ) {
 							return json_encode( $value );
 						}
@@ -227,7 +234,7 @@ class Options_Page {
 
 			// Add a dynamic filter for each field - delete option if value is '__unset__'
 			add_filter( 'pre_update_option_' . $field['id'], function( $new_value, $old_value ) use ( $field ) {
-				error_log( 'pre_update_option_' . $field['id'] . ' - ' . print_r( $new_value, true ) );
+				// error_log( 'pre_update_option_' . $field['id'] . ' - ' . print_r( $new_value, true ) );
 				if ( $new_value === '__unset__' ) {
 					delete_option( $field['id'] );
 					return null;

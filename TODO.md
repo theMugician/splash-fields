@@ -3,13 +3,14 @@
 ## TODO
 
 ### Misc
+- Make sure `$field['field_name']` exists for all fields - crucial for Repeater to work
 - Check when json_encoding starts for Checkbox_List, File, Image, Repeater
     - process_value
         - value
         - sanitize
     - save
 - `file` and `image` attribute `allowed-types`
-- `file` inconsistent save bug
+- `file` inconsistent save bug - check 
 - `Error` Class and handling - Write a value to trigger error for testing purposes
 - `select:multiple` Use serialized array instead of adding multiple metakeys of the same name
 

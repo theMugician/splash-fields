@@ -1,25 +1,46 @@
-jQuery(function ($) {
-    // Set all variables to be used in scope
-    let frame
+(function ($) {
+    'use strict'
 
-    const field = $('.spf-field-image'),
-        addImgLink = field.find('.spf-image__upload'),
-        delImgLink = field.find('.spf-image__delete'),
-        imgContainer = field.find('.spf-image__image-container'),
-        imgDataInput = field.find('.spf-image__image-data')
+    const image = {}
 
-    // ADD IMAGE LINK
-    addImgLink.on('click', function (event) {
+    /**
+     * Handles a click on delete image.
+     *
+     * @param {Object} event Click event.
+     */
+    image.deleteHandler = function (event) {
+        console.log('Delete handler triggered')
+        console.log($(this))
         event.preventDefault()
+        const field = $(this).closest('.spf-field-image')
+        const input = field.find('.spf-image__image-data')
+        const container = field.find('.spf-image__image-container')
+        const addImgLink = field.find('.spf-image__upload')
+        const delImgLink = field.find('.spf-image__delete')
+
+        input.val('')
+        container.html('')
+        addImgLink.removeClass('hide')
+        delImgLink.addClass('hide')
+    }
+
+    /**
+     * Handles image selection.
+     *
+     * @param {Object} event Click event.
+     */
+    image.addHandler = function (event) {
+        event.preventDefault()
+        const field = $(this).closest('.spf-field-image')
 
         // If the media frame already exists, reopen it.
-        if (frame) {
-            frame.open()
+        if (field.data('frame')) {
+            field.data('frame').open()
             return
         }
 
         // Create a new media frame
-        frame = wp.media({
+        const frame = wp.media({
             title: 'Select or Upload Image',
             button: {
                 text: 'Use this image'
@@ -30,12 +51,16 @@ jQuery(function ($) {
             multiple: false  // Set to true to allow multiple files to be selected
         })
 
+        // Store the frame in the field data
+        field.data('frame', frame)
+
         // When an image is selected in the media frame...
         frame.on('select', function () {
             // Get media attachment details from the frame state
             const attachment = frame.state().get('selection').first().toJSON()
 
             // Send the attachment URL to our custom image input field.
+            const imgContainer = field.find('.spf-image__image-container')
             imgContainer.html('<img src="' + attachment.url + '" alt="' + attachment.alt + '" />')
 
             // Create an object with the image data
@@ -47,33 +72,43 @@ jQuery(function ($) {
             }
 
             // Send the image data to our hidden input as a JSON string
+            const imgDataInput = field.find('.spf-image__image-data')
             imgDataInput.val(JSON.stringify(imageData))
 
             // Hide the add image link
+            const addImgLink = field.find('.spf-image__upload')
             addImgLink.addClass('hide')
 
             // Unhide the remove image link
+            const delImgLink = field.find('.spf-image__delete')
             delImgLink.removeClass('hide')
         })
 
         // Finally, open the modal on click
         frame.open()
+    }
+
+    /**
+     * Adds event listeners for image field actions.
+     */
+    image.addEventListeners = function () {
+        console.log('add event listeners')
+        $('.spf-image__upload').on('click', image.addHandler)
+        $('.spf-image__delete').on('click', image.deleteHandler)
+    }
+
+    /**
+     * Initiates image object.
+     */
+    function init () {
+        console.log('init image object')
+        image.addEventListeners()
+    }
+
+    $(document).ready(function () {
+        init()
     })
 
-    // DELETE IMAGE LINK
-    delImgLink.on('click', function (event) {
-        event.preventDefault()
+})(jQuery)
 
-        // Clear out the preview image
-        imgContainer.html('')
-
-        // Un-hide the add image link
-        addImgLink.removeClass('hide')
-
-        // Hide the delete image link
-        delImgLink.addClass('hide')
-
-        // Delete the image data from the hidden input
-        imgDataInput.val('')
-    })
-})
+console.log('image.js loaded')

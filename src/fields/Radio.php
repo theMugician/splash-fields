@@ -37,7 +37,7 @@ class Radio extends Input {
 	 * @return string
 	 */
 	static public function html_input( $field, $meta ) {
-		$output    .= '<fieldset class="spf-input-list">';
+		$output    = '<fieldset class="spf-input-list">';
         $output    .= static::html_radio_inputs( $field, $meta );
 		$output    .= '</fieldset>';
 		return $output;
