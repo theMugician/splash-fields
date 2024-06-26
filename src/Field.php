@@ -26,6 +26,7 @@ class Field {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
+
 		// Replace with default?
 		// Unserialize raw meta data.
 		// if ( isset( $field['multiple'] ) && $field['multiple'] ) {
@@ -38,6 +39,7 @@ class Field {
 			}
 			$meta = is_array( $meta ) ? $meta : array();
 		}
+
 		// On Save
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
@@ -145,11 +147,11 @@ class Field {
 	 * @param array $field     The field settings.
 	 */
 	public static function process_value( $value, $object_id, array $field ) {
-		if ( $field['type'] === 'image' && $field['id'] === 'spf-options-image-test-3') {
-			error_log( 'Image::process_value() $value: ' . print_r( $value, true ) );
-		}
+
 		$value = static::value( $value, $object_id, $field );
+
 		$value = static::sanitize( $value );
+
 		return $value;
 	}
 

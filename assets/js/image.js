@@ -101,7 +101,6 @@
      * Initiates image object.
      */
     function init () {
-        console.log('init image object')
         image.addEventListeners()
     }
 

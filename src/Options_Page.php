@@ -140,8 +140,6 @@ class Options_Page {
 	public function enqueue() {
 		// Enqueue scripts and styles for fields.
 		foreach ( $this->fields as $field ) {
-			error_log('Enqueuing scripts for field: ' . print_r($field, true));
-
 			Field::call( $field, 'admin_enqueue_scripts' );
 		}
 		/**
@@ -203,9 +201,6 @@ class Options_Page {
 				$field['id'],
 				array(
 					'sanitize_callback' => function( $value ) use ( $field ) {
-						if ( $field['type'] === 'repeater' && $field['id'] === 'spf-options-repeater-test') {
-							error_log( 'Options_page::sanitize_callback() $value: ' . print_r( $value, true ) );
-						}
 						$value = Field::call( $field, 'process_value', $value, 0, $field );
 						// TODO BUG: Reproduce bug for file value
 						// Sometimes the value comes out as """"

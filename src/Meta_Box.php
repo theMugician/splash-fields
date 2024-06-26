@@ -245,10 +245,19 @@ class Meta_Box {
 
         $new = $_POST[$field['id']];
 
+		// Unslash the data. 
+		// This is required for fields that have multiple values because the json string data is slashed by WordPress.
+		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+			$new = wp_unslash( $new );
+		}
+
 		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
 
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
 		
+		if ( $field['type'] === 'select') {
+			error_log( $new );
+		}
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}

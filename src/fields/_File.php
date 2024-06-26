@@ -164,16 +164,13 @@ class File extends Input {
 
         // Check if decode_value returned an array.
         if ( ! is_array( $decoded_value ) ) {
-            // error_log( 'Invalid serialized data: ' . print_r( $value, true ) );
             return '';
         }
 
         // If a new file is uploaded, handle it.
         $file_add_id = self::file_add_id( $field['id'] );
-        // error_log( 'File add ID: ' . print_r( $file_add_id, true ) );
 
         if ( ! empty( $_FILES[ $file_add_id ]['name'] ) ) {
-            error_log( '$_FILES[ $file_add_id ] name: ' . print_r( $_FILES[ $file_add_id ]['name'], true ) );
             $attachment_id = media_handle_upload( $file_add_id, $object_id );
             if ( is_wp_error( $attachment_id ) ) {
                 $error_message = $attachment_id->get_error_message();
@@ -190,14 +187,12 @@ class File extends Input {
 
         // Sanitize each element in the array.
         $value = $decoded_value;
-        // error_log( 'return value: ' . print_r( $value, true ) );
 
         // Re-serialize the array to a string.
         return json_encode( $value );
     }
 
     public static function sanitize( $value ) {
-        // error_log( 'Sanitize value: ' . print_r( $value, true ) );
         if ( $value === '' || is_null( $value ) ) {
             return '';
         }

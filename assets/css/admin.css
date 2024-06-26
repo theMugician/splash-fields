@@ -169,6 +169,10 @@ input[type=radio].spf-field__radio-button {
     color: red;
 }
 
+.spf-file__delete.hide, .spf-file__upload.hide {
+    display: none;
+}
+
 /* Image Field */
 .spf-image__delete.hide, .spf-image__upload.hide {
     display: none;

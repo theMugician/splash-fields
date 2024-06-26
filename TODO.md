@@ -3,6 +3,7 @@
 ## TODO
 
 ### Misc
+- Test Metabox, User and Taxonomy
 - Make sure `$field['field_name']` exists for all fields - crucial for Repeater to work
 - Check when json_encoding starts for Checkbox_List, File, Image, Repeater
     - process_value

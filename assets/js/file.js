@@ -3,6 +3,63 @@
 
     const file = {}
 
+    file.getIcon = function (attachment) {
+        /*
+        if ('image' === attachment.type) {
+            return `<img src="${attachment.url}" alt="${attachment.name}" style="width:48px;height:64px;">`
+        } else {
+            fetch(spfFileData.ajaxUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=get_file_icon&id=${attachment.id}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.data.url) // This outputs the correct URL
+                        return `<img src="${data.data.url}" alt="${attachment.name}" style="width:48px;height:48px;">` // Adjust the path to your generic icon
+                    } else {
+                        console.error('Error fetching image')
+                    }
+                })
+                .catch(error => console.error('Error:', error))
+        }
+        */
+        return new Promise((resolve, reject) => {
+            if ('image' === attachment.type) {
+                resolve(`<img src="${attachment.url}" alt="${attachment.name}" style="width:48px;height:48px;">`)
+            } else if (spfFileData.defaultIcon) {
+                resolve(`<img src="${spfFileData.defaultIcon}" alt="${attachment.name}" style="width:48px;height:64px;">`)
+            } else {
+                fetch(spfFileData.ajaxUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=get_file_icon&id=${attachment.id}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log(data.data.url)
+                            resolve(`${data.data.url}`)
+                        } else {
+                            console.error('Error fetching image')
+                            reject('Error fetching image')
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error)
+                        reject(error)
+                    })
+            }
+        })
+    }
+
     /**
      * Handles a click on delete file.
      *
@@ -56,11 +113,36 @@
         frame.on('select', function () {
             // Get media attachment details from the frame state
             const attachment = frame.state().get('selection').first().toJSON()
+            // <img src="${attachment.url}" alt="${attachment.name}" style="width:48px;height:48px;">
 
             // Send the attachment URL to our custom file input field.
             const fileContainer = field.find('.spf-file__file-container')
-            fileContainer.html('<div>' + attachment.name + '</div>')
-
+            // fileContainer.html('<div>' + attachment.name + '</div>')
+            /*
+            fileContainer.html(
+                `<div class="spf-file">
+                    <div class="spf-file__icon">
+                        ${file.getIcon(attachment)}
+                    </div>
+                    <div class="spf-file__info">
+                        <a href="${attachment.url}" target="_blank" class="spf-file__title">${attachment.name}</a>
+                        <div class="spf-file__name">${attachment.name}</div>
+                    </div>
+                </div>
+                `
+            )
+            */
+            file.getIcon(attachment).then(iconHtml => {
+                fileContainer.html(`
+                    <div class="spf-file">
+                        <div class="spf-file__icon">${iconHtml}</div>
+                        <div class="spf-file__info">
+                            <a href="${attachment.url}" target="_blank" class="spf-file__title">${attachment.name}</a>
+                            <div class="spf-file__name">${attachment.name}</div>
+                        </div>
+                    </div>
+                `)
+            })
             // Create an object with the file data
             const fileData = {
                 id: attachment.id,

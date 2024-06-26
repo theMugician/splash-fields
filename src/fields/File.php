@@ -40,6 +40,11 @@ class File extends Input {
             true 
         );
 
+        wp_localize_script( 'spf-file-js', 'spfFileData', array(
+            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+            'defaultIcon' => SPF_ASSETS_URL . '/images/document.png',
+        ) );
+
         wp_enqueue_script( 'spf-file-js' );
     }
 
@@ -59,6 +64,37 @@ class File extends Input {
     }
 
     /**
+     * Register AJAX actions for logged-in and non-logged-in users.
+     */
+    public static function add_actions() {
+        add_action( 'wp_ajax_get_file_icon', array( __CLASS__, 'get_file_icon_handler') );
+        add_action( 'wp_ajax_nopriv_get_file_icon', array( __CLASS__, 'get_file_icon_handler') ); // If needed for non-logged-in users
+    }
+
+    /**
+     * Handles the AJAX request to fetch an icon for a file.
+     */
+    public static function get_file_icon_handler() {
+        // Ensure the ID parameter is present and is an integer.
+        $file_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : null;
+
+        if ( ! empty( $file_id ) ) {
+            $image = wp_get_attachment_image( $file_id, [48, 64], true );
+
+            // $image = wp_get_attachment_image_src( $file_id, [48, 64] );
+            if ( $image && isset( $image ) ) {
+                wp_send_json_success( ['url' => $image] );
+            } else {
+                // Return default icon if not an image, assuming the script is in the root of your plugin directory.
+                wp_send_json_success( ['url' => defined( 'SPF_ASSETS_PATH' ) ? SPF_ASSETS_PATH . '/images/document.png' : 'path/to/fallback/document.png'] );
+            }
+        } else {
+            // Return error icon or message, adjust path as needed.
+            wp_send_json_error( ['url' => defined( 'SPF_ASSETS_PATH' ) ? SPF_ASSETS_PATH . '/images/error-icon.png' : 'path/to/fallback/error-icon.png'] );
+        }
+    }
+
+    /**
      * Normalize parameters for field.
      *
      * @param array $field Field parameters.
@@ -66,6 +102,7 @@ class File extends Input {
      */
     public static function normalize( $field ) {
         return wp_parse_args( $field, array(
+            'multiple' => true,
             'field_name' => $field['id'],
             'upload_iframe_src' => '',
         ) );
@@ -164,6 +201,9 @@ class File extends Input {
     public static function sanitize( $value ) {
         // Decode the JSON string.
         $decoded_value = json_decode( $value, true );
+        if ( json_last_error() !== JSON_ERROR_NONE ) {
+            error_log( 'File::sanitize JSON Error: ' . json_last_error_msg() );
+        }
 
         // Check if the decoded value is a single file object.
         if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
@@ -173,6 +213,7 @@ class File extends Input {
             $decoded_value['type'] = isset( $decoded_value['type'] ) ? sanitize_text_field( $decoded_value['type'] ) : '';
             return json_encode( $decoded_value );
         }
+        error_log( 'Returned [] ');
 
         // If the value is not an array, return an empty array encoded as a JSON string.
         return json_encode( [] );

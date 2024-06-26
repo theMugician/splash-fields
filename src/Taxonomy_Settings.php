@@ -227,6 +227,11 @@ class Taxonomy_Settings {
         $old = Field::call( 'raw_meta', $field, $this->term_id );
 
         $new = $_POST[$field['id']];
+
+        if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+			$new = wp_unslash( $new );
+		}
+
         $new = Field::call( $field, 'process_value', $new , $this->term_id, $field );
 
         // update_meta with Storage Class

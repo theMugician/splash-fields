@@ -53,8 +53,6 @@ class Image extends Input {
      */
     public static function upload_iframe_src( $post_id ) {
         $upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
-        var_dump( $upload_iframe_src );
-
         $upload_iframe_src = add_query_arg( 'type', 'image', $upload_iframe_src );
         return add_query_arg( 'TB_iframe', true, $upload_iframe_src );
     }
@@ -67,6 +65,7 @@ class Image extends Input {
      */
     public static function normalize( $field ) {
         return wp_parse_args( $field, array(
+            'multiple' => true,
             'field_name' => $field['id'],
             'upload_iframe_src' => '',
         ) );
@@ -129,13 +128,11 @@ class Image extends Input {
  * @return string The sanitized meta value.
  */
 public static function sanitize( $value ) {
-    // error_log( 'Image::sanitize() $value: ' . print_r( $value, true ) );
     // Decode the JSON string.
     $decoded_value = json_decode( $value, true );
 
     // Check if the decoded value is a single image object.
     if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
-        // error_log( 'Image::sanitize() $decoded_value: ' . print_r( $decoded_value, true ) );
         $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;
         $decoded_value['url'] = isset( $decoded_value['url'] ) ? esc_url_raw( $decoded_value['url'] ) : '';
         $decoded_value['name'] = isset( $decoded_value['name'] ) ? sanitize_text_field( $decoded_value['name'] ) : '';
