@@ -207,8 +207,8 @@ input[type=radio].spf-field__radio-button {
 }
 
 .spf-user-settings .spf-field {
-    border: 0;
-    padding: 20px 0;
+    /* border: 0;
+    padding: 20px 0; */
 }
 
 .spf-user-settings .spf-field__label {
@@ -240,8 +240,8 @@ input[type=radio].spf-field__radio-button {
 }
 
 .spf-taxonomy-settings--edit .spf-field {
-    border: 0;
-    padding: 20px 0;
+    /* border: 0;
+    padding: 20px 0; */
 }
 
 .spf-taxonomy-settings--edit .spf-field__label {
