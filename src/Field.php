@@ -26,19 +26,19 @@ class Field {
 	 */
 	public static function show( array $field, $post_id = 0 ) {
 		$meta = static::raw_meta( $post_id, $field );
-
-		// Replace with default?
-		// Unserialize raw meta data.
-		// if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-		// 	$meta = json_decode( $meta );
-		// 	$meta = is_array( $meta ) ? $meta : array();
-		// }
+		/**
+		 * Remove this - At the moment only 3 ['checkbox-list', 'image', 'file'] field types have multiple attribute.
+		 * 'file' and 'image' fields need the raw json string to add to their hidden input values.
+		 * Decode the json string to an array in the field's html method.
+		 */
+		/*
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 			if ( is_string( $meta ) && is_json( $meta ) ) {
 				$meta = json_decode( $meta, true );
 			}
 			$meta = is_array( $meta ) ? $meta : array();
 		}
+		*/
 
 		// On Save
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
@@ -57,12 +57,6 @@ class Field {
 	 */
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
-		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-			if ( is_string( $meta ) && is_json( $meta ) ) {
-				$meta = json_decode( $meta, true );
-			}
-			$meta = is_array( $meta ) ? $meta : array();
-		}
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
 		$html .= '</div>';

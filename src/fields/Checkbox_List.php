@@ -144,12 +144,10 @@ class Checkbox_List extends Input {
 	 * @return string
 	 */
 	static public function html_checkbox_inputs( $field, $meta ) {
-		// $meta_exists = [];
-		// if ( $meta && count( $meta ) > 0 ) {
-		// 	foreach( $meta as $key => $value ) {
-		// 		$meta_exists[$value] = 1;
-		// 	}
-		// }
+		if ( is_string( $meta ) && is_json( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+		$meta = is_array( $meta ) ? $meta : array();
         $output = '';
 		foreach ( $field['options'] as $option_value => $option_label ) {
 			$checked = in_array( $option_value, $meta, true ) ? ' checked' : '';

@@ -44,6 +44,11 @@ class Repeater extends Input {
      * @param int   $post_id Post ID.
      */
     public static function html( $field, $meta  ) {
+        if ( is_string( $meta ) && is_json( $meta ) ) {
+			$meta = json_decode( $meta, true );
+		}
+		$meta = is_array( $meta ) ? $meta : array();
+        
         // Enqueue scripts for each sub-field
         self::enqueue_scripts( $field );
 
@@ -103,12 +108,6 @@ class Repeater extends Input {
      */
     protected static function show_sub_field( $field, $meta ) {
         $field = Field::call( 'normalize', $field );
-        if ( isset( $field['multiple'] ) && $field['multiple'] ) {
-            if ( is_string( $meta ) && is_json( $meta ) ) {
-                $meta = json_decode( $meta );
-            }
-            $meta = is_array( $meta ) ? $meta : array();
-        }
         $meta  = static::get_default( $field, $meta );
 
         $html  = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );

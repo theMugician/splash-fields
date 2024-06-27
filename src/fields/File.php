@@ -142,13 +142,11 @@ class File extends Input {
     }
 
     /**
-     * HTML and functionality to add/update/delete file.
-     *
-     * @link https://codex.wordpress.org/Javascript_Reference/wp.media
+     * Markup for the file input field.
      * 
-     * @param array $field Field parameters.
-     * @param mixed $meta  Meta value.
-     * @return string
+     * @param   array   $field  Field parameters.
+     * @param   string  $meta   JSON string of metadata value.
+     * @return  string  $output HTML markup for the file input field.
      */
     public static function html_input( $field, $meta ) {
         // Get WordPress' media upload URL
@@ -157,9 +155,6 @@ class File extends Input {
         // Decode the JSON string
         $file_data = json_decode( $meta, true );
         $file_id = isset( $file_data['id'] ) ? $file_data['id'] : '';
-        $file_url = isset( $file_data['url'] ) ? $file_data['url'] : '';
-        $file_name = isset( $file_data['name'] ) ? $file_data['name'] : '';
-        $file_type = isset( $file_data['type'] ) ? $file_data['type'] : '';
 
         // For convenience, check if we have file data
         $has_file = !empty( $file_id );
@@ -170,7 +165,6 @@ class File extends Input {
         $output = '<div class="spf-file__file-container">';
         if ( $has_file ) {
             $output .= self::html_file( $file_data );
-            // $output .= '<div>' . esc_html( $file_name ) . '</div>';
         }
         $output .= '</div>';
         $output .= sprintf(

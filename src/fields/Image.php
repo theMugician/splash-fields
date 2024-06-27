@@ -72,13 +72,11 @@ class Image extends Input {
     }
 
     /**
-     * HTML and functionality to add/update/delete image.
-     *
-     * @link https://codex.wordpress.org/Javascript_Reference/wp.media
+     * Markup for the file input field.
      * 
-     * @param array $field Field parameters.
-     * @param mixed $meta  Meta value.
-     * @return string
+     * @param   array   $field  Field parameters.
+     * @param   string  $meta   JSON string of metadata value.
+     * @return  string  $output HTML markup for the file input field.
      */
     public static function html_input( $field, $meta ) {
         // Get WordPress' media upload URL
@@ -121,47 +119,27 @@ class Image extends Input {
         return $output;
     }
 
-/**
- * Sanitize the meta value.
- *
- * @param string $value The meta value to sanitize.
- * @return string The sanitized meta value.
- */
-public static function sanitize( $value ) {
-    // Decode the JSON string.
-    $decoded_value = json_decode( $value, true );
+    /**
+     * Sanitize the meta value.
+     *
+     * @param   string  $value JSON string meta value to sanitize.
+     * @return  mixed   The sanitized meta value JSON string or empty array.
+     */
+    public static function sanitize( $value ) {
+        // Decode the JSON string.
+        $decoded_value = json_decode( $value, true );
 
-    // Check if the decoded value is a single image object.
-    if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
-        $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;
-        $decoded_value['url'] = isset( $decoded_value['url'] ) ? esc_url_raw( $decoded_value['url'] ) : '';
-        $decoded_value['name'] = isset( $decoded_value['name'] ) ? sanitize_text_field( $decoded_value['name'] ) : '';
-        $decoded_value['alt'] = isset( $decoded_value['alt'] ) ? sanitize_text_field( $decoded_value['alt'] ) : '';
-        return json_encode( $decoded_value );
-    }
-    
-    /*
-    // Check if the decoded value is an array of image objects.
-    if ( is_array( $decoded_value ) ) {
-        // Iterate through each item and sanitize its fields.
-        foreach ( $decoded_value as &$item ) {
-            if ( is_array( $item ) ) {
-                $item['id'] = isset( $item['id'] ) ? intval( $item['id'] ) : 0;
-                $item['url'] = isset( $item['url'] ) ? esc_url_raw( $item['url'] ) : '';
-                $item['name'] = isset( $item['name'] ) ? sanitize_text_field( $item['name'] ) : '';
-                $item['alt'] = isset( $item['alt'] ) ? sanitize_text_field( $item['alt'] ) : '';
-            } else {
-                // If the item is not an array, return an empty array.
-                return wp_json_encode( [] );
-            }
+        // Check if the decoded value is a single image object.
+        if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
+            $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;
+            $decoded_value['url'] = isset( $decoded_value['url'] ) ? esc_url_raw( $decoded_value['url'] ) : '';
+            $decoded_value['name'] = isset( $decoded_value['name'] ) ? sanitize_text_field( $decoded_value['name'] ) : '';
+            $decoded_value['alt'] = isset( $decoded_value['alt'] ) ? sanitize_text_field( $decoded_value['alt'] ) : '';
+            return json_encode( $decoded_value );
         }
-        // Return the sanitized array encoded as a JSON string.
-        return wp_json_encode( $decoded_value );
-    }
-    */
 
-    // If the value is not an array, return an empty array encoded as a JSON string.
-    return json_encode( [] );
-}
+        // If the value is not an array, return an empty array encoded as a JSON string.
+        return json_encode( [] );
+    }
 
 }
