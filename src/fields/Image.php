@@ -17,7 +17,13 @@ class Image extends Input {
      * @param array $field   Field parameters.
      * @param int   $post_id Post ID.
      */
+    /*
     public static function show( array $field, $post_id = 0 ) {
+        // if ( isset( $field['meta'] ) && $field['meta'] ) {
+        //     return;
+        // } else {
+
+        // }
         $meta = static::raw_meta( $post_id, $field );
         $field['upload_iframe_src'] = static::upload_iframe_src( $post_id );
         $html = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
@@ -25,6 +31,7 @@ class Image extends Input {
         $html .= '</div>';
         echo $html;
     }
+    */
 
     /**
      * Enqueue admin scripts.
@@ -51,8 +58,12 @@ class Image extends Input {
      * @param int $post_id Post ID.
      * @return string Media iframe source.
      */
-    public static function upload_iframe_src( $post_id ) {
-        $upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
+    public static function upload_iframe_src( $post_id = 0 ) {
+        $upload_iframe_src = admin_url( 'media-upload.php' );
+        if ( $post_id ) {
+            $upload_iframe_src = add_query_arg( 'post_id', $post_id, $upload_iframe_src );
+        }
+        // $upload_iframe_src = add_query_arg( 'post_id', $post_id, admin_url( 'media-upload.php' ) );
         $upload_iframe_src = add_query_arg( 'type', 'image', $upload_iframe_src );
         return add_query_arg( 'TB_iframe', true, $upload_iframe_src );
     }
@@ -79,9 +90,12 @@ class Image extends Input {
      * @return  string  $output HTML markup for the file input field.
      */
     public static function html_input( $field, $meta ) {
-        // Get WordPress' media upload URL
-        $upload_link = esc_url( $field['upload_iframe_src'] );
+        // $field['upload_iframe_src'] = static::upload_iframe_src( $field['post_id'] );
 
+        // Get WordPress' media upload URL
+        // $upload_link = esc_url( $field['upload_iframe_src'] );
+        $upload_link = esc_url( static::upload_iframe_src( $field['post_id'] ) );
+        var_dump( $upload_link );
         // Decode the JSON string
         $image_data = json_decode( $meta, true );
         $image_id = isset( $image_data['id'] ) ? $image_data['id'] : '';

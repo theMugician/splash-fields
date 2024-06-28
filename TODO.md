@@ -9,6 +9,13 @@
 
 ------------------------------------------
 
+## ERRORS & BUGS
+1. If file is empty this error pops up - File::sanitize JSON Error: Syntax error  
+2. PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/htdocs/sandbox/wp-content/plugins/splash-fields/src/Meta_Box.php on line 247  
+3. PHP Warning:  Undefined array key "spf-meta-boxes-repeater" in /Applications/MAMP/htdocs/sandbox/wp-content/plugins/splash-fields/src/Meta_Box.php on line 247  
+4. Repeater with saved fields breaks page
+5. event listener needs to be added to new image and file buttons when they get added to repeater group
+
 ## QA
 ### Needs QA:
 - Make sure `$field['field_name']` exists for all fields - crucial for Repeater to work

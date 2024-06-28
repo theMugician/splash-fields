@@ -37,6 +37,17 @@ class Repeater extends Input {
         }
     }
 
+    /*
+    public static function show( $field, $post_id  ) {
+        $meta = static::raw_meta( $post_id, $field );
+        $field['post_id'] = $post_id;
+        $html = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
+        $html .= static::html( $field, $meta );
+        $html .= '</div>';
+        echo $html;
+    }
+    */
+
     /**
      * Display the repeater field.
      *
@@ -48,7 +59,7 @@ class Repeater extends Input {
 			$meta = json_decode( $meta, true );
 		}
 		$meta = is_array( $meta ) ? $meta : array();
-        
+
         // Enqueue scripts for each sub-field
         self::enqueue_scripts( $field );
 
@@ -87,6 +98,7 @@ class Repeater extends Input {
         $group_html  .= '<h3 class="spf-repeater-group__title">Group <span class="spf-repeater-group__number">' . esc_html( $group_number ) . '</span></h3>';
 
         foreach ( $field['fields'] as $sub_field ) {
+            $sub_field['post_id'] = $field['post_id'];
             $sub_field['field_name'] = sprintf( '%s[%d][%s]', $field['id'], $index, $sub_field['id'] );
             $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
@@ -110,6 +122,7 @@ class Repeater extends Input {
         $field = Field::call( 'normalize', $field );
         $meta  = static::get_default( $field, $meta );
 
+        // $field['meta'] = $meta;
         $html  = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
         $html .= Field::call( 'html', $field, $meta );
         $html .= '</div>';

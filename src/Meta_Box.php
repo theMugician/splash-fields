@@ -241,10 +241,12 @@ class Meta_Box {
 
 	public function save_field( array $field ) {
         // Get Posted Value
-        $old = Field::call( 'raw_meta', $field, $this->object_id );
 
+        $old = Field::call( 'raw_meta', $field, $this->object_id );
+		error_log( 'save_field: ', print_r( $field['id'] ) );
         $new = $_POST[$field['id']];
 
+		error_log( 'save_field: ', print_r( $new ) );
 		// Unslash the data. 
 		// This is required for fields that have multiple values because the json string data is slashed by WordPress.
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {

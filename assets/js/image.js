@@ -30,6 +30,7 @@
      * @param {Object} event Click event.
      */
     image.addHandler = function (event) {
+        console.log('Add handler triggered')
         event.preventDefault()
         const field = $(this).closest('.spf-field-image')
 
@@ -92,7 +93,6 @@
      * Adds event listeners for image field actions.
      */
     image.addEventListeners = function () {
-        console.log('add event listeners')
         $('.spf-image__upload').on('click', image.addHandler)
         $('.spf-image__delete').on('click', image.deleteHandler)
     }

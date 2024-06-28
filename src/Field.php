@@ -40,6 +40,8 @@ class Field {
 		}
 		*/
 
+		$field['post_id'] = $post_id;
+
 		// On Save
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
