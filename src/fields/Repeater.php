@@ -55,11 +55,17 @@ class Repeater extends Input {
      * @param int   $post_id Post ID.
      */
     public static function html( $field, $meta  ) {
+        // echo '<pre>';
+        // var_dump( $meta );
+        // echo '</pre>';
         if ( is_string( $meta ) && is_json( $meta ) ) {
+            // echo '<pre>';
+            // var_dump( $meta );
+            // echo '</pre>';
 			$meta = json_decode( $meta, true );
 		}
 		$meta = is_array( $meta ) ? $meta : array();
-
+        // error_log( 'Repeater meta: ' . print_r( $meta, true ) );
         // Enqueue scripts for each sub-field
         self::enqueue_scripts( $field );
 
@@ -71,7 +77,6 @@ class Repeater extends Input {
                 $html .= static::render_repeater_group( $field, $group_meta, $index );
             }
         }
-
         $html .= '</div>';
         $html .= '<button type="button" class="button spf-add-repeater-row">Add Row</button>';
 
@@ -133,10 +138,10 @@ class Repeater extends Input {
     /**
      * Process the value of the repeater field.
      *
-     * @param mixed $value   New value.
-     * @param int   $post_id Post ID.
-     * @param array $field   Field configuration.
-     * @return array
+     * @param   mixed $value            New value.
+     * @param   int   $post_id          Post ID.
+     * @param   array $field            Field configuration.
+     * @return  array $processed_value  Array of processed sub field values.
      */
     public static function process_value( $value, $post_id, $field ) {
         if ( empty( $value ) || ! is_array( $value ) ) {
@@ -151,12 +156,22 @@ class Repeater extends Input {
             foreach ( $field['fields'] as $sub_field ) {
                 $sub_field_id    = $sub_field['id'];
                 $sub_field_value = isset( $group_values[ $sub_field_id ] ) ? $group_values[ $sub_field_id ] : '';
-                $processed_group[ $sub_field_id ] = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
+                $sub_field_processed_value = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
+                /**
+                 * I can't add a JSON string as a value within the repeater value array because it will be double-encoded. 
+                 */
+                if ( $sub_field['type'] === 'image' || $sub_field['type'] === 'file' ) {
+                    $sub_field_processed_value = json_decode( $sub_field_processed_value );
+                }
+                // $processed_group[ $sub_field_id ] = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
+                $processed_group[ $sub_field_id ] = $sub_field_processed_value;
+
             }
 
             $processed_value[] = $processed_group;
         }
 
+        error_log( 'Repeater::process_value(): ' . print_r( $processed_value, true ) );
         return $processed_value;
     }
 

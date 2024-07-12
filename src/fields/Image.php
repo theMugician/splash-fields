@@ -83,21 +83,27 @@ class Image extends Input {
     }
 
     /**
-     * Markup for the file input field.
+     * Markup for the image input field.
      * 
      * @param   array   $field  Field parameters.
-     * @param   string  $meta   JSON string of metadata value.
+     * @param   mixed   $meta   JSON string or array of metadata value.
      * @return  string  $output HTML markup for the file input field.
      */
     public static function html_input( $field, $meta ) {
-        // $field['upload_iframe_src'] = static::upload_iframe_src( $field['post_id'] );
-
         // Get WordPress' media upload URL
-        // $upload_link = esc_url( $field['upload_iframe_src'] );
         $upload_link = esc_url( static::upload_iframe_src( $field['post_id'] ) );
-        var_dump( $upload_link );
+
         // Decode the JSON string
-        $image_data = json_decode( $meta, true );
+        if ( is_string( $meta ) && is_json( $meta ) ) {
+            $image_data = json_decode( $meta, true );
+        } elseif ( is_array( $meta ) ) {
+            $image_data = $meta;
+            // Ensure $meta is a string for further processing
+            $meta = json_encode( $meta );
+        } else {
+            $image_data = array();
+        }
+        // $image_data = json_decode( $meta, true );
         $image_id = isset( $image_data['id'] ) ? $image_data['id'] : '';
         $image_url = isset( $image_data['url'] ) ? $image_data['url'] : '';
         $image_name = isset( $image_data['name'] ) ? $image_data['name'] : '';
@@ -137,12 +143,14 @@ class Image extends Input {
      * Sanitize the meta value.
      *
      * @param   string  $value JSON string meta value to sanitize.
-     * @return  mixed   The sanitized meta value JSON string or empty array.
+     * @return  mixed   The sanitized  JSON string (meta value or empty array).
      */
     public static function sanitize( $value ) {
         // Decode the JSON string.
         $decoded_value = json_decode( $value, true );
-
+        if ( json_last_error() !== JSON_ERROR_NONE ) {
+            error_log( 'Image::sanitize JSON Error: ' . json_last_error_msg() );
+        }
         // Check if the decoded value is a single image object.
         if ( is_array( $decoded_value ) && isset( $decoded_value['id'] ) ) {
             $decoded_value['id'] = isset( $decoded_value['id'] ) ? intval( $decoded_value['id'] ) : 0;

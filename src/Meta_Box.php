@@ -244,7 +244,17 @@ class Meta_Box {
 
         $old = Field::call( 'raw_meta', $field, $this->object_id );
 		error_log( 'save_field: ', print_r( $field['id'] ) );
-        $new = $_POST[$field['id']];
+        // $new = $_POST[$field['id']]; // Refactor everywhere else to use this method
+		$new;
+		if ( isset( $_POST[$field['id']] ) ) {
+			$new = $_POST[$field['id']];
+		} else {
+			if ( isset( $field['multiple'] ) && $field['multiple'] ) {
+				$new = '[]';
+			} else {
+				$new = '';
+			}
+		}
 
 		error_log( 'save_field: ', print_r( $new ) );
 		// Unslash the data. 
@@ -253,13 +263,13 @@ class Meta_Box {
 			$new = wp_unslash( $new );
 		}
 
-		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
-
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
 		
+		/*
 		if ( $field['type'] === 'select') {
 			error_log( $new );
 		}
+		*/
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}

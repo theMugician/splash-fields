@@ -145,7 +145,7 @@ class File extends Input {
      * Markup for the file input field.
      * 
      * @param   array   $field  Field parameters.
-     * @param   string  $meta   JSON string of metadata value.
+     * @param   mixed   $meta   JSON string or array of metadata value.
      * @return  string  $output HTML markup for the file input field.
      */
     public static function html_input( $field, $meta ) {
@@ -153,7 +153,16 @@ class File extends Input {
         $upload_link = esc_url( $field['upload_iframe_src'] );
 
         // Decode the JSON string
-        $file_data = json_decode( $meta, true );
+        if ( is_string( $meta ) && is_json( $meta ) ) {
+            $file_data = json_decode( $meta, true );
+        } elseif ( is_array( $meta ) ) {
+            $file_data = $meta;
+            // Ensure $meta is a string for further processing
+            $meta = json_encode( $meta );
+        } else {
+            $file_data = array();
+        }
+
         $file_id = isset( $file_data['id'] ) ? $file_data['id'] : '';
 
         // For convenience, check if we have file data
@@ -189,8 +198,8 @@ class File extends Input {
     /**
      * Sanitize the meta value.
      *
-     * @param string $value The meta value to sanitize.
-     * @return string The sanitized meta value.
+     * @param   string  $value The meta value to sanitize.
+     * @return  mixed   The sanitized JSON string (meta value or empty array).
      */
     public static function sanitize( $value ) {
         // Decode the JSON string.
@@ -207,7 +216,6 @@ class File extends Input {
             $decoded_value['type'] = isset( $decoded_value['type'] ) ? sanitize_text_field( $decoded_value['type'] ) : '';
             return json_encode( $decoded_value );
         }
-        error_log( 'Returned [] ');
 
         // If the value is not an array, return an empty array encoded as a JSON string.
         return json_encode( [] );

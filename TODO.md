@@ -10,11 +10,20 @@
 ------------------------------------------
 
 ## ERRORS & BUGS
-1. If file is empty this error pops up - File::sanitize JSON Error: Syntax error  
-2. PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/htdocs/sandbox/wp-content/plugins/splash-fields/src/Meta_Box.php on line 247  
-3. PHP Warning:  Undefined array key "spf-meta-boxes-repeater" in /Applications/MAMP/htdocs/sandbox/wp-content/plugins/splash-fields/src/Meta_Box.php on line 247  
-4. Repeater with saved fields breaks page
-5. event listener needs to be added to new image and file buttons when they get added to repeater group
+### TODO
+
+1. Repeater field with Editor field breaks page. No CSS is being loaded.
+
+### DONE
+Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
+1. Event listener needs to be added to new image and file buttons when they get added to repeater group. - Will probably solve most of the repeater bugs. 
+2. If file is empty this error pops up - File::sanitize JSON Error: Syntax error  
+3. Refactor `$new = $_POST[$field['id']];` Error comes up when field value is empty/unselected. 
+PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/htdocs/sandbox/wp-content/plugins/splash-fields/src/Meta_Box.php on line 247 
+4. Repeater > Image/File - Check how JSON string is being saved in Repeater. Meta not being outputted because of incorrect JSON string.
+5. Setting a file and/or image within Repeater saves bad value (null, empty)? in Repeater
+`[11-Jul-2024 20:09:40 UTC] File::sanitize JSON Error: Syntax error`
+`[11-Jul-2024 20:09:40 UTC] Image::sanitize JSON Error: Syntax error`
 
 ## QA
 ### Needs QA:

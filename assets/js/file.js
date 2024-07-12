@@ -187,4 +187,8 @@
         init()
     })
 
+    // Expose init function globally
+    window.spf = window.spf || {}
+    window.spf.fileInit = init
+
 })(jQuery)

@@ -108,6 +108,8 @@
         init()
     })
 
-})(jQuery)
+    // Expose init function globally
+    window.spf = window.spf || {}
+    window.spf.imageInit = init
 
-console.log('image.js loaded')
+})(jQuery)

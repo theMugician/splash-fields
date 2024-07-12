@@ -13,7 +13,7 @@
 
         // Find the repeater wrapper
         const $wrapper = $(this).siblings('.spf-repeater-wrapper')
-        
+
         // Get the template and clone it
         const template = $(this).siblings('.spf-repeater-template').html()
         // const template = $('.spf-repeater-template').html()
@@ -29,6 +29,14 @@
 
         // Update indexes
         repeater.updateIndexes($wrapper)
+
+        // Check for image and file fields in the new repeater row and initialize if present
+        if ($clone.find('.spf-field-image').length > 0 && window.spf && typeof window.spf.imageInit === 'function') {
+            window.spf.imageInit()
+        }
+        if ($clone.find('.spf-field-file').length > 0 && window.spf && typeof window.spf.fileInit === 'function') {
+            window.spf.fileInit()
+        }
     }
 
     /**
@@ -55,7 +63,7 @@
     repeater.updateIndexes = function ($wrapper) {
         $wrapper.children('.spf-repeater-group').each(function (index) {
             $(this).find('input, textarea, select').each(function () {
-                var name = $(this).attr('name')
+                let name = $(this).attr('name')
                 if (name) {
                     name = name.replace(/\[\d+\]/, '[' + index + ']')
                     $(this).attr('name', name)
@@ -72,7 +80,10 @@
         $(document).on('click', '.spf-delete-repeater-row', repeater.deleteRepeaterRowHandler)
     }
 
-    function init() {
+    /**
+     * Initiates repeater object.
+     */
+    function init () {
         repeater.addRowButton = $('.spf-add-repeater-row')
         repeater.addEventListeners()
     }

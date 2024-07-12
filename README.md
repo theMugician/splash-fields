@@ -12,12 +12,11 @@ Create custom fields and add them to a metabox, options page, taxonomy page, use
 ## Taxonomy
 
 ## Gutenberg Sidepanel
-*In development*
 
 # Fields
 - Checkbox
 - Checkbox List
-- Editor
+- Editor *In development*
 - File
 - Image
 - Input
@@ -28,6 +27,6 @@ Create custom fields and add them to a metabox, options page, taxonomy page, use
 - Textarea
 
 # Roadmap
-- Repeater Field
-- Gutenberg Sidebar
 - Detailed document
+- Editor within Repeater
+- File and Image field allowed types parameter
