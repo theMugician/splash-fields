@@ -100,6 +100,7 @@ if ( ! function_exists( 'is_json' ) ) {
 	 */
 	function is_json( $string ) {
 		json_decode( $string );
+		// error_log( 'is_json(): ' . json_last_error() );
 		return ( json_last_error() === JSON_ERROR_NONE );
 	}
 }

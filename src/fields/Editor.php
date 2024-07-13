@@ -25,6 +25,7 @@ class Editor extends Input {
 		// Using output buffering because wp_editor() echos directly.
 		ob_start();
 
+		error_log( 'Editor::$meta: ' . print_r( $meta, true ) );
 		$attributes = self::get_attributes( $field );
 		$options = $field['options'];
 
@@ -32,8 +33,12 @@ class Editor extends Input {
 		if ( ! empty( $attributes['required'] ) ) {
 			$options['editor_class'] .= ' spf-editor-required';
 		}
+		error_log( print_r( $attributes['id'], true ) );
 
-		wp_editor( $meta, $attributes['id'], $options );
+		$editor_id = $attributes['id'] . '_' . uniqid();
+        wp_editor( $meta, $editor_id, $options );
+
+		// wp_editor( $meta, $attributes['id'], $options );
 		// echo '<script class="rwmb-wysiwyg-id" type="text/html" data-id="', esc_attr( $attributes['id'] ), '" data-options="', esc_attr( wp_json_encode( $options ) ), '"></script>';
 		// echo '<script>if ( typeof rwmb !== "undefined" ) rwmb.$document.trigger( "mb_init_editors" );</script>';
 

@@ -11,8 +11,8 @@
 
 ## ERRORS & BUGS
 ### TODO
-
-1. Repeater field with Editor field breaks page. No CSS is being loaded.
+1. Repeater $meta JSON string is not being decoded when it includes an editor value with an image. Even though the JSON string looks correct.
+`Repeater.php line 62`
 
 ### DONE
 Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
@@ -24,6 +24,7 @@ PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/h
 5. Setting a file and/or image within Repeater saves bad value (null, empty)? in Repeater
 `[11-Jul-2024 20:09:40 UTC] File::sanitize JSON Error: Syntax error`
 `[11-Jul-2024 20:09:40 UTC] Image::sanitize JSON Error: Syntax error`
+6. Repeater field with Editor field breaks page. No CSS is being loaded.
 
 ## QA
 ### Needs QA:

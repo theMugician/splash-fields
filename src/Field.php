@@ -252,7 +252,9 @@ class Field {
 		// 	error_log( $field['id'] . ': ' . $new );
 		// }
 		if ( is_array( $new ) ) {
-			error_log( 'Field::save::is_array: '. $field['id'] . ': ' . print_r( $new, true ) );
+			error_log( 'Array:: '. $field['id'] . ': ' . print_r( $new, true ) );
+			error_log( 'Encoded:: '. $field['id'] . ': ' . print_r( json_encode( $new ), true ) );
+
 			// Remove object meta if $new is empty.
             if ( empty( $new ) ) {
 				$storage->delete( $post_id, $name );

@@ -58,10 +58,9 @@ class Repeater extends Input {
         // echo '<pre>';
         // var_dump( $meta );
         // echo '</pre>';
+        error_log( 'Repeater::$meta::is_json: ' . print_r( is_json( $meta ), true ) );
         if ( is_string( $meta ) && is_json( $meta ) ) {
-            // echo '<pre>';
-            // var_dump( $meta );
-            // echo '</pre>';
+
 			$meta = json_decode( $meta, true );
 		}
 		$meta = is_array( $meta ) ? $meta : array();

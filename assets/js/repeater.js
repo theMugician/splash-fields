@@ -6,7 +6,7 @@
     /**
      * Handles a click to add a repeater row.
      *
-     * @param event Click event.
+     * @param {Array} event Click event.
      */
     repeater.addRepeaterRowHandler = function (event) {
         event.preventDefault()
@@ -29,6 +29,22 @@
 
         // Update indexes
         repeater.updateIndexes($wrapper)
+
+        // Reinitialize TinyMCE editors in the new repeater row
+        $clone.find('.wp-editor-area').each(function() {
+            const id = $(this).attr('id')
+            if (typeof tinymce !== 'undefined') {
+                tinymce.execCommand('mceRemoveEditor', false, id)
+                tinymce.execCommand('mceAddEditor', false, id)
+            }
+            if (typeof quicktags !== 'undefined') {
+                quicktags({ id: id })
+            }
+            wp.editor.initialize(id, {
+                tinymce: true,
+                quicktags: true
+            })
+        })
 
         // Check for image and file fields in the new repeater row and initialize if present
         if ($clone.find('.spf-field-image').length > 0 && window.spf && typeof window.spf.imageInit === 'function') {
