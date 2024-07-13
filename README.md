@@ -23,7 +23,12 @@ add_filter( 'spf_meta_boxes', function( $meta_boxes ) {
 ```php
 add_filter( 'spf_options_pages', function( $options_pages ) {
     $options_pages[] = array(
-        'title'      => 'SPF Options Page',
+        'id'            => 'spf-options-page-test',
+        'title'         => 'SPF Options Page',
+        'menu_title'    => 'SPF Options Page',
+        'menu_slug'     => 'spf-options-test',
+        'parent_slug'   => 'options-general.php', // Optional - skip it to create top-level menu
+        'capability'    => 'manage_options',
         'fields'     => array(
             array(
                 'name' => 'Text',
@@ -57,7 +62,9 @@ add_filter( 'spf_user_settings', function( $user_settings ) {
 ```php
 add_filter( 'spf_taxonomy_settings', function( $taxonomy_settings ) {
     $taxonomy_settings[] = array(
-        'title'      => 'SPF Taxonomy Settings',
+        'id'	    => 'spf-taxonomy-settings-test',
+        'title'     => 'SPF Taxonomy Settings',
+        'taxonomy'  => array( 'post_tag' ), // Where do you want to show this. Can be an array of multiple taxonomies
         'fields'     => array(
             array(
                 'name' => 'Text',
@@ -74,6 +81,7 @@ add_filter( 'spf_taxonomy_settings', function( $taxonomy_settings ) {
 ```php
 add_filter( 'spf_plugin_sidebars', function( $plugin_sidebars ) {
     $plugin_sidebars[] = array(
+        'id'    => 'spf-plugin-sidebars',
         'title'      => 'SPF Plugin Sidebar',
         'fields'     => array(
             array(
