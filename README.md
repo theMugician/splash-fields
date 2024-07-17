@@ -98,17 +98,17 @@ add_filter( 'spf_plugin_sidebars', function( $plugin_sidebars ) {
 # Fields
 - Checkbox
 - Checkbox List
-- Editor *In development*
+- Editor
 - File
 - Image
 - Input
 - Number
 - Radio
+- Repeater
 - Select
 - Text
 - Textarea
 
 # Roadmap
 - Detailed document
-- Fix Editor within Repeater Bug
 - File and Image field `allowed_types` parameter
