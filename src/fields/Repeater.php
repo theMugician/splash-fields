@@ -37,17 +37,6 @@ class Repeater extends Input {
         }
     }
 
-    /*
-    public static function show( $field, $post_id  ) {
-        $meta = static::raw_meta( $post_id, $field );
-        $field['post_id'] = $post_id;
-        $html = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
-        $html .= static::html( $field, $meta );
-        $html .= '</div>';
-        echo $html;
-    }
-    */
-
     /**
      * Display the repeater field.
      *
@@ -55,16 +44,15 @@ class Repeater extends Input {
      * @param int   $post_id Post ID.
      */
     public static function html( $field, $meta  ) {
-        // echo '<pre>';
-        // var_dump( $meta );
-        // echo '</pre>';
-        error_log( 'Repeater::$meta::is_json: ' . print_r( is_json( $meta ), true ) );
+        echo '<pre>';
+        var_dump( $meta );
+        echo '</pre>';
+        error_log( 'Repeater::$meta::is_json: ' . print_r( is_json( $meta ) ) );
         if ( is_string( $meta ) && is_json( $meta ) ) {
 
 			$meta = json_decode( $meta, true );
 		}
 		$meta = is_array( $meta ) ? $meta : array();
-        // error_log( 'Repeater meta: ' . print_r( $meta, true ) );
         // Enqueue scripts for each sub-field
         self::enqueue_scripts( $field );
 
@@ -106,6 +94,9 @@ class Repeater extends Input {
             $sub_field['field_name'] = sprintf( '%s[%d][%s]', $field['id'], $index, $sub_field['id'] );
             $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
+            if ( $sub_field['type'] === 'editor' ) {
+                $sub_field_meta = html_entity_decode( $sub_field_meta, ENT_QUOTES, 'UTF-8' );
+            }
             $group_html .= static::show_sub_field( $sub_field, $sub_field_meta );
         }
 
@@ -125,8 +116,6 @@ class Repeater extends Input {
     protected static function show_sub_field( $field, $meta ) {
         $field = Field::call( 'normalize', $field );
         $meta  = static::get_default( $field, $meta );
-
-        // $field['meta'] = $meta;
         $html  = sprintf( '<div class="spf-field spf-field-%s">', esc_attr( $field['type'] ) );
         $html .= Field::call( 'html', $field, $meta );
         $html .= '</div>';
@@ -157,12 +146,20 @@ class Repeater extends Input {
                 $sub_field_value = isset( $group_values[ $sub_field_id ] ) ? $group_values[ $sub_field_id ] : '';
                 $sub_field_processed_value = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
                 /**
-                 * I can't add a JSON string as a value within the repeater value array because it will be double-encoded. 
+                 * Properly encode the editor content to preserve newlines and special characters
+                 */
+                if ( $sub_field['type'] === 'editor' ) {
+                    $sub_field_processed_value = htmlentities( $sub_field_processed_value, ENT_QUOTES, 'UTF-8' );
+                    $sub_field_processed_value = json_encode( $sub_field_processed_value );
+                    $sub_field_processed_value = trim( $sub_field_processed_value, '"' );
+                }
+
+                /**
+                 * I can't add a JSON string as a value within the repeater value array because it will be double-encoded and break everything. 
                  */
                 if ( $sub_field['type'] === 'image' || $sub_field['type'] === 'file' ) {
                     $sub_field_processed_value = json_decode( $sub_field_processed_value );
                 }
-                // $processed_group[ $sub_field_id ] = Field::call( $sub_field, 'process_value', $sub_field_value, $post_id, $sub_field );
                 $processed_group[ $sub_field_id ] = $sub_field_processed_value;
 
             }
@@ -170,7 +167,6 @@ class Repeater extends Input {
             $processed_value[] = $processed_group;
         }
 
-        error_log( 'Repeater::process_value(): ' . print_r( $processed_value, true ) );
         return $processed_value;
     }
 

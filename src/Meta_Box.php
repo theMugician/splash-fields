@@ -243,7 +243,6 @@ class Meta_Box {
         // Get Posted Value
 
         $old = Field::call( 'raw_meta', $field, $this->object_id );
-		error_log( 'save_field: ', print_r( $field['id'] ) );
         // $new = $_POST[$field['id']]; // Refactor everywhere else to use this method
 		$new;
 		if ( isset( $_POST[$field['id']] ) ) {
@@ -256,8 +255,7 @@ class Meta_Box {
 			}
 		}
 
-		error_log( 'save_field: ', print_r( $new ) );
-		// Unslash the data. 
+		// Unslash the data.
 		// This is required for fields that have multiple values because the json string data is slashed by WordPress.
 		if ( isset( $field['multiple'] ) && $field['multiple'] ) {
 			$new = wp_unslash( $new );
@@ -265,11 +263,6 @@ class Meta_Box {
 
 		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
 		
-		/*
-		if ( $field['type'] === 'select') {
-			error_log( $new );
-		}
-		*/
         // update_meta with Storage Class
         Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}

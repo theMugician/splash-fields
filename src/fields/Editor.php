@@ -33,7 +33,6 @@ class Editor extends Input {
 		if ( ! empty( $attributes['required'] ) ) {
 			$options['editor_class'] .= ' spf-editor-required';
 		}
-		error_log( print_r( $attributes['id'], true ) );
 
 		$editor_id = $attributes['id'] . '_' . uniqid();
         wp_editor( $meta, $editor_id, $options );

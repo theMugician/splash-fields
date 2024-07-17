@@ -248,13 +248,7 @@ class Field {
             }
         }
 		*/
-		// if ( $field['type'] === 'file' || $field['type'] === 'image' ) {
-		// 	error_log( $field['id'] . ': ' . $new );
-		// }
 		if ( is_array( $new ) ) {
-			error_log( 'Array:: '. $field['id'] . ': ' . print_r( $new, true ) );
-			error_log( 'Encoded:: '. $field['id'] . ': ' . print_r( json_encode( $new ), true ) );
-
 			// Remove object meta if $new is empty.
             if ( empty( $new ) ) {
 				$storage->delete( $post_id, $name );
@@ -368,9 +362,6 @@ class Field {
 				$args[] = $field; // Add field as last param.
 			}
 		}
-		// echo '<pre>';
-		// var_dump($args);
-		// echo '</pre>';
 		$class = \Splash_Fields\Helpers\Field::get_class( $field );
 		if ( method_exists( $class, $method ) ) {
 			return call_user_func_array( [ $class, $method ], $args );

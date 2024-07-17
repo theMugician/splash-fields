@@ -229,7 +229,6 @@ class Options_Page {
 
 			// Add a dynamic filter for each field - delete option if value is '__unset__'
 			add_filter( 'pre_update_option_' . $field['id'], function( $new_value, $old_value ) use ( $field ) {
-				// error_log( 'pre_update_option_' . $field['id'] . ' - ' . print_r( $new_value, true ) );
 				if ( $new_value === '__unset__' ) {
 					delete_option( $field['id'] );
 					return null;
