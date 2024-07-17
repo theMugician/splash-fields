@@ -11,8 +11,7 @@
 
 ## ERRORS & BUGS
 ### TODO
-1. Repeater $meta JSON string is not being decoded when it includes an editor value with an image. Even though the JSON string looks correct.
-`Repeater.php line 62`
+
 
 ### DONE
 Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
@@ -25,6 +24,8 @@ PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/h
 `[11-Jul-2024 20:09:40 UTC] File::sanitize JSON Error: Syntax error`
 `[11-Jul-2024 20:09:40 UTC] Image::sanitize JSON Error: Syntax error`
 6. Repeater field with Editor field breaks page. No CSS is being loaded.
+7. Repeater $meta JSON string is not being decoded when it includes an editor value with an image. Even though the JSON string looks correct.
+`Repeater.php line 62`
 
 ## QA
 ### Needs QA:
@@ -53,6 +54,9 @@ Test each field (12) with every object type (5)
 
 #### Object Types
 - Metabox
+    - Post ✅
+    - Page 🛠
+    - CPT  🛠
 - Option Page
 - User
 - Taxonomy
@@ -74,7 +78,7 @@ Test each field (12) with every object type (5)
 
 #### Get Fields
 - `spf_get( 'field_id' )` function  
-    - post_meta
+    - post_meta 🛠
     - user_meta
     - term_meta
     - options
@@ -96,9 +100,3 @@ To grab POST and GET form data
 See:  
 - request.php
 - rwmb_request
-
-
-# Scouty
-Page Title
-Troubleshoot "Elementor"
-Remove from menu light/dark toggle

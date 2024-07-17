@@ -83,6 +83,7 @@ if ( ! function_exists( 'spf_get_field' ) ) {
 
 		// Check if the value is a JSON string and decode it if true.
 		if ( is_string( $value ) && is_json( $value ) ) {
+			// $value = html_entity_decode( $value, ENT_QUOTES, 'UTF-8' );
 			$value = json_decode( $value, true );
 		}
 

@@ -25,7 +25,6 @@ class Editor extends Input {
 		// Using output buffering because wp_editor() echos directly.
 		ob_start();
 
-		error_log( 'Editor::$meta: ' . print_r( $meta, true ) );
 		$attributes = self::get_attributes( $field );
 		$options = $field['options'];
 

@@ -44,10 +44,10 @@ class Repeater extends Input {
      * @param int   $post_id Post ID.
      */
     public static function html( $field, $meta  ) {
-        echo '<pre>';
-        var_dump( $meta );
-        echo '</pre>';
-        error_log( 'Repeater::$meta::is_json: ' . print_r( is_json( $meta ) ) );
+        // echo '<pre>';
+        // var_dump( $meta );
+        // echo '</pre>';
+        // error_log( 'Repeater::$meta::is_json: ' . print_r( is_json( $meta ) ) );
         if ( is_string( $meta ) && is_json( $meta ) ) {
 
 			$meta = json_decode( $meta, true );
@@ -95,7 +95,7 @@ class Repeater extends Input {
             $sub_field_meta = isset( $group_meta[ $sub_field['id'] ] ) ? $group_meta[ $sub_field['id'] ] : '';
 
             if ( $sub_field['type'] === 'editor' ) {
-                $sub_field_meta = html_entity_decode( $sub_field_meta, ENT_QUOTES, 'UTF-8' );
+                // $sub_field_meta = html_entity_decode( $sub_field_meta, ENT_QUOTES, 'UTF-8' );
             }
             $group_html .= static::show_sub_field( $sub_field, $sub_field_meta );
         }
@@ -149,7 +149,7 @@ class Repeater extends Input {
                  * Properly encode the editor content to preserve newlines and special characters
                  */
                 if ( $sub_field['type'] === 'editor' ) {
-                    $sub_field_processed_value = htmlentities( $sub_field_processed_value, ENT_QUOTES, 'UTF-8' );
+                    // $sub_field_processed_value = htmlentities( $sub_field_processed_value, ENT_QUOTES, 'UTF-8' );
                     $sub_field_processed_value = json_encode( $sub_field_processed_value );
                     $sub_field_processed_value = trim( $sub_field_processed_value, '"' );
                 }
