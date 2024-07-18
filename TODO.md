@@ -55,9 +55,9 @@ Test each field (12) with every object type (5)
 #### Object Types
 - Metabox
     - Post ✅
-    - Page 🛠
-    - CPT  🛠
-- Option Page
+    - Page ✅
+    - CPT  ✅
+- Option Page 🛠
 - User
 - Taxonomy
 - Gutenberg Sidebar
