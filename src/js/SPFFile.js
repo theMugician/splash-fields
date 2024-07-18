@@ -102,20 +102,19 @@ const SPFFile = compose(
                     // value={fileData ? fileData.id : ''}
                     value={value ? value.id : ''}
                     render={({ open }) => (
-                        <Button variant='primary' onClick={open}>
+                        <Button variant='secondary' onClick={open}>
                             {value ? __('Change File') : __('Upload File')}
                         </Button>
                     )}
                 />
             </MediaUploadCheck>
             {value && (
-                <div>
-                    <p>{__('File:', 'text-domain')}</p>
+                <div className="spf-plugin-sidebar-file-info">
                     <p>{__('ID:', 'text-domain')} {value.id}</p>
                     <p>{__('URL:', 'text-domain')} <a href={value.url} target="_blank" rel="noopener noreferrer">{value.url}</a></p>
                     <p>{__('Name:', 'text-domain')} {value.name}</p>
                     <p>{__('Type:', 'text-domain')} {value.type}</p>
-                    <Button variant='primary' onClick={handleDelete}>
+                    <Button variant="secondary" isDestructive onClick={handleDelete}>
                         Remove File
                     </Button>
                 </div>

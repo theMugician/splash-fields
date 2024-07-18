@@ -18,6 +18,14 @@
     border: 1px dashed #ccc;
 }
 
+.spf-plugin-sidebar-file-info {
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px dashed #ccc;
+}
+
 .spf-plugin-sidebar-repeater-group .spf-plugin-sidebar-field:first-child {
     margin-top: 0;
 }

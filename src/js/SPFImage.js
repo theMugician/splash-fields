@@ -78,23 +78,21 @@ const SPFImage = compose(
                     allowedTypes={['image']}
                     value={value ? value.id : ''}
                     render={({ open }) => (
-                        <Button onClick={open}>
+                        <Button variant="secondary" onClick={open}>
                             {value ? __('Replace Image') : __('Upload Image')}
                         </Button>
                     )}
                 />
             </MediaUploadCheck>
             {value && (
-                <div>
-                    <div>
-                        <img src={value.url} alt={value.alt || __('Selected Image')} style={{ maxWidth: '100%' }} />
-                        <p>{__('Image ID:', 'text-domain')} {value.id}</p>
-                        <p>{__('Image Name:', 'text-domain')} {value.name}</p>
-                        <p>{__('Image Alt:', 'text-domain')} {value.alt}</p>
-                        <Button onClick={removeImage}>
-                            {__('Remove Image')}
-                        </Button>
-                    </div>
+                <div className="spf-plugin-sidebar-file-info">
+                    <img src={value.url} alt={value.alt || __('Selected Image')} style={{ maxWidth: '100%' }} />
+                    <p>{__('Image ID:', 'text-domain')} {value.id}</p>
+                    <p>{__('Image Name:', 'text-domain')} {value.name}</p>
+                    <p>{__('Image Alt:', 'text-domain')} {value.alt}</p>
+                    <Button variant="secondary" isDestructive onClick={removeImage}>
+                        {__('Remove Image')}
+                    </Button>
                 </div>
             )}
         </div>
