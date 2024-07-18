@@ -11,7 +11,8 @@
 
 ## ERRORS & BUGS
 ### TODO
-
+1. Meta_Box - The toolbar shows up on the top and bottom when Editor is first loaded in the Repeater
+2. `wp.editPost.PluginSidebar is deprecated since version 6.6. Please use wp.editor.PluginSidebar instead.`
 
 ### DONE
 Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
@@ -26,7 +27,11 @@ PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/h
 6. Repeater field with Editor field breaks page. No CSS is being loaded.
 7. Repeater $meta JSON string is not being decoded when it includes an editor value with an image. Even though the JSON string looks correct.
 `Repeater.php line 62`
-
+8. <File>
+    SyntaxError: Unexpected end of JSON input
+        at JSON.parse (<anonymous>)
+        at http://localhost:8888/sandbox/wp-content/plugins/splash-fields/assets/js/plugin-sidebar.js?ver=6.6:2:5681
+        
 ## QA
 ### Needs QA:
 - Make sure `$field['field_name']` exists for all fields - crucial for Repeater to work

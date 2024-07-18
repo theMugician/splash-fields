@@ -18,8 +18,19 @@ const SPFFile = compose(
     }),
     withSelect((select, props) => {
         const metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+        // return {
+        //     metaValue: metaValue ? JSON.parse(metaValue) : null
+        // }
+        let parsedMetaValue = null
+
+        try {
+            parsedMetaValue = metaValue ? JSON.parse(metaValue) : null
+        } catch (error) {
+            console.error("Failed to parse metaValue:", error)
+        }
+
         return {
-            metaValue: metaValue ? JSON.parse(metaValue) : null
+            metaValue: parsedMetaValue
         }
     })
 )((props) => {
@@ -32,10 +43,24 @@ const SPFFile = compose(
     // const fileData = props.metaValue ? JSON.parse(props.metaValue) : null
 
     const [value, setValue] = useState(() => {
+        // if ('undefined' !== typeof props.value) {
+        //     return props.value || null
+        // }
+        // console.log(props.metaValue)
+        // return props.metaValue ? JSON.parse(props.metaValue) : null
+        // try {
+        //     if ('undefined' !== typeof props.value) {
+        //         return props.value || null
+        //     }
+        //     return props.metaValue ? JSON.parse(props.metaValue) : null
+        // } catch (error) {
+        //     console.error("Failed to parse metaValue:", error)
+        //     return null
+        // }
         if ('undefined' !== typeof props.value) {
             return props.value || null
         }
-        return props.metaValue ? JSON.parse(props.metaValue) : null
+        return props.metaValue
     })
 
     /**
@@ -54,7 +79,7 @@ const SPFFile = compose(
         if ('undefined' !== typeof props.onChange) {
             props.onChange(fileData)
         } else {
-            props.setMetaValue(JSON.stringify(fileData))
+            props.setMetaValue(fileData)
         }
     }
 
@@ -82,9 +107,6 @@ const SPFFile = compose(
                         </Button>
                     )}
                 />
-                <Button variant='primary' onClick={handleDelete}>
-                    Delete File
-                </Button>
             </MediaUploadCheck>
             {value && (
                 <div>
@@ -93,6 +115,9 @@ const SPFFile = compose(
                     <p>{__('URL:', 'text-domain')} <a href={value.url} target="_blank" rel="noopener noreferrer">{value.url}</a></p>
                     <p>{__('Name:', 'text-domain')} {value.name}</p>
                     <p>{__('Type:', 'text-domain')} {value.type}</p>
+                    <Button variant='primary' onClick={handleDelete}>
+                        Remove File
+                    </Button>
                 </div>
             )}
         </div>

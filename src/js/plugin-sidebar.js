@@ -1,5 +1,6 @@
 import { registerPlugin } from '@wordpress/plugins'
 import { PluginSidebar } from '@wordpress/edit-post'
+// import { PluginSidebar } from '@wordpress/editor'
 import { PanelBody } from '@wordpress/components'
 import SPFCheckbox from './SPFCheckbox'
 import SPFCheckboxList from './SPFCheckboxList'
