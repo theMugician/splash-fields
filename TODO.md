@@ -13,6 +13,13 @@
 ### TODO
 1. Meta_Box - The toolbar shows up on the top and bottom when Editor is first loaded in the Repeater
 2. `wp.editPost.PluginSidebar is deprecated since version 6.6. Please use wp.editor.PluginSidebar instead.`
+3. PluginSidebar bug with File and Image
+    - Delete Image and File meta from database
+    - `Image` - Add an image and leave `File` empty
+    - Click Save
+    - DB - Image contains JSON string info of image while File contains `[]`
+    * The data only gets saved when there has been a change in one of the fields
+    * When you click remove image or file it and click save it will delete that meta from DB
 
 ### DONE
 Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
@@ -31,7 +38,7 @@ PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/h
     SyntaxError: Unexpected end of JSON input
         at JSON.parse (<anonymous>)
         at http://localhost:8888/sandbox/wp-content/plugins/splash-fields/assets/js/plugin-sidebar.js?ver=6.6:2:5681
-        
+
 ## QA
 ### Needs QA:
 - Make sure `$field['field_name']` exists for all fields - crucial for Repeater to work

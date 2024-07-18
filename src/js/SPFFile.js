@@ -18,6 +18,7 @@ const SPFFile = compose(
     }),
     withSelect((select, props) => {
         const metaValue = select('core/editor').getEditedPostAttribute('meta')[props.metaKey]
+        console.log(metaValue)
         // return {
         //     metaValue: metaValue ? JSON.parse(metaValue) : null
         // }
@@ -89,7 +90,11 @@ const SPFFile = compose(
      */
     const handleDelete = () => {
         setValue(null)
-        props.deleteMetaValue()
+        if ('undefined' !== typeof props.handleDelete) {
+            props.handleDelete()
+        } else {
+            props.deleteMetaValue()
+        }
     }
 
     return (
@@ -108,7 +113,7 @@ const SPFFile = compose(
                     )}
                 />
             </MediaUploadCheck>
-            {value && (
+            {value && value.id && (
                 <div className="spf-plugin-sidebar-file-info">
                     <p>{__('ID:', 'text-domain')} {value.id}</p>
                     <p>{__('URL:', 'text-domain')} <a href={value.url} target="_blank" rel="noopener noreferrer">{value.url}</a></p>

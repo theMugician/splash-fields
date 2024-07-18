@@ -231,6 +231,13 @@ class Plugin_Sidebar {
                         'single'         => true,
                         'type'           => $this->data_types[$field['type']],
                         'sanitize_callback' => function( $value ) use ( $field ) {
+                            if ( $field['type'] === 'image' || $field['type'] === 'file' ) {
+                                error_log(  $field['type'] . '::sanitize_callback::value = ' . print_r( $value, true ) );
+                            }
+                            // Check if the value is null
+                            if ( $value === null ) {
+                                return null;
+                            }
                             return Field::call( $field, 'sanitize', $value );
                         },
                         'auth_callback'  => function() {

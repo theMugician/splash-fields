@@ -66,7 +66,11 @@ const SPFImage = compose(
      */
     const removeImage = () => {
         setValue(null)
-        props.deleteMetaValue()
+        if ('undefined' !== typeof props.handleDelete) {
+            props.handleDelete()
+        } else {
+            props.deleteMetaValue()
+        }
     }
 
     return (
@@ -84,7 +88,7 @@ const SPFImage = compose(
                     )}
                 />
             </MediaUploadCheck>
-            {value && (
+            {value && value.id && (
                 <div className="spf-plugin-sidebar-file-info">
                     <img src={value.url} alt={value.alt || __('Selected Image')} style={{ maxWidth: '100%' }} />
                     <p>{__('Image ID:', 'text-domain')} {value.id}</p>

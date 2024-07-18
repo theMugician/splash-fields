@@ -80,6 +80,20 @@ const SPFRepeater = compose(
     }
 
     /**
+     * Handle delete for Image and File fields.
+     *
+     * @param {number} index   - The index of the item.
+     * @param {string} fieldId - The ID of the field.
+     */
+    const handleDelete = (index, fieldId) => {
+        const newItems = [...items]
+        newItems[index][fieldId].value = null
+        // newItems[index].splice(fieldId, 1)
+        setItems(newItems)
+        props.setMetaValue(newItems)
+    }
+
+    /**
      * Add a new item to the repeater field.
      */
     const addItem = () => {
@@ -119,6 +133,7 @@ const SPFRepeater = compose(
                         label: field.name,
                         value: item[field.id] ? item[field.id].value : '',
                         onChange: (value) => handleFieldChange(index, field.id, value),
+                        handleDelete: () => handleDelete(index, field.id),
                         ...('undefined' !== typeof field.default && { default: field.default }),
                         ...('undefined' !== typeof field.placeholder && { placeholder: field.placeholder })
                     }
