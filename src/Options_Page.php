@@ -7,10 +7,6 @@
 
 namespace Splash_Fields;
 
-/*
-string $page_title, string $menu_title, string $capability, string $menu_slug, callable $callback = ”
-*/
-
 /**
  * Class Options_Page.
  * 
@@ -30,14 +26,6 @@ class Options_Page {
 	public $options_page;
 
 	/**
-	 * Detect whether the meta box is saved at least once.
-	 * Used to prevent duplicated calls like revisions, manual hook to wp_insert_post, etc.
-	 *
-	 * @var bool
-	 */
-	public $saved = false;
-
-	/**
 	 * The object ID.
 	 *
 	 * @var int
@@ -50,6 +38,14 @@ class Options_Page {
 	 * @var string
 	 */
 	protected $object_type = 'options';
+
+	/**
+	 * Detect whether the settings have been registered.
+	 * Used to prevent duplicated calls.
+	 *
+	 * @var bool
+	 */
+	protected $registered = false;
 
     /**
      * The ID of the meta box.
@@ -92,6 +88,14 @@ class Options_Page {
      * @var array
      */
     protected $fields = array();
+
+	/**
+	 * Flags to track if sanitize callback has processed the value for each field.
+	 * sanitize_callback runs twice on initial save so this is the fix.
+	 * @see https://stackoverflow.com/questions/71974444/wordpress-register-setting-sanitize-callback-runs-twice-on-initial-save
+	 * @var array
+	 */
+	private static $processed_fields = array();
 
     /**
      * Constructor.
@@ -183,6 +187,12 @@ class Options_Page {
 	 */
 	public function register_settings() {
 
+		// Prevent duplicate registration
+		if ( $this->registered ) {
+			return;
+		}
+		$this->registered = true;
+
 		// $settings_section_id = 'settings_section_id';
 		$settings_section_id = $this->id;
 
@@ -201,16 +211,23 @@ class Options_Page {
 				$field['id'],
 				array(
 					'sanitize_callback' => function( $value ) use ( $field ) {
+						if ( isset( self::$processed_fields[ $field['id'] ] ) ) {
+							return $value;
+						}
+						self::$processed_fields[$field['id']] = true;
+
+						if ( $value === '' || $value === null ) {
+							// return '__unset__';
+							return null;
+						}
 						$value = Field::call( $field, 'process_value', $value, 0, $field );
+
 						// TODO BUG: Reproduce bug for file value
 						// Sometimes the value comes out as """"
 						if ( is_array( $value ) ) {
 							return json_encode( $value );
 						}
-						if ( $value === '' || $value === null ) {
-							return '__unset__';
-							// return null;
-						}
+
 						return $value;
 					}, 
 				),
@@ -228,15 +245,22 @@ class Options_Page {
 			);
 
 			// Add a dynamic filter for each field - delete option if value is '__unset__'
+			/*
 			add_filter( 'pre_update_option_' . $field['id'], function( $new_value, $old_value ) use ( $field ) {
+				error_log( 'pre_update_option_' . $field['id'] . ' - ' . $new_value );
 				if ( $new_value === '__unset__' ) {
+					error_log( 'unset_true_' . $field['id'] . ' - ' . $new_value );
+
 					delete_option( $field['id'] );
 					return null;
 				}
 				return $new_value;
 			}, 10, 2 );
+			*/
 
 		}
+		// Reset processed fields after registering all settings
+		self::$processed_fields = array();
 
 	}
 
@@ -273,44 +297,6 @@ class Options_Page {
 
 		// End container.
 		echo '</div>';
-	}
-
-	/**
-	 * Save data from meta box
-	 *
-	 * @param int $object_id Object ID.
-	 */
-	public function save_post( $object_id ) {
-		if ( ! $this->validate() ) {
-			return;
-		}
-
-		$this->saved = true;
-
-		$object_id       = $this->get_real_object_id( $object_id );
-		$this->object_id = $object_id;
-
-		// Before save action.
-		do_action( 'spf_before_save_post', $object_id );
-		do_action( "spf_{$this->id}_before_save_post", $object_id );
-
-		array_map( [ $this, 'save_field' ], $this->fields );
-
-		// After save action.
-		do_action( 'spf_after_save_post', $object_id );
-		do_action( "spf_{$this->id}_after_save_post", $object_id );
-	}
-
-	public function save_field( array $field ) {
-        // Get Posted Value
-        $old = Field::call( 'raw_meta', $field, $this->object_id );
-        $new = $_POST[$field['id']];
-
-		$class = '\\Splash_Fields\\Fields\\' . \Splash_Fields\Helpers\String_Helper::title_case( $field['type'] );
-		$new = Field::call( $field, 'process_value', $new , $this->object_id, $field );
-
-        // update_meta with Storage Class
-        Field::call( $field, 'save', $new, $old, $this->object_id, $field );
 	}
 
     public function register_fields() {
@@ -433,21 +419,5 @@ class Options_Page {
 	 */
 	protected function get_current_object_id() {
 		return get_the_ID();
-	}
-
-	/**
-	 * Get real object ID when submitting.
-	 *
-	 * @param int $object_id Object ID.
-	 * @return int
-	 */
-	protected function get_real_object_id( $object_id ) {
-		// Make sure meta is added to the post, not a revision.
-		if ( 'post' !== $this->object_type ) {
-			return $object_id;
-		}
-		$parent = wp_is_post_revision( $object_id );
-
-		return $parent ?: $object_id;
 	}
 }

@@ -11,12 +11,31 @@ namespace Splash_Fields;
  * Class Plugin.
  */
 class Plugin {
+	/**
+	 * The single instance of the class.
+	 *
+	 * @var Plugin
+	 */
+	protected static $instance = null;
 
 	/**
 	 * Constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		$this->init();
+	}
+
+	/**
+	 * Ensure only one instance of the class is loaded or can be loaded.
+	 *
+	 * @return Plugin - The single instance of the class.
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	public function activate() {}
@@ -34,7 +53,7 @@ class Plugin {
 
 		new Assets();
 
-		$core = new Core();
+		$core = Core::get_instance();
 		$core->init();
 
 		// Public functions.

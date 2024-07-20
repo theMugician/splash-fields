@@ -11,6 +11,27 @@ namespace Splash_Fields;
  * Class Core.
  */
 class Core {
+
+	/**
+	 * The single instance of the class.
+	 *
+	 * @var Core
+	 */
+	protected static $instance = null;
+
+	/**
+	 * Ensure only one instance of the class is loaded or can be loaded.
+	 *
+	 * @return Core - The single instance of the class.
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
     public function init() {
         add_action( 'init', [ $this, 'register_meta_boxes' ], 20 );
         add_action( 'init', [ $this, 'register_options_pages' ], 20 );
@@ -43,15 +64,17 @@ class Core {
     }
 
     public function register_options_pages() {
-        $configs  = apply_filters( 'spf_options_pages', [] );
-
+        $configs = apply_filters( 'spf_options_pages', [] );
+        /*
         static $data = [];
-
+        
         if ( ! isset( $data['options_page'] ) ) {
             $data['options_page'] = new Options_Page_Registry();
         }
 
         $registry = $data['options_page'];
+        */
+        $registry = Options_Page_Registry::get_instance();
 
         foreach ( $configs as $config ) {
             if ( ! is_array( $config ) || empty( $config ) ) {

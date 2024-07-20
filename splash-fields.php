@@ -29,7 +29,8 @@ require_once 'vendor/autoload.php';
 use Splash_Fields\Plugin;
 
 if ( class_exists( 'Splash_Fields\Plugin' ) ) {
-	$the_plugin = new Plugin();
+	// $the_plugin = new Plugin();
+	$the_plugin = Plugin::get_instance();
 }
 
 // register_activation_hook( __FILE__, [ $the_plugin, 'activate' ] );

@@ -59,6 +59,7 @@ class Field {
 	 */
 	public static function show_in_options_page( array $field, $option_name = '' ) {
 		$meta = get_option( $option_name );
+		$field['post_id'] = 0; // Used by Image, File and Repeater fields.
 		$html = sprintf( '<div class="spf-field spf-field-%s">', $field['type'] );
 		$html .= static::html( $field, $meta );
 		$html .= '</div>';

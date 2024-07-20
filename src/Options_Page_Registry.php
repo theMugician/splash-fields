@@ -14,7 +14,32 @@ namespace Splash_Fields;
  * Class Options_Page_Registry.
 */
 class Options_Page_Registry {
-	private $data = [];
+    /**
+     * The single instance of the class.
+     *
+     * @var Options_Page_Registry
+     */
+    protected static $instance = null;
+
+    /**
+     * List of registered options pages.
+     *
+     * @var array
+     */
+    private $data = [];
+
+	/**
+     * Ensure only one instance of the class is loaded or can be loaded.
+     *
+     * @return Options_Page_Registry - The single instance of the class.
+     */
+    public static function get_instance() {
+        if ( null === self::$instance ) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
 
 	/**
 	 * Create a meta box object.
@@ -23,10 +48,20 @@ class Options_Page_Registry {
 	 * @return      \Options_Page
 	 */
 	public function make( array $settings ) {
+		/*
 		$class_name = apply_filters( 'spf_options_page_class_name', 'Splash_Fields\Options_Page', $settings );
 		$options_page = new $class_name( $settings );
 		$this->add( $options_page );
 		return $options_page;
+		*/
+		if ( ! isset( $this->data[ $settings['id'] ] ) ) {
+			$class_name   = apply_filters( 'spf_options_page_class_name', 'Splash_Fields\Options_Page', $settings );
+			$options_page = new $class_name( $settings );
+			$this->add( $options_page );
+			return $options_page;
+		}
+
+		return $this->data[ $settings['id'] ];
 	}
 
 	public function add( Options_Page $options_page ) {
