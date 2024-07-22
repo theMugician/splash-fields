@@ -20,18 +20,12 @@
     - DB - Image contains JSON string info of image while File contains `[]`
     * The data only gets saved when there has been a change in one of the fields
     * When you click remove image or file it and click save it will delete that meta from DB
-4. Options Bug
-    - Delete Options from database
-    - Repeater 
-        - Add Row
-        - Check Checkbox
-    - Click Save
-    - Result - Repeater is empty and Text and Textarea fields have the value of `__unset__`
-    - Repeater 
-        - Add Row
-        - Check Checkbox
-    - Click Save
-    - Result - Repeater contains value now and Text and Textarea fields have the value of nothing
+4. `spf_taxonomy_settings`
+    - Go to /edit-tags.php?taxonomy=category
+    - Under editor add content
+    - Click `Add New Category`
+    - Click on the page of your new added category
+    - Content in editor is not there
 
 ### DONE
 Decide on outputted empty value: `""`, `"[]"`, `Array` or what? 
@@ -50,6 +44,18 @@ PHP Warning:  Undefined array key "spf-meta-boxes-radio" in /Applications/MAMP/h
     SyntaxError: Unexpected end of JSON input
         at JSON.parse (<anonymous>)
         at http://localhost:8888/sandbox/wp-content/plugins/splash-fields/assets/js/plugin-sidebar.js?ver=6.6:2:5681
+9. Options Bug
+    - Delete Options from database
+    - Repeater 
+        - Add Row
+        - Check Checkbox
+    - Click Save
+    - Result - Repeater is empty and Text and Textarea fields have the value of `__unset__`
+    - Repeater 
+        - Add Row
+        - Check Checkbox
+    - Click Save
+    - Result - Repeater contains value now and Text and Textarea fields have the value of nothing
 
 ## QA
 ### Needs QA:
@@ -81,10 +87,10 @@ Test each field (12) with every object type (5)
     - Post ✅
     - Page ✅
     - CPT  ✅
-- Option Page 🛠
-- User
-- Taxonomy
-- Gutenberg Sidebar
+- Option Page ✅
+- User ✅
+- Taxonomy 🛠
+- Gutenberg Sidebar 🛠
 
 #### Fields
 - Checkbox
